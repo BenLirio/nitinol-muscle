@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nitinol — The Metal That Remembers</title>
+<style>
+  :root{
+    --bg:#0b0f17; --panel:#121826; --panel2:#0e1420; --line:#1f2a3d;
+    --text:#dbe3f0; --muted:#8b97ad;
+    --hot:#ff5a36; --cold:#6aa6ff; --teal:#38d9c0; --gold:#ffb347;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg); color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.6; overflow-x:hidden;
+  }
+  body::before{
+    content:""; position:fixed; inset:0; z-index:-1;
+    background:
+      radial-gradient(900px 500px at 80% -10%, rgba(255,90,54,.10), transparent 60%),
+      radial-gradient(800px 500px at 10% 20%, rgba(106,166,255,.08), transparent 60%),
+      radial-gradient(700px 600px at 50% 110%, rgba(56,217,192,.07), transparent 60%);
+  }
+  .wrap{max-width:960px; margin:0 auto; padding:0 20px;}
+
+  header{padding:64px 0 8px; text-align:center;}
+  .eyebrow{
+    display:inline-block; font-size:12px; letter-spacing:.22em; text-transform:uppercase;
+    color:var(--teal); border:1px solid rgba(56,217,192,.35); border-radius:999px;
+    padding:6px 14px; margin-bottom:18px;
+  }
+  h1{font-size:clamp(34px,6vw,58px); line-height:1.1; letter-spacing:-.02em;}
+  h1 .grad{
+    background:linear-gradient(90deg,var(--cold),var(--teal) 50%,var(--hot));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .sub{color:var(--muted); max-width:640px; margin:16px auto 0; font-size:17px;}
+
+  .hero-demo{margin:28px auto 0; max-width:860px;}
+  .hero-demo svg{width:100%; display:block;}
+  #heroLabel{
+    text-align:center; font-size:15px; color:var(--muted); height:24px;
+    transition:color .4s;
+  }
+
+  section{padding:56px 0 8px;}
+  .section-inner{
+    opacity:0; transform:translateY(26px);
+    transition:opacity .7s ease, transform .7s ease;
+  }
+  .section-inner.visible{opacity:1; transform:none;}
+  h2{font-size:clamp(24px,3.5vw,34px); letter-spacing:-.01em; margin-bottom:8px;}
+  .kicker{
+    font-size:12px; letter-spacing:.2em; text-transform:uppercase;
+    color:var(--gold); margin-bottom:10px;
+  }
+  .lead{color:var(--muted); max-width:720px; margin-bottom:22px;}
+  .lead b, p b{color:var(--text);}
+
+  .card{
+    background:linear-gradient(180deg,var(--panel),var(--panel2));
+    border:1px solid var(--line); border-radius:18px; padding:22px;
+    box-shadow:0 14px 40px rgba(0,0,0,.35);
+  }
+
+  .controls{
+    display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-top:14px;
+  }
+  button{
+    font:inherit; font-size:14px; font-weight:600; color:var(--text);
+    background:#1a2336; border:1px solid #2a3a57; border-radius:10px;
+    padding:9px 16px; cursor:pointer; transition:transform .12s, background .2s, opacity .2s;
+  }
+  button:hover:not(:disabled){background:#223054; transform:translateY(-1px);}
+  button:active:not(:disabled){transform:translateY(0);}
+  button:disabled{opacity:.38; cursor:not-allowed;}
+  button.hotbtn{background:#3a1610; border-color:#6e2a1a; color:#ffb4a0;}
+  button.hotbtn:hover:not(:disabled){background:#532015;}
+  button.coldbtn{background:#10203a; border-color:#274a7e; color:#a9c8ff;}
+  button.coldbtn:hover:not(:disabled){background:#16315c;}
+  .tabbtn.active{background:var(--teal); border-color:var(--teal); color:#06201b;}
+
+  input[type=range]{
+    -webkit-appearance:none; appearance:none; width:200px; height:6px; border-radius:3px;
+    background:linear-gradient(90deg,var(--cold),var(--hot)); outline:none; cursor:pointer;
+  }
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none; appearance:none; width:20px; height:20px; border-radius:50%;
+    background:#fff; border:3px solid #0b0f17; box-shadow:0 0 0 2px #ffffff55;
+  }
+  input[type=range]::-moz-range-thumb{
+    width:16px; height:16px; border-radius:50%; background:#fff; border:3px solid #0b0f17;
+  }
+  label.ctl{font-size:13px; color:var(--muted); display:flex; align-items:center; gap:10px;}
+
+  .readout{
+    display:flex; flex-wrap:wrap; gap:8px 18px; margin-top:12px; font-size:13px; color:var(--muted);
+  }
+  .readout b{color:var(--text); font-variant-numeric:tabular-nums;}
+  .pill{
+    display:inline-block; padding:3px 12px; border-radius:999px; font-size:12px; font-weight:700;
+    border:1px solid; letter-spacing:.03em;
+  }
+  .pill.cold{color:#a9c8ff; border-color:#2c4f8a; background:#10203a;}
+  .pill.hot{color:#ffb4a0; border-color:#7e3a26; background:#3a1610;}
+  .pill.mid{color:#ffd9a0; border-color:#8a6a2c; background:#2e2410;}
+
+  #wireCanvas{
+    width:100%; display:block; border-radius:12px; background:#0a0e16;
+    border:1px solid var(--line); touch-action:none; cursor:grab; margin-top:14px;
+  }
+  #wireCanvas.grabbing{cursor:grabbing;}
+  .hint{font-size:13px; color:var(--gold); height:18px; margin-top:8px; transition:opacity .4s; opacity:0;}
+  .hint.show{opacity:1;}
+
+  .thermo{
+    flex:1; min-width:160px; max-width:260px; height:10px; border-radius:5px;
+    background:#1a2336; overflow:hidden; position:relative;
+  }
+  .thermo>i{
+    position:absolute; inset:0 100% 0 0; display:block;
+    background:linear-gradient(90deg,var(--cold),#c084fc,var(--hot));
+    transition:none;
+  }
+
+  svg .atomlabel{font-size:11px; fill:var(--muted);}
+  .legend{display:flex; gap:18px; margin-top:10px; font-size:13px; color:var(--muted); flex-wrap:wrap;}
+  .legend span{display:flex; align-items:center; gap:7px;}
+  .dot{width:12px; height:12px; border-radius:50%; display:inline-block;}
+
+  .grid2{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:18px;}
+  @media(max-width:760px){.grid2{grid-template-columns:1fr;}}
+  .mini{
+    background:var(--panel2); border:1px solid var(--line); border-radius:14px; padding:18px;
+  }
+  .mini h3{font-size:16px; margin-bottom:6px;}
+  .mini h3 .ic{margin-right:8px;}
+  .mini p{font-size:14px; color:var(--muted);}
+
+  .stats{display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:14px; margin-top:20px;}
+  .stat{
+    background:var(--panel2); border:1px solid var(--line); border-radius:14px; padding:18px 16px;
+  }
+  .stat .big{font-size:28px; font-weight:800; letter-spacing:-.02em;}
+  .stat .big.teal{color:var(--teal);} .stat .big.hot{color:var(--hot);}
+  .stat .big.cold{color:var(--cold);} .stat .big.gold{color:var(--gold);}
+  .stat small{color:var(--muted); display:block; font-size:13px; line-height:1.45; margin-top:4px;}
+
+  .chips{display:flex; flex-wrap:wrap; gap:9px; margin-top:16px;}
+  .chip{
+    font-size:13px; color:var(--text); background:#15203a; border:1px solid #283a5e;
+    border-radius:999px; padding:6px 14px;
+  }
+
+  footer{padding:60px 0 40px; text-align:center; color:var(--muted); font-size:13px;}
+  footer b{color:var(--text);}
+</style>
+</head>
+<body>
+
+<header class="wrap">
+  <div class="eyebrow">NiTi · Shape-Memory Alloy</div>
+  <h1>Nitinol: <span class="grad">the metal that remembers</span></h1>
+  <p class="sub">
+    Bend it, crumple it, tie it in a knot — then warm it up, and it snaps back to the exact shape
+    it was “trained” to remember. Here’s how it works, and how engineers use it as artificial muscle.
+  </p>
+  <div class="hero-demo">
+    <svg viewBox="0 0 800 200" aria-label="Animated nitinol wire returning to shape">
+      <path id="heroGhost" fill="none" stroke="#243049" stroke-width="3" stroke-dasharray="3 9" stroke-linecap="round"/>
+      <path id="heroWire" fill="none" stroke="#94a3b8" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <div id="heroLabel">❄️ Cold: bend it into any shape…</div>
+  </div>
+</header>
+
+<!-- ============ 1. WHAT IS IT ============ -->
+<section class="wrap">
+  <div class="section-inner">
+    <div class="kicker">01 · The basics</div>
+    <h2>One alloy, two personalities</h2>
+    <p class="lead">
+      Nitinol is roughly <b>half nickel, half titanium</b> (the name = <b>Ni</b> + <b>Ti</b> +
+      <b>N</b>aval <b>O</b>rdnance <b>L</b>aboratory, where it was discovered in 1959).
+      Its trick comes from having <b>two different crystal structures</b> that it switches between
+      with temperature — no melting, no magic, just atoms shuffling a fraction of a nanometer.
+    </p>
+    <div class="grid2">
+      <div class="mini">
+        <h3><span class="ic">🥶</span>Cold → Martensite</h3>
+        <p>A soft, low-symmetry structure arranged in herringbone “twins”. The twins can flip
+        orientation under stress, so cold nitinol bends easily and <b>stays</b> bent — it feels
+        like soft, dead metal.</p>
+      </div>
+      <div class="mini">
+        <h3><span class="ic">🔥</span>Hot → Austenite</h3>
+        <p>A rigid, highly ordered cubic structure. There is only <b>one way</b> the atoms can
+        arrange themselves — and that arrangement encodes the trained shape. Heat the metal and
+        every atom marches back to its assigned position.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 2. CRYSTAL LATTICE ============ -->
+<section class="wrap">
+  <div class="section-inner">
+    <div class="kicker">02 · Atomic view · interactive</div>
+    <h2>Watch the atoms switch phase</h2>
+    <p class="lead">
+      Drag the temperature slider to transform the crystal. Cool it into martensite, press
+      <b>Apply stress</b> to bend it (the twins flip and the whole lattice leans — that’s the
+      macroscopic shape change you feel). Then heat it: the lattice has no choice but to return
+      to the cubic grid. <b>That return is the shape memory.</b>
+    </p>
+    <div class="card">
+      <svg id="lattice" viewBox="0 0 540 330" style="width:100%; display:block;"></svg>
+      <div class="legend">
+        <span><i class="dot" style="background:#5eead4"></i>Nickel</span>
+        <span><i class="dot" style="background:#93c5fd"></i>Titanium</span>
+        <span>State: <b id="latticeState" class="pill cold" style="margin-left:6px">—</b></span>
+      </div>
+      <div class="controls">
+        <label class="ctl">❄️ <input type="range" id="latTemp" min="0" max="100" value="85"> 🔥</label>
+        <span style="font-size:13px;color:var(--muted)">Temp: <b id="latTempVal">85</b> °C</span>
+        <button id="latStress">💪 Apply stress (bend it)</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 3. WIRE PLAYGROUND ============ -->
+<section class="wrap">
+  <div class="section-inner">
+    <div class="kicker">03 · Try it yourself · interactive</div>
+    <h2>Bend the wire. Then heat it.</h2>
+    <p class="lead">
+      This wire was “trained” straight. <b>Drag anywhere on it</b> to bend it while it’s cold,
+      then hit <b>Heat</b> and watch it remember. Switch to <b>Superelastic</b> mode to see
+      nitinol’s other superpower: above its transition temperature, stress alone creates
+      martensite — and it springs back the instant you let go, after bending ~10× further than
+      steel could.
+    </p>
+    <div class="card">
+      <div class="controls" style="margin-top:0">
+        <button class="tabbtn active" id="modeMemory">🧠 Shape memory</button>
+        <button class="tabbtn" id="modeSuper">🤸 Superelastic</button>
+        <span style="flex:1"></span>
+        <button id="wireReset">↺ Reset</button>
+      </div>
+      <canvas id="wireCanvas" width="680" height="260"></canvas>
+      <div class="hint" id="wireHint"></div>
+      <div class="controls">
+        <button class="hotbtn" id="btnHeat">🔥 Heat</button>
+        <button class="coldbtn" id="btnCool">❄️ Cool</button>
+        <div class="thermo"><i id="thermoFill"></i></div>
+        <span style="font-size:13px;color:var(--muted)"><b id="wireTemp">20</b> °C</span>
+        <b id="wireState" class="pill cold">Martensite · soft</b>
+      </div>
+    </div>
+    <div class="grid2">
+      <div class="mini">
+        <h3><span class="ic">🧠</span>Shape memory effect</h3>
+        <p>Below ~As, deformation just flips twins — recoverable up to <b>~8% strain</b>. Heating
+        above Af erases it all. This is one-way memory: it remembers <i>hot</i> shape only.</p>
+      </div>
+      <div class="mini">
+        <h3><span class="ic">🤸</span>Superelasticity</h3>
+        <p>Above Af, bending force itself converts austenite → martensite. Remove the force and
+        it instantly transforms back. This is why nitinol eyeglass frames and heart stents
+        survive being crushed.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 4. MUSCLE ============ -->
+<section class="wrap">
+  <div class="section-inner">
+    <div class="kicker">04 · Artificial muscle · interactive</div>
+    <h2>Wire in, muscle out</h2>
+    <p class="lead">
+      Run electric current through a nitinol wire and it heats itself (Joule heating), transforms
+      to austenite, and <b>contracts ~4–5%</b> — pulling with enormous force, like a tendon.
+      Coil the wire into a spring and the stroke multiplies. Drive the slider below (or pulse it)
+      to flex this robotic bicep.
+    </p>
+    <div class="card">
+      <svg id="armSvg" viewBox="0 0 560 360" style="width:100%; display:block;"></svg>
+      <div class="controls">
+        <label class="ctl">⚡ Current
+          <input type="range" id="currentSlider" min="0" max="100" value="0">
+        </label>
+        <button class="hotbtn" id="btnPulse">⚡ Pulse!</button>
+        <span style="flex:1"></span>
+      </div>
+      <div class="readout">
+        <span>Current: <b id="roCurrent">0</b>%</span>
+        <span>Wire temp: <b id="roTemp">20</b> °C</span>
+        <span>Contraction: <b id="roStrain">0.0</b>%</span>
+        <span><b id="roPhase" class="pill cold">Martensite · relaxed</b></span>
+      </div>
+    </div>
+    <div class="grid2">
+      <div class="mini">
+        <h3><span class="ic">🦾</span>Just like a real bicep</h3>
+        <p>Muscle can only <b>pull</b>, never push — so does nitinol. Real robots use it in
+        <b>antagonistic pairs</b> (a “bicep” and a “tricep” wire), or against a return spring,
+        exactly like your own arm. Gravity plays the tricep here.</p>
+      </div>
+      <div class="mini">
+        <h3><span class="ic">🌡️</span>The catch</h3>
+        <p>Heating is fast (milliseconds), but <b>cooling sets the speed limit</b> — the wire must
+        shed heat to relax. Thin wires, fans, or water cooling make SMA muscles cycle faster.
+        Efficiency is low (&lt;5%), but the simplicity is unbeatable: no motor, no gears, silent.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 5. NUMBERS & USES ============ -->
+<section class="wrap">
+  <div class="section-inner">
+    <div class="kicker">05 · Why engineers love it</div>
+    <h2>Muscle-grade numbers</h2>
+    <div class="stats">
+      <div class="stat"><div class="big teal">~8%</div>
+        <small>Recoverable strain — ordinary steel manages ~0.5% before permanent damage.</small></div>
+      <div class="stat"><div class="big hot">~200 MPa</div>
+        <small>Actuation stress. Human skeletal muscle: ~0.35 MPa. Per cross-section, nitinol pulls ~500× harder.</small></div>
+      <div class="stat"><div class="big gold">No motor</div>
+        <small>One wire = a complete actuator. Silent, solid-state, works at any scale down to micro-grippers.</small></div>
+      <div class="stat"><div class="big cold">−100…+100 °C</div>
+        <small>Transition temperature is tunable — shifting the Ni:Ti ratio by 0.1% moves it ~10 °C.</small></div>
+    </div>
+    <h2 style="margin-top:38px">Where you’ll find it</h2>
+    <div class="chips">
+      <span class="chip">🫀 Self-expanding heart stents</span>
+      <span class="chip">👓 Indestructible eyeglass frames</span>
+      <span class="chip">🦷 Orthodontic archwires</span>
+      <span class="chip">🤖 Robot grippers &amp; soft robots</span>
+      <span class="chip">🦾 Prosthetic hands</span>
+      <span class="chip">✈️ Morphing jet-engine chevrons</span>
+      <span class="chip">🛰️ Satellite hinge releases</span>
+      <span class="chip">📷 Phone camera autofocus</span>
+    </div>
+  </div>
+</section>
+
+<footer class="wrap">
+  <b>Nitinol</b> — discovered by accident, remembered forever. · Demos are schematic; real
+  transition temps (Mf, Ms, As, Af) and strains depend on alloy composition and training.
+</footer>
+
+<script>
+"use strict";
+/* ---------- helpers ---------- */
+const clamp = (v,a,b)=>Math.max(a,Math.min(b,v));
+const lerp  = (a,b,t)=>a+(b-a)*t;
+const ease  = t=>t<.5 ? 2*t*t : 1-Math.pow(-2*t+2,2)/2;
+function hex2rgb(h){return [parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)];}
+function mixColor(c1,c2,t){
+  const a=hex2rgb(c1), b=hex2rgb(c2);
+  return `rgb(${Math.round(lerp(a[0],b[0],t))},${Math.round(lerp(a[1],b[1],t))},${Math.round(lerp(a[2],b[2],t))})`;
+}
+const COLD_C = "#8a93a5", HOT_C = "#ff5233";
+
+/* ---------- scroll reveal ---------- */
+const io = new IntersectionObserver(es=>es.forEach(e=>{
+  if(e.isIntersecting){e.target.classList.add("visible"); io.unobserve(e.target);}
+}),{threshold:.12});
+document.querySelectorAll(".section-inner").forEach(el=>io.observe(el));
+
+/* ================= HERO WIRE ================= */
+const heroWire  = document.getElementById("heroWire");
+const heroGhost = document.getElementById("heroGhost");
+const heroLabel = document.getElementById("heroLabel");
+const HERO_N = 48;
+let heroStart = performance.now();
+(function setGhost(){
+  let d="";
+  for(let i=0;i<HERO_N;i++){
+    const x = 60 + (740-60)*i/(HERO_N-1);
+    d += (i?` L`:`M`)+x.toFixed(1)+" 100";
+  }
+  heroGhost.setAttribute("d",d);
+})();
+let heroPhaseTxt = "";
+function heroTick(now){
+  const t = ((now-heroStart)/8000)%1;
+  let bend, heat, label;
+  if(t<0.22){ bend=ease(t/0.22); heat=0; label="❄️ Cold: bend it into any shape…"; }
+  else if(t<0.38){ bend=1; heat=0; label="It stays bent — like soft, dead metal."; }
+  else if(t<0.52){ bend=1; heat=ease((t-0.38)/0.14); label="🔥 Now apply heat…"; }
+  else if(t<0.78){ bend=1-ease((t-0.52)/0.26); heat=1; label="…and it snaps back to its trained shape!"; }
+  else { bend=0; heat=1-ease((t-0.78)/0.22); label="Cooling down. Ready to go again."; }
+  let d="";
+  for(let i=0;i<HERO_N;i++){
+    const f = i/(HERO_N-1);
+    const x = 60 + (740-60)*f;
+    const y = 100 + bend*55*Math.sin(f*Math.PI*3)*Math.sin(f*Math.PI);
+    d += (i?` L`:`M`)+x.toFixed(1)+" "+y.toFixed(1);
+  }
+  heroWire.setAttribute("d",d);
+  heroWire.setAttribute("stroke", mixColor("#94a3b8",HOT_C,heat));
+  heroWire.style.filter = heat>0.15 ? `drop-shadow(0 0 ${10*heat}px rgba(255,82,51,${0.8*heat}))` : "none";
+  if(label!==heroPhaseTxt){ heroPhaseTxt=label; heroLabel.textContent=label;
+    heroLabel.style.color = heat>0.5 ? "#ffb4a0" : ""; }
+}
+
+/* ================= CRYSTAL LATTICE ================= */
+const latSvg = document.getElementById("lattice");
+const LAT = { rows:6, cols:9, s:46, ox:46, oy:42, atoms:[], hb:[], vb:[],
+              m:1, mTarget:1, d:0, dTarget:0 };   // m: 0=austenite 1=martensite ; d: detwinned
+// herringbone twin offsets (triangle wave) & uniform-shear detwinned offsets
+const TWIN = r=>{ const p=[0,1,2,1]; return p[r%4]*15; };
+const DET  = r=>r*13;
+(function buildLattice(){
+  const NS="http://www.w3.org/2000/svg";
+  function mk(tag,attrs){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);latSvg.appendChild(e);return e;}
+  // bonds first (under atoms)
+  for(let r=0;r<LAT.rows;r++)for(let c=0;c<LAT.cols;c++){
+    if(c<LAT.cols-1) LAT.hb.push({r,c,el:mk("line",{stroke:"#2a3a57","stroke-width":2})});
+    if(r<LAT.rows-1) LAT.vb.push({r,c,el:mk("line",{stroke:"#2a3a57","stroke-width":2})});
+  }
+  for(let r=0;r<LAT.rows;r++)for(let c=0;c<LAT.cols;c++){
+    const ni=(r+c)%2===0;
+    LAT.atoms.push({r,c,el:mk("circle",{r:10.5,fill:ni?"#5eead4":"#93c5fd",
+      stroke:ni?"#1d6f63":"#2c5a96","stroke-width":1.5})});
+  }
+})();
+const latPos = (r,c)=>{
+  const shear = lerp(TWIN(r), DET(r), LAT.d) * LAT.m;
+  return [ LAT.ox + c*LAT.s + shear,
+           LAT.oy + r*LAT.s*lerp(1,0.93,LAT.m) ];
+};
+const latTemp = document.getElementById("latTemp");
+const latTempVal = document.getElementById("latTempVal");
+const latStress = document.getElementById("latStress");
+const latState = document.getElementById("latticeState");
+latTemp.addEventListener("input",()=>{
+  latTempVal.textContent = latTemp.value;
+  LAT.mTarget = clamp((60-+latTemp.value)/40, 0, 1);   // <20° fully martensite, >60° austenite
+  if(LAT.mTarget < 0.5) LAT.dTarget = 0;               // heating erases the deformation = memory!
+});
+latTemp.dispatchEvent(new Event("input"));
+latStress.addEventListener("click",()=>{ if(LAT.m>0.7) LAT.dTarget = LAT.dTarget>0.5 ? 0 : 1; });
+function latTick(){
+  LAT.m += (LAT.mTarget-LAT.m)*0.07;
+  LAT.d += (LAT.dTarget-LAT.d)*0.07;
+  for(const a of LAT.atoms){ const [x,y]=latPos(a.r,a.c); a.el.setAttribute("cx",x); a.el.setAttribute("cy",y); }
+  for(const b of LAT.hb){ const [x1,y1]=latPos(b.r,b.c),[x2,y2]=latPos(b.r,b.c+1);
+    b.el.setAttribute("x1",x1);b.el.setAttribute("y1",y1);b.el.setAttribute("x2",x2);b.el.setAttribute("y2",y2);}
+  for(const b of LAT.vb){ const [x1,y1]=latPos(b.r,b.c),[x2,y2]=latPos(b.r+1,b.c);
+    b.el.setAttribute("x1",x1);b.el.setAttribute("y1",y1);b.el.setAttribute("x2",x2);b.el.setAttribute("y2",y2);}
+  // state label + stress button availability
+  latStress.disabled = LAT.m < 0.7;
+  let txt, cls;
+  if(LAT.m < 0.3){ txt="Austenite · rigid cubic (trained shape)"; cls="hot"; }
+  else if(LAT.m < 0.8){ txt="Transforming…"; cls="mid"; }
+  else if(LAT.d > 0.5){ txt="Detwinned martensite · DEFORMED — now heat it!"; cls="mid"; }
+  else { txt="Twinned martensite · soft herringbone"; cls="cold"; }
+  if(latState.textContent!==txt){ latState.textContent=txt; latState.className="pill "+cls; }
+}
+
+/* ================= WIRE PLAYGROUND ================= */
+const cv = document.getElementById("wireCanvas");
+const ctx = cv.getContext("2d");
+const CW=680, CH=260;
+(function fixDPR(){
+  const dpr = window.devicePixelRatio||1;
+  cv.width=CW*dpr; cv.height=CH*dpr; ctx.scale(dpr,dpr);
+})();
+const WN=80;
+const wHome = Array.from({length:WN},(_,i)=>({x:40+(CW-80)*i/(WN-1), y:135}));
+let wPts = wHome.map(p=>({...p}));
+let wTemp=20, wTarget=20, wMode="memory", wDragI=-1, wLast=null;
+const As=45, Af=75;
+const wTempEl=document.getElementById("wireTemp"), thermoFill=document.getElementById("thermoFill");
+const wStateEl=document.getElementById("wireState"), wHint=document.getElementById("wireHint");
+const btnHeat=document.getElementById("btnHeat"), btnCool=document.getElementById("btnCool");
+const modeMemory=document.getElementById("modeMemory"), modeSuper=document.getElementById("modeSuper");
+let hintTimer=null;
+function showHint(msg){
+  wHint.textContent=msg; wHint.classList.add("show");
+  clearTimeout(hintTimer); hintTimer=setTimeout(()=>wHint.classList.remove("show"),2200);
+}
+function canvasPos(e){
+  const r=cv.getBoundingClientRect();
+  return {x:(e.clientX-r.left)*CW/r.width, y:(e.clientY-r.top)*CH/r.height};
+}
+cv.addEventListener("pointerdown",e=>{
+  const p=canvasPos(e);
+  if(wMode==="memory" && wTemp>As){ showHint("☝️ Too hot to hold its shape — press ❄️ Cool first."); return; }
+  let best=-1, bd=45;
+  wPts.forEach((q,i)=>{ const d=Math.hypot(q.x-p.x,q.y-p.y); if(d<bd){bd=d;best=i;} });
+  if(best>=0){ wDragI=best; wLast=p; cv.setPointerCapture(e.pointerId); cv.classList.add("grabbing"); }
+});
+cv.addEventListener("pointermove",e=>{
+  if(wDragI<0) return;
+  const p=canvasPos(e), dx=p.x-wLast.x, dy=p.y-wLast.y;
+  for(let i=0;i<WN;i++){
+    const w=Math.exp(-((i-wDragI)**2)/(2*8*8));
+    wPts[i].x=clamp(wPts[i].x+dx*w, 12, CW-12);
+    wPts[i].y=clamp(wPts[i].y+dy*w, 14, CH-14);
+  }
+  wLast=p;
+});
+const wRelease=e=>{ wDragI=-1; cv.classList.remove("grabbing"); };
+cv.addEventListener("pointerup",wRelease);
+cv.addEventListener("pointercancel",wRelease);
+btnHeat.addEventListener("click",()=>wTarget=90);
+btnCool.addEventListener("click",()=>wTarget=20);
+document.getElementById("wireReset").addEventListener("click",()=>{ wPts=wHome.map(p=>({...p})); });
+function setMode(m){
+  wMode=m;
+  modeMemory.classList.toggle("active",m==="memory");
+  modeSuper.classList.toggle("active",m==="super");
+  btnHeat.disabled = btnCool.disabled = (m==="super");
+  if(m==="super"){ wTarget=20; showHint("Body-temp wire is already above Af — bend it, then let go!"); }
+  else showHint("Bend the wire while cold, then press 🔥 Heat.");
+  wPts=wHome.map(p=>({...p}));
+}
+modeMemory.addEventListener("click",()=>setMode("memory"));
+modeSuper.addEventListener("click",()=>setMode("super"));
+function wireTick(){
+  wTemp += (wTarget-wTemp)*0.035;
+  // recovery
+  if(wMode==="memory"){
+    if(wTemp>As){
+      const f=clamp((wTemp-As)/(Af-As),0,1), rate=0.02+0.13*f;
+      for(let i=0;i<WN;i++){ wPts[i].x+=(wHome[i].x-wPts[i].x)*rate; wPts[i].y+=(wHome[i].y-wPts[i].y)*rate; }
+    }
+  } else if(wDragI<0){
+    for(let i=0;i<WN;i++){ wPts[i].x+=(wHome[i].x-wPts[i].x)*0.22; wPts[i].y+=(wHome[i].y-wPts[i].y)*0.22; }
+  }
+  // draw
+  ctx.clearRect(0,0,CW,CH);
+  // trained-shape ghost
+  let deformed=0; for(let i=0;i<WN;i++) deformed+=Math.hypot(wPts[i].x-wHome[i].x,wPts[i].y-wHome[i].y);
+  if(deformed>WN*0.8){
+    ctx.beginPath(); ctx.setLineDash([3,9]); ctx.strokeStyle="#2b3a55"; ctx.lineWidth=2;
+    ctx.moveTo(wHome[0].x,wHome[0].y); ctx.lineTo(wHome[WN-1].x,wHome[WN-1].y); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle="#46587e"; ctx.font="11px sans-serif";
+    ctx.fillText("trained shape", wHome[0].x, wHome[0].y-10);
+  }
+  const heatF = wMode==="super" ? 0.18 : clamp((wTemp-20)/(90-20),0,1);
+  ctx.beginPath();
+  ctx.moveTo(wPts[0].x,wPts[0].y);
+  for(let i=1;i<WN;i++) ctx.lineTo(wPts[i].x,wPts[i].y);
+  ctx.lineCap="round"; ctx.lineJoin="round"; ctx.lineWidth=9;
+  ctx.strokeStyle = wMode==="super" ? "#7dd3c4" : mixColor(COLD_C,HOT_C,heatF);
+  ctx.shadowColor = "rgba(255,82,51,"+(0.85*heatF)+")";
+  ctx.shadowBlur = wMode==="super"?0:22*heatF;
+  ctx.stroke(); ctx.shadowBlur=0;
+  // UI readouts
+  wTempEl.textContent = wMode==="super" ? "37" : Math.round(wTemp);
+  thermoFill.style.right = wMode==="super" ? "76%" : (100-clamp((wTemp-20)/70,0,1)*100)+"%";
+  let st,cls;
+  if(wMode==="super"){ st="Austenite · superelastic"; cls="hot"; }
+  else if(wTemp<As){ st="Martensite · soft — drag me!"; cls="cold"; }
+  else if(wTemp<Af){ st="Transforming…"; cls="mid"; }
+  else{ st="Austenite · shape restored"; cls="hot"; }
+  if(wStateEl.textContent!==st){ wStateEl.textContent=st; wStateEl.className="pill "+cls; }
+}
+showHint("Bend the wire while cold, then press 🔥 Heat.");
+
+/* ================= MUSCLE ARM ================= */
+const armSvg=document.getElementById("armSvg");
+const ANS="http://www.w3.org/2000/svg";
+function amk(tag,attrs,parent){const e=document.createElementNS(ANS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);(parent||armSvg).appendChild(e);return e;}
+const SHOULDER={x:92,y:182}, ELBOW={x:312,y:182}, FOREARM=150, ATTACH=56, ANCHOR={x:136,y:160};
+const REST_A=12, FLEX_A=-76;            // forearm angle, degrees below horizontal
+// scene (build order = z order)
+amk("rect",{x:40,y:60,width:46,height:262,rx:14,fill:"#16203a",stroke:"#283a5e"});          // mount post
+amk("text",{x:63,y:340,"text-anchor":"middle",fill:"#5a6b8a","font-size":"11"}).textContent="frame";
+const upperArm=amk("line",{x1:SHOULDER.x,y1:SHOULDER.y,x2:ELBOW.x,y2:ELBOW.y,
+  stroke:"#33415e","stroke-width":20,"stroke-linecap":"round"});
+const foreArm=amk("line",{stroke:"#3d4d70","stroke-width":16,"stroke-linecap":"round"});
+const coil=amk("path",{fill:"none","stroke-width":4,"stroke-linecap":"round","stroke-linejoin":"round"});
+const anchorDot=amk("circle",{cx:ANCHOR.x,cy:ANCHOR.y,r:6,fill:"#aab6cc",stroke:"#0b0f17","stroke-width":2});
+const attachDot=amk("circle",{r:6,fill:"#aab6cc",stroke:"#0b0f17","stroke-width":2});
+amk("circle",{cx:ELBOW.x,cy:ELBOW.y,r:12,fill:"#1a2336",stroke:"#56688f","stroke-width":3}); // elbow joint
+const dbBar=amk("line",{stroke:"#202b42","stroke-width":6,"stroke-linecap":"round"});
+const dbC1=amk("circle",{r:11,fill:"#27344f",stroke:"#56688f","stroke-width":2});
+const dbC2=amk("circle",{r:11,fill:"#27344f",stroke:"#56688f","stroke-width":2});
+const armLbl=amk("text",{x:ANCHOR.x-4,y:ANCHOR.y-18,fill:"#7dd3c4","font-size":"12"});
+armLbl.textContent="nitinol coil “bicep”";
+const ARM={cur:0, temp:20, ang:REST_A};
+const curSlider=document.getElementById("currentSlider");
+const roCurrent=document.getElementById("roCurrent"), roTemp=document.getElementById("roTemp");
+const roStrain=document.getElementById("roStrain"), roPhase=document.getElementById("roPhase");
+curSlider.addEventListener("input",()=>{ ARM.cur=+curSlider.value; roCurrent.textContent=ARM.cur; });
+let pulseT=null;
+document.getElementById("btnPulse").addEventListener("click",()=>{
+  curSlider.value=100; curSlider.dispatchEvent(new Event("input"));
+  clearTimeout(pulseT);
+  pulseT=setTimeout(()=>{ curSlider.value=0; curSlider.dispatchEvent(new Event("input")); },1400);
+});
+function coilPath(A,B,heat,contract){
+  const dx=B.x-A.x, dy=B.y-A.y, len=Math.hypot(dx,dy);
+  const ux=dx/len, uy=dy/len, nx=-uy, ny=ux;
+  const segs=26, amp=7+contract*9;
+  let d=`M${A.x.toFixed(1)} ${A.y.toFixed(1)}`;
+  for(let k=1;k<segs;k++){
+    const t=k/segs, env=Math.sin(Math.PI*t);
+    const off=(k%2?1:-1)*amp*env;
+    d+=` L${(A.x+ux*len*t+nx*off).toFixed(1)} ${(A.y+uy*len*t+ny*off).toFixed(1)}`;
+  }
+  return d+` L${B.x.toFixed(1)} ${B.y.toFixed(1)}`;
+}
+function armTick(){
+  const tTarget=20+ARM.cur*0.85;                 // 100% current → ~105°C
+  ARM.temp += (tTarget-ARM.temp)*(tTarget>ARM.temp?0.06:0.02);  // heats faster than it cools
+  const strain=clamp((ARM.temp-As)/(Af+12-As),0,1);
+  const target=lerp(REST_A,FLEX_A,strain);
+  ARM.ang += (target-ARM.ang)*0.09;
+  const a=ARM.ang*Math.PI/180;
+  const hand={x:ELBOW.x+Math.cos(a)*FOREARM, y:ELBOW.y+Math.sin(a)*FOREARM};
+  const B={x:ELBOW.x+Math.cos(a)*ATTACH, y:ELBOW.y+Math.sin(a)*ATTACH};
+  foreArm.setAttribute("x1",ELBOW.x); foreArm.setAttribute("y1",ELBOW.y);
+  foreArm.setAttribute("x2",hand.x);  foreArm.setAttribute("y2",hand.y);
+  attachDot.setAttribute("cx",B.x); attachDot.setAttribute("cy",B.y);
+  const heatF=clamp((ARM.temp-20)/85,0,1);
+  coil.setAttribute("d",coilPath(ANCHOR,B,heatF,strain));
+  coil.setAttribute("stroke",mixColor("#7d879b",HOT_C,heatF));
+  coil.style.filter = heatF>0.2 ? `drop-shadow(0 0 ${8*heatF}px rgba(255,82,51,${0.7*heatF}))` : "none";
+  // dumbbell perpendicular to forearm
+  const nx=-Math.sin(a), ny=Math.cos(a);
+  dbBar.setAttribute("x1",hand.x+nx*17); dbBar.setAttribute("y1",hand.y+ny*17);
+  dbBar.setAttribute("x2",hand.x-nx*17); dbBar.setAttribute("y2",hand.y-ny*17);
+  dbC1.setAttribute("cx",hand.x+nx*17); dbC1.setAttribute("cy",hand.y+ny*17);
+  dbC2.setAttribute("cx",hand.x-nx*17); dbC2.setAttribute("cy",hand.y-ny*17);
+  roTemp.textContent=Math.round(ARM.temp);
+  roStrain.textContent=(strain*4.7).toFixed(1);
+  let st,cls;
+  if(strain<0.08){ st="Martensite · relaxed"; cls="cold"; }
+  else if(strain<0.92){ st="Transforming · contracting…"; cls="mid"; }
+  else { st="Austenite · fully flexed 💪"; cls="hot"; }
+  if(roPhase.textContent!==st){ roPhase.textContent=st; roPhase.className="pill "+cls; }
+}
+
+/* ---------- main loop ---------- */
+function loop(now){
+  heroTick(now);
+  latTick();
+  wireTick();
+  armTick();
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>

@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nitinolus flexilis — the metal that flexes like a creature</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --abyss-top:#050a26;
+    --abyss-mid:#04203a;
+    --abyss-deep:#02161e;
+    --aqua:#56f0dc;
+    --aqua-dim:#2f8f86;
+    --magenta:#ff8ae0;
+    --coral:#ff8a5c;
+    --pearl:#ffe9cf;
+    --ink:#eaf8f6;
+    --dim:#9cc4cd;
+    --membrane:rgba(16,52,70,.38);
+    --membrane-edge:rgba(120,235,220,.16);
+    --disp:"Baloo 2","Trebuchet MS","Comic Sans MS",cursive,sans-serif;
+    --body:"Quicksand","Trebuchet MS","Segoe UI",sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:linear-gradient(180deg,var(--abyss-top) 0%,var(--abyss-mid) 46%,var(--abyss-deep) 100%) fixed;
+    color:var(--ink);
+    font-family:var(--body);
+    font-size:16.5px;
+    line-height:1.65;
+    overflow-x:hidden;
+    min-height:100vh;
+  }
+  ::selection{background:rgba(86,240,220,.35);color:#fff;}
+
+  /* ---------- ambient layers ---------- */
+  #plankton{position:fixed;inset:0;z-index:0;pointer-events:none;}
+  .glowblob{position:fixed;border-radius:50%;filter:blur(90px);pointer-events:none;z-index:0;opacity:.30;}
+  .glowblob.a{width:48vw;height:48vw;left:-14vw;top:-10vw;background:radial-gradient(circle,#0e5e6e,transparent 70%);animation:driftA 34s ease-in-out infinite alternate;}
+  .glowblob.b{width:42vw;height:42vw;right:-12vw;top:34%;background:radial-gradient(circle,#5e2a66,transparent 70%);animation:driftB 41s ease-in-out infinite alternate;}
+  .glowblob.c{width:50vw;height:30vw;left:18vw;bottom:-14vw;background:radial-gradient(circle,#0c4452,transparent 70%);animation:driftA 47s ease-in-out infinite alternate-reverse;}
+  @keyframes driftA{from{transform:translate(0,0) scale(1);}to{transform:translate(7vw,5vh) scale(1.18);}}
+  @keyframes driftB{from{transform:translate(0,0) scale(1.1);}to{transform:translate(-6vw,-7vh) scale(.92);}}
+
+  #glowdot{
+    position:fixed;left:0;top:0;width:34px;height:34px;margin:-17px 0 0 -17px;
+    border-radius:50%;pointer-events:none;z-index:50;
+    background:radial-gradient(circle,rgba(150,255,238,.55),rgba(150,255,238,.12) 55%,transparent 72%);
+    mix-blend-mode:screen;display:none;
+  }
+  @media (hover:hover) and (pointer:fine){ #glowdot{display:block;} }
+
+  .wrap{position:relative;z-index:1;max-width:940px;margin:0 auto;padding:0 18px;}
+
+  /* ---------- header ---------- */
+  header{padding:72px 0 16px;text-align:center;}
+  .eyebrow{
+    display:inline-block;font-family:var(--disp);font-weight:600;font-size:13px;
+    letter-spacing:.18em;text-transform:uppercase;color:var(--aqua);
+    background:rgba(86,240,220,.07);border:1.5px solid rgba(86,240,220,.35);
+    border-radius:999px;padding:7px 18px;margin-bottom:20px;
+    box-shadow:0 0 24px rgba(86,240,220,.18);
+    animation:breathe 5s ease-in-out infinite;
+  }
+  @keyframes breathe{0%,100%{transform:scale(1);opacity:.92;}50%{transform:scale(1.035);opacity:1;}}
+  h1{
+    font-family:var(--disp);font-weight:800;
+    font-size:clamp(34px,6.4vw,62px);line-height:1.08;letter-spacing:-.01em;
+    text-shadow:0 0 36px rgba(86,240,220,.25);
+  }
+  h1 em{
+    font-style:normal;
+    background:linear-gradient(95deg,var(--aqua) 10%,var(--magenta) 55%,var(--coral) 95%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    filter:drop-shadow(0 0 18px rgba(255,138,224,.3));
+  }
+  .sub{color:var(--dim);max-width:620px;margin:18px auto 0;font-size:17.5px;}
+  .sub b{color:var(--ink);}
+
+  /* ---------- sections ---------- */
+  section{padding:54px 0 6px;}
+  .kicker{
+    font-family:var(--disp);font-weight:700;font-size:12.5px;letter-spacing:.22em;
+    text-transform:uppercase;color:var(--magenta);margin-bottom:8px;
+    text-shadow:0 0 14px rgba(255,138,224,.45);
+  }
+  h2{
+    font-family:var(--disp);font-weight:700;font-size:clamp(25px,3.6vw,36px);
+    letter-spacing:-.01em;margin-bottom:10px;line-height:1.15;
+  }
+  .lead{color:var(--dim);max-width:730px;margin-bottom:22px;font-size:16px;}
+  .lead b{color:var(--ink);}
+
+  .rise{opacity:0;transform:translateY(34px) scale(.985);transition:opacity 1s cubic-bezier(.22,1,.36,1),transform 1s cubic-bezier(.22,1,.36,1);}
+  .rise.surfaced{opacity:1;transform:none;}
+
+  .membrane{
+    position:relative;
+    background:radial-gradient(130% 150% at 18% -4%,rgba(46,110,128,.36),var(--membrane) 55%,rgba(8,26,42,.46));
+    border:1px solid var(--membrane-edge);
+    backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+    border-radius:46px 60px 50px 64px;
+    padding:26px 26px 24px;
+    box-shadow:0 30px 80px rgba(0,0,0,.45),inset 0 1px 0 rgba(170,255,242,.09),0 0 60px rgba(40,150,150,.07);
+    animation:blobby 16s ease-in-out infinite alternate;
+  }
+  @keyframes blobby{
+    0%{border-radius:46px 60px 50px 64px;}
+    50%{border-radius:62px 46px 66px 48px;}
+    100%{border-radius:50px 64px 46px 60px;}
+  }
+  .membrane svg{width:100%;display:block;}
+  #tentSvg{touch-action:pan-y;cursor:pointer;}
+
+  /* ---------- controls ---------- */
+  .controls{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-top:16px;}
+  .btn{
+    font-family:var(--disp);font-weight:700;font-size:15px;color:var(--ink);
+    background:rgba(22,66,80,.65);
+    border:1.5px solid rgba(86,240,220,.35);border-radius:999px;
+    padding:10px 22px;cursor:pointer;position:relative;overflow:hidden;
+    transition:transform .45s cubic-bezier(.3,1.9,.45,1),box-shadow .3s,border-color .3s;
+    box-shadow:0 4px 18px rgba(0,0,0,.3);
+    touch-action:none;user-select:none;-webkit-user-select:none;
+  }
+  .btn:hover{box-shadow:0 4px 22px rgba(86,240,220,.28);border-color:rgba(86,240,220,.6);transform:translateY(-2px) scale(1.03);}
+  .btn:active{transform:scale(.91);}
+  .btn.on{
+    background:rgba(86,240,220,.22);border-color:var(--aqua);
+    box-shadow:0 0 26px rgba(86,240,220,.4);
+  }
+  .musclebtn::before{
+    content:"";position:absolute;inset:0;border-radius:999px;
+    background:linear-gradient(95deg,rgba(255,138,92,.65),rgba(255,138,224,.4));
+    opacity:var(--heat,0);transition:opacity .12s linear;
+  }
+  .musclebtn span{position:relative;}
+
+  input[type=range]{
+    -webkit-appearance:none;appearance:none;
+    width:230px;max-width:60vw;height:16px;border-radius:10px;cursor:pointer;outline:none;
+    background:linear-gradient(90deg,#0b2c46 0%,#10565f 42%,#a14a3c 78%,#ff8a5c 100%);
+    box-shadow:inset 0 2px 8px rgba(0,0,0,.6),0 0 18px rgba(255,138,92,.14);
+    border:1px solid rgba(160,255,240,.18);
+  }
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none;appearance:none;width:28px;height:28px;border-radius:50%;
+    background:radial-gradient(circle at 34% 30%,#fdfffd,var(--aqua) 55%,#0f6a60);
+    border:none;box-shadow:0 0 16px rgba(86,240,220,.8),0 2px 8px rgba(0,0,0,.5);
+    transition:transform .3s cubic-bezier(.3,1.9,.45,1);
+  }
+  input[type=range]::-webkit-slider-thumb:active{transform:scale(1.25);}
+  input[type=range]::-moz-range-thumb{
+    width:26px;height:26px;border-radius:50%;border:none;
+    background:radial-gradient(circle at 34% 30%,#fdfffd,var(--aqua) 55%,#0f6a60);
+    box-shadow:0 0 16px rgba(86,240,220,.8);
+  }
+  label.ctl{font-size:13.5px;color:var(--dim);display:flex;align-items:center;gap:10px;font-weight:600;}
+
+  .pill{
+    display:inline-block;font-family:var(--disp);font-weight:700;font-size:12.5px;
+    padding:4px 14px;border-radius:999px;border:1.5px solid;letter-spacing:.04em;
+    transition:all .4s;
+  }
+  .pill.cold{color:#9fd9ff;border-color:rgba(110,190,255,.45);background:rgba(30,80,140,.25);box-shadow:0 0 14px rgba(110,190,255,.15);}
+  .pill.mid{color:#ffc7ec;border-color:rgba(255,138,224,.45);background:rgba(130,50,120,.25);box-shadow:0 0 14px rgba(255,138,224,.2);}
+  .pill.hot{color:#ffc2a3;border-color:rgba(255,138,92,.5);background:rgba(140,60,30,.3);box-shadow:0 0 16px rgba(255,138,92,.3);}
+
+  .note{
+    font-size:14px;color:var(--pearl);min-height:22px;margin-top:12px;font-weight:600;
+    text-shadow:0 0 12px rgba(255,233,207,.3);transition:opacity .4s;
+  }
+
+  /* ---------- trio pods ---------- */
+  .pods{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:18px;}
+  .pod{
+    background:rgba(8,30,46,.5);border:1px solid rgba(120,235,220,.12);
+    border-radius:30px 38px 32px 40px;padding:14px 14px 12px;
+    animation:blobby 13s ease-in-out infinite alternate;
+  }
+  .pod h3{font-family:var(--disp);font-weight:700;font-size:15.5px;margin-bottom:2px;color:var(--aqua);}
+  .pod p{font-size:13px;color:var(--dim);line-height:1.5;}
+
+  /* ---------- plaque ---------- */
+  .plaque{
+    background:linear-gradient(165deg,rgba(70,56,36,.42),rgba(34,30,22,.5) 60%,rgba(18,22,26,.55));
+    border:2px solid rgba(255,233,207,.28);
+    border-radius:34px 40px 36px 44px;
+    padding:30px 30px 26px;position:relative;
+    box-shadow:0 24px 60px rgba(0,0,0,.5),inset 0 0 50px rgba(255,220,170,.05),inset 0 1.5px 0 rgba(255,233,207,.2);
+  }
+  .plaque .screw{
+    position:absolute;width:13px;height:13px;border-radius:50%;
+    background:radial-gradient(circle at 35% 30%,#ffeccd,#9a8059 60%,#4d3e28);
+    box-shadow:0 1px 3px rgba(0,0,0,.6);
+  }
+  .screw.tl{top:14px;left:16px;} .screw.tr{top:14px;right:16px;}
+  .screw.bl{bottom:14px;left:16px;} .screw.br{bottom:14px;right:16px;}
+  .plaque .ribbon{
+    font-family:var(--disp);font-weight:600;font-size:11.5px;letter-spacing:.3em;
+    text-transform:uppercase;color:rgba(255,233,207,.65);text-align:center;margin-bottom:6px;
+  }
+  .plaque .species{
+    font-family:var(--disp);font-weight:800;font-size:clamp(26px,4.5vw,38px);
+    text-align:center;color:var(--pearl);font-style:italic;letter-spacing:.01em;
+    text-shadow:0 0 24px rgba(255,233,207,.3);
+  }
+  .plaque .common{
+    text-align:center;color:rgba(255,233,207,.7);font-size:14px;margin-bottom:20px;font-weight:600;
+  }
+  .vitals{display:grid;gap:0;border-top:1px solid rgba(255,233,207,.18);}
+  .vrow{
+    display:grid;grid-template-columns:1.1fr 1fr 1fr;gap:10px;align-items:baseline;
+    padding:11px 4px;border-bottom:1px solid rgba(255,233,207,.13);font-size:14px;
+  }
+  .vrow .vk{color:rgba(255,233,207,.75);font-weight:700;}
+  .vrow .vme{font-family:var(--disp);font-weight:700;color:var(--aqua);text-shadow:0 0 12px rgba(86,240,220,.35);}
+  .vrow .vyou{color:var(--dim);}
+  .vhead{font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;border-bottom:1.5px solid rgba(255,233,207,.25);padding:6px 4px;}
+  .vhead .vme{color:rgba(134,240,225,.85);text-shadow:none;font-family:var(--body);}
+  .vhead .vyou{color:rgba(255,233,207,.5);}
+  .care{margin-top:20px;}
+  .care h4{
+    font-family:var(--disp);font-weight:700;font-size:14px;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--coral);margin-bottom:8px;
+    text-shadow:0 0 12px rgba(255,138,92,.4);
+  }
+  .care ul{list-style:none;}
+  .care li{
+    font-size:14px;color:var(--dim);padding:5px 0 5px 26px;position:relative;
+  }
+  .care li::before{
+    content:"";position:absolute;left:4px;top:12px;width:9px;height:9px;border-radius:50%;
+    background:radial-gradient(circle at 35% 30%,#ffd2b8,var(--coral));
+    box-shadow:0 0 10px rgba(255,138,92,.6);
+  }
+  .care li b{color:var(--pearl);}
+
+  /* ---------- habitat tanks ---------- */
+  .tanks{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-top:20px;}
+  .tank{
+    background:linear-gradient(180deg,rgba(20,72,92,.45),rgba(6,26,40,.6));
+    border:1px solid rgba(120,235,220,.16);
+    border-radius:26px 26px 34px 34px;padding:18px 16px 16px;text-align:center;
+    transition:transform .5s cubic-bezier(.3,1.9,.45,1),box-shadow .4s;
+    position:relative;overflow:hidden;
+  }
+  .tank::before{
+    content:"";position:absolute;left:10%;right:10%;top:0;height:6px;border-radius:0 0 8px 8px;
+    background:linear-gradient(90deg,transparent,rgba(170,255,242,.35),transparent);
+  }
+  .tank:hover{transform:translateY(-6px) scale(1.03);box-shadow:0 14px 36px rgba(20,180,170,.18);}
+  .tank .crit{
+    width:58px;height:58px;margin:0 auto 10px;border-radius:50%;
+    background:radial-gradient(circle at 50% 40%,rgba(86,240,220,.22),rgba(86,240,220,.04) 70%);
+    display:flex;align-items:center;justify-content:center;font-size:28px;
+    box-shadow:0 0 22px rgba(86,240,220,.18),inset 0 0 14px rgba(86,240,220,.12);
+    animation:breathe 4.6s ease-in-out infinite;
+  }
+  .tank h3{font-family:var(--disp);font-weight:700;font-size:15px;color:var(--ink);margin-bottom:3px;}
+  .tank p{font-size:12.5px;color:var(--dim);line-height:1.5;}
+  .tank small{display:block;margin-top:8px;font-family:var(--disp);font-weight:600;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,138,224,.65);}
+
+  footer{padding:64px 0 46px;text-align:center;color:var(--dim);font-size:13.5px;}
+  footer b{color:var(--ink);}
+  footer .fin{font-family:var(--disp);font-weight:700;color:var(--aqua);font-size:15px;margin-bottom:6px;text-shadow:0 0 16px rgba(86,240,220,.35);}
+
+  @media(max-width:760px){
+    .pods{grid-template-columns:1fr;}
+    .vrow{grid-template-columns:1fr;gap:1px;padding:9px 4px;}
+    .vhead{display:none;}
+    .vrow .vme::before{content:"specimen · ";color:rgba(134,240,225,.6);font-family:var(--body);font-weight:600;font-size:11px;letter-spacing:.1em;text-transform:uppercase;}
+    .vrow .vyou::before{content:"real muscle · ";color:rgba(255,233,207,.5);font-weight:600;font-size:11px;letter-spacing:.1em;text-transform:uppercase;}
+    .membrane{padding:18px 14px 16px;border-radius:34px 44px 38px 48px;}
+    header{padding:52px 0 10px;}
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important;transition-duration:.01s !important;}
+  }
+</style>
+</head>
+<body>
+
+<canvas id="plankton" aria-hidden="true"></canvas>
+<div class="glowblob a" aria-hidden="true"></div>
+<div class="glowblob b" aria-hidden="true"></div>
+<div class="glowblob c" aria-hidden="true"></div>
+<div id="glowdot" aria-hidden="true"></div>
+
+<div class="wrap">
+
+<header>
+  <div class="eyebrow">night aquarium · field guide · specimen nº 22</div>
+  <h1>Meet the metal that<br><em>flexes like a creature</em></h1>
+  <p class="sub">
+    <b>Nitinol</b> is a nickel–titanium alloy with a secret: feed it a whisper of electric
+    current and it warms, shivers through a phase change, and <b>contracts like living
+    muscle</b> — no motor, no gears, just atoms changing their minds. Welcome to the tank.
+    Please tap the glass.
+  </p>
+</header>
+
+<!-- ================= 1. TENTACLE ================= -->
+<section>
+  <div class="rise">
+    <div class="kicker">exhibit 01 · the tentacle tank</div>
+    <h2>Three glowing muscles, one curious limb</h2>
+    <p class="lead">
+      This soft limb has <b>three nitinol wires</b> sewn along its underside — base, middle,
+      tip. <b>Tap a wire to switch its current on</b> (or press &amp; hold the limb itself):
+      Joule heating pushes the wire past its transition temperature, it contracts <b>~4–5%</b>,
+      and that segment curls toward the warm side. Let go, and the abyssal cold relaxes it.
+      <b>Curl all three and see if it can pick up the pearl.</b>
+    </p>
+    <div class="membrane" data-demo="tent">
+      <svg id="tentSvg" viewBox="0 0 720 500" aria-label="Interactive soft robotic tentacle with three nitinol muscles">
+        <defs>
+          <radialGradient id="pearlGrad" cx="35%" cy="28%" r="80%">
+            <stop offset="0%" stop-color="#ffffff"/>
+            <stop offset="38%" stop-color="#ffe9cf"/>
+            <stop offset="100%" stop-color="#c9a187"/>
+          </radialGradient>
+          <linearGradient id="tenGrad" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="rgba(46,140,150,.85)"/>
+            <stop offset="100%" stop-color="rgba(120,80,160,.75)"/>
+          </linearGradient>
+        </defs>
+        <ellipse id="mound" cx="0" cy="0" rx="34" ry="9" fill="rgba(180,160,140,.18)"/>
+        <ellipse id="tenHead" cx="64" cy="130" rx="50" ry="44" fill="rgba(50,130,145,.6)" stroke="rgba(140,250,235,.25)" stroke-width="2"/>
+        <path id="tenBody" d="M0 0" fill="url(#tenGrad)" stroke="rgba(150,255,240,.28)" stroke-width="2"/>
+        <g id="suckerG"></g>
+        <path id="wire0" d="M0 0" fill="none" stroke-linecap="round" stroke-width="3"/>
+        <path id="wire1" d="M0 0" fill="none" stroke-linecap="round" stroke-width="3"/>
+        <path id="wire2" d="M0 0" fill="none" stroke-linecap="round" stroke-width="3"/>
+        <circle id="eyeW" cx="78" cy="114" r="10" fill="#f4fffc"/>
+        <circle id="eyeP" cx="80" cy="115" r="4.5" fill="#06222c"/>
+        <circle id="pearlHalo" cx="0" cy="0" r="22" fill="rgba(255,233,207,.12)"/>
+        <circle id="pearl" cx="0" cy="0" r="13" fill="url(#pearlGrad)" stroke="rgba(255,255,255,.35)" stroke-width="1"/>
+      </svg>
+      <div class="controls">
+        <button class="btn musclebtn" id="mb0"><span>◉ base wire</span></button>
+        <button class="btn musclebtn" id="mb1"><span>◉ middle wire</span></button>
+        <button class="btn musclebtn" id="mb2"><span>◉ tip wire</span></button>
+        <span style="flex:1"></span>
+        <span id="tentPhase" class="pill cold">muscles cold · martensite</span>
+      </div>
+      <div class="note" id="tentNote">Tap a wire to switch its current on or off — or press &amp; hold the limb itself.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 2. PLANKTON PHASE ================= -->
+<section>
+  <div class="rise">
+    <div class="kicker">exhibit 02 · the plankton ballet</div>
+    <h2>Why warming makes it pull</h2>
+    <p class="lead">
+      Imagine the alloy's atoms as a school of glowing plankton. <b>Cold</b>, they slump into a
+      loose herringbone drift — <b>martensite</b>, soft and stretchy. <b>Warm them past the
+      transition</b> and the whole school snaps into one tidy cubic constellation —
+      <b>austenite</b>, rigid and slightly shorter. That snap-to-formation, multiplied by
+      trillions of atoms, <b>is</b> the muscle contraction. Drag the vent slider.
+    </p>
+    <div class="membrane" data-demo="phase">
+      <canvas id="phaseCv" style="width:100%;height:auto;aspect-ratio:560/300;border-radius:26px;display:block;" aria-label="Atoms switching between martensite drift and austenite constellation"></canvas>
+      <div class="controls">
+        <label class="ctl">abyssal chill
+          <input type="range" id="ventSlider" min="0" max="100" value="12" aria-label="Temperature">
+        vent heat</label>
+        <span style="flex:1"></span>
+        <span id="phState" class="pill cold">martensite · sleepy drift</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 3. JELLYFISH ================= -->
+<section>
+  <div class="rise">
+    <div class="kicker">exhibit 03 · the jelly</div>
+    <h2>Pull, never push</h2>
+    <p class="lead">
+      Like real muscle, nitinol can only <b>pull</b> — it contracts hot, but nothing makes it
+      push back out. So every nitinol creature needs an <b>antagonist</b>: a partner muscle, or
+      something springy. This jelly's <b>ring of nitinol muscle</b> squeezes the bell to swim;
+      the bell's own <b>elastic body re-stretches the ring</b> while it cools — exactly how a
+      real jellyfish pairs muscle with springy mesoglea.
+    </p>
+    <div class="membrane" data-demo="jelly">
+      <svg id="jellySvg" viewBox="0 0 340 380" style="max-width:430px;margin:0 auto;" aria-label="Swimming jellyfish driven by a nitinol muscle ring">
+        <defs>
+          <linearGradient id="waterGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="rgba(28,96,120,.32)"/>
+            <stop offset="100%" stop-color="rgba(4,18,32,.5)"/>
+          </linearGradient>
+          <radialGradient id="bellGrad" cx="50%" cy="20%" r="90%">
+            <stop offset="0%" stop-color="rgba(190,150,255,.5)"/>
+            <stop offset="60%" stop-color="rgba(120,90,210,.32)"/>
+            <stop offset="100%" stop-color="rgba(86,240,220,.14)"/>
+          </radialGradient>
+        </defs>
+        <rect x="6" y="6" width="328" height="368" rx="34" fill="url(#waterGrad)" stroke="rgba(120,235,220,.14)"/>
+        <g id="jelGroup">
+          <g id="jelTents"></g>
+          <path id="jelBell" d="M0 0" fill="url(#bellGrad)" stroke="rgba(200,170,255,.4)" stroke-width="1.5"/>
+          <ellipse id="jelOrgan" cx="0" cy="0" rx="14" ry="10" fill="rgba(255,138,224,.4)"/>
+          <path id="jelRing" d="M0 0" fill="none" stroke-width="5" stroke-linecap="round"/>
+        </g>
+        <text x="170" y="366" text-anchor="middle" fill="rgba(156,196,205,.55)" font-size="11" font-family="Quicksand,sans-serif">muscle ring squeezes → bell jets water → jelly rises · elastic bell re-opens it</text>
+      </svg>
+      <div class="controls">
+        <button class="btn" id="jelPulse">✦ pulse the ring</button>
+        <button class="btn" id="jelAuto">∿ auto-swim</button>
+        <span style="flex:1"></span>
+        <span id="jelState" class="pill cold">ring cool · bell open</span>
+      </div>
+      <div class="note">Heating is instant; <b>cooling between pulses sets the swim rhythm</b> — the deep sea is this jelly's metronome.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 4. ONE WIRE MANY BODIES ================= -->
+<section>
+  <div class="rise">
+    <div class="kicker">exhibit 04 · one wire, many bodies</div>
+    <h2>Same muscle, different creatures</h2>
+    <p class="lead">
+      A bare wire only shortens ~5% — barely a shiver. But <b>body plans amplify it</b>:
+      coil the wire and you trade force for stroke; pair two wires against each other and you
+      get back-and-forth motion. One warmth slider feeds all three critters below.
+    </p>
+    <div class="membrane" data-demo="trio">
+      <div class="controls" style="margin-top:0;justify-content:center;">
+        <label class="ctl">cold
+          <input type="range" id="trioSlider" min="0" max="100" value="0" aria-label="Shared warmth">
+        warm</label>
+      </div>
+      <div class="pods">
+        <div class="pod">
+          <svg viewBox="0 0 220 130" aria-label="Straight wire worm">
+            <line id="wormWire" x1="45" y1="76" x2="175" y2="76" stroke-width="3" stroke-linecap="round"/>
+            <path id="wormBody" d="M35 76 Q110 76 185 76" fill="none" stroke="rgba(86,200,190,.55)" stroke-width="24" stroke-linecap="round"/>
+            <circle id="wormEye" cx="181" cy="70" r="3.5" fill="#06222c" stroke="#d8fff8" stroke-width="2"/>
+            <text id="wormPct" x="110" y="118" text-anchor="middle" fill="rgba(255,233,207,.7)" font-size="12" font-family="Quicksand,sans-serif">0.0% shorter</text>
+          </svg>
+          <h3>bare-wire worm</h3>
+          <p>A straight wire scrunches a humble <b>4–5%</b>. Strong, but subtle.</p>
+        </div>
+        <div class="pod">
+          <svg viewBox="0 0 220 130" aria-label="Coiled muscle inchworm">
+            <path id="inchCoil" d="M0 0" fill="none" stroke-width="2.5" stroke-linecap="round"/>
+            <path id="inchBody" d="M0 0" fill="none" stroke="rgba(150,120,220,.6)" stroke-width="15" stroke-linecap="round"/>
+            <circle cx="35" cy="106" r="6" fill="rgba(200,255,245,.5)"/>
+            <circle id="inchFoot" cx="185" cy="106" r="6" fill="rgba(200,255,245,.5)"/>
+            <circle id="inchEye" cx="185" cy="98" r="3.5" fill="#06222c" stroke="#d8fff8" stroke-width="2"/>
+            <text id="inchPct" x="110" y="124" text-anchor="middle" fill="rgba(255,233,207,.7)" font-size="12" font-family="Quicksand,sans-serif">0% scrunch</text>
+          </svg>
+          <h3>coiled-spring inchworm</h3>
+          <p>Coil the wire and the same 5% becomes a <b>huge scrunch</b> — force traded for stroke.</p>
+        </div>
+        <div class="pod">
+          <svg viewBox="0 0 220 130" aria-label="Antagonistic pair fish tail">
+            <path id="fishWireT" d="M0 0" fill="none" stroke-width="2.5" stroke-linecap="round"/>
+            <path id="fishWireB" d="M0 0" fill="none" stroke-width="2.5" stroke-linecap="round"/>
+            <path id="fishTail" d="M0 0" fill="rgba(86,200,190,.45)" stroke="rgba(150,255,240,.35)" stroke-width="1.5" stroke-linejoin="round"/>
+            <ellipse cx="82" cy="65" rx="42" ry="24" fill="rgba(86,200,190,.55)"/>
+            <circle cx="56" cy="60" r="4" fill="#06222c" stroke="#d8fff8" stroke-width="2"/>
+            <text x="110" y="124" text-anchor="middle" fill="rgba(255,233,207,.7)" font-size="12" font-family="Quicksand,sans-serif">slide back &amp; forth to wag</text>
+          </svg>
+          <h3>antagonist-pair fish</h3>
+          <p>The dial routes current between <b>two wires that take turns pulling</b> — each re-stretches the other. Wag away.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 5. VITALS PLAQUE ================= -->
+<section>
+  <div class="rise">
+    <div class="kicker">exhibit 05 · resident plaque</div>
+    <h2>Vitals, honestly measured</h2>
+    <div class="plaque" data-demo="plaque">
+      <i class="screw tl"></i><i class="screw tr"></i><i class="screw bl"></i><i class="screw br"></i>
+      <div class="ribbon">aquarium of soft machines · permanent resident</div>
+      <div class="species">Nitinolus flexilis</div>
+      <div class="common">common name: glowing wire-muscle · hatched 1959, Naval Ordnance Laboratory (Ni + Ti + NOL)</div>
+      <div class="vitals">
+        <div class="vrow vhead"><span class="vk"></span><span class="vme">this specimen</span><span class="vyou">your muscle</span></div>
+        <div class="vrow"><span class="vk">pulling stress</span><span class="vme">~200 MPa</span><span class="vyou">~0.35 MPa — it pulls ~500× harder per cm²</span></div>
+        <div class="vrow"><span class="vk">stroke (shortening)</span><span class="vme">4–5% bare · 100%+ coiled</span><span class="vyou">~40%</span></div>
+        <div class="vrow"><span class="vk">efficiency</span><span class="vme">&lt; 5%</span><span class="vyou">~25% — biology wins on snacks-to-motion</span></div>
+        <div class="vrow"><span class="vk">top speed</span><span class="vme">heats in milliseconds, but must cool to relax</span><span class="vyou">fast both ways</span></div>
+        <div class="vrow"><span class="vk">noise</span><span class="vme">perfectly silent</span><span class="vyou">mostly silent</span></div>
+        <div class="vrow"><span class="vk">moving parts</span><span class="vme">zero — the metal itself is the motor</span><span class="vyou">billions of molecular motors</span></div>
+      </div>
+      <div class="care">
+        <h4>care instructions (read before adopting)</h4>
+        <ul>
+          <li><b>Pulls only, never pushes.</b> Always house with a bias spring or an antagonist partner wire.</li>
+          <li><b>Cooling sets the tempo.</b> It flexes instantly but relaxes only as fast as heat can leave — thin wires, fans, or water keep it lively.</li>
+          <li><b>Hearty appetite.</b> Under 5% efficient; most of the meal becomes warm water. Budget power accordingly.</li>
+          <li><b>Do not overheat.</b> Too far past its transition and it slowly forgets its trained shape (fatigue and memory loss are real).</li>
+          <li><b>Temperament is tunable.</b> Nudging the Ni:Ti recipe by 0.1% shifts its transition temperature by ~10 °C.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 6. HABITATS ================= -->
+<section>
+  <div class="rise">
+    <div class="kicker">exhibit 06 · where it lives</div>
+    <h2>Known habitats</h2>
+    <p class="lead">Wild populations of <b>Nitinolus</b> thrive anywhere a silent, tiny, motor-free pull is precious.</p>
+    <div class="tanks" data-demo="tanks">
+      <div class="tank"><div class="crit">🦾</div><h3>Prosthetic hands</h3><p>Wire tendons curl fingers with lifelike, silent grace.</p><small>tendon reef</small></div>
+      <div class="tank"><div class="crit">🩺</div><h3>Surgical micro-grippers</h3><p>Muscles thinner than a hair grip where no motor could ever fit.</p><small>the narrows</small></div>
+      <div class="tank"><div class="crit">📷</div><h3>Phone camera autofocus</h3><p>A whisper of current nudges the lens — millions ship every year.</p><small>shallow pools</small></div>
+      <div class="tank"><div class="crit">🤖</div><h3>Soft robots</h3><p>Crawling, gripping, swimming machines with no rigid skeleton at all.</p><small>open water</small></div>
+      <div class="tank"><div class="crit">🫀</div><h3>Heart stents</h3><p>Superelastic cousins squeeze into a catheter, then bloom at body heat.</p><small>bloodstream trench</small></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="fin">∿ end of tour — please return your bioluminescence on the way out ∿</div>
+  Demos are schematic but honest: real transition temperatures (M<sub>f</sub>, M<sub>s</sub>,
+  A<sub>s</sub>, A<sub>f</sub>), strains and forces depend on alloy recipe and training.
+  <b>Nitinol</b>: discovered by accident, flexing ever since.
+</footer>
+
+</div><!-- /wrap -->
+
+<script>
+"use strict";
+/* ============ helpers ============ */
+const $ = id => document.getElementById(id);
+const clamp = (v,a,b) => Math.max(a, Math.min(b, v));
+const lerp = (a,b,t) => a + (b-a)*t;
+const sstep = t => { t = clamp(t,0,1); return t*t*(3-2*t); };
+function hex2rgb(h){ return [parseInt(h.slice(1,3),16), parseInt(h.slice(3,5),16), parseInt(h.slice(5,7),16)]; }
+function mixc(c1,c2,t){
+  const a = hex2rgb(c1), b = hex2rgb(c2);
+  return "rgb(" + Math.round(lerp(a[0],b[0],t)) + "," + Math.round(lerp(a[1],b[1],t)) + "," + Math.round(lerp(a[2],b[2],t)) + ")";
+}
+function smoothClosed(pts){
+  const n = pts.length;
+  let d = "M" + ((pts[0][0]+pts[1][0])/2).toFixed(1) + " " + ((pts[0][1]+pts[1][1])/2).toFixed(1);
+  for(let i=1;i<=n;i++){
+    const a = pts[i%n], b = pts[(i+1)%n];
+    d += " Q" + a[0].toFixed(1) + " " + a[1].toFixed(1) + " " + ((a[0]+b[0])/2).toFixed(1) + " " + ((a[1]+b[1])/2).toFixed(1);
+  }
+  return d + "Z";
+}
+function smoothOpen(pts){
+  const n = pts.length;
+  let d = "M" + pts[0][0].toFixed(1) + " " + pts[0][1].toFixed(1);
+  for(let i=1;i<n-1;i++){
+    const a = pts[i];
+    d += " Q" + a[0].toFixed(1) + " " + a[1].toFixed(1) + " " + ((a[0]+pts[i+1][0])/2).toFixed(1) + " " + ((a[1]+pts[i+1][1])/2).toFixed(1);
+  }
+  return d + " L" + pts[n-1][0].toFixed(1) + " " + pts[n-1][1].toFixed(1);
+}
+const COLD_WIRE = "#3a7d84", HOT_WIRE = "#ff8a5c";
+
+/* ============ scroll reveal + demo visibility ============ */
+const revealIO = new IntersectionObserver(es => es.forEach(e => {
+  if(e.isIntersecting){ e.target.classList.add("surfaced"); revealIO.unobserve(e.target); }
+}), {threshold:.1});
+document.querySelectorAll(".rise").forEach(el => revealIO.observe(el));
+
+const VIS = {};
+const visIO = new IntersectionObserver(es => es.forEach(e => {
+  VIS[e.target.dataset.demo] = e.isIntersecting;
+}), {threshold:.02});
+document.querySelectorAll("[data-demo]").forEach(el => { VIS[el.dataset.demo] = false; visIO.observe(el); });
+
+/* ============ plankton particles (canvas, sprite-based) ============ */
+const PK = (() => {
+  const cv = $("plankton"), ctx = cv.getContext("2d");
+  let W = 0, H = 0, dpr = 1;
+  function resize(){
+    dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    W = window.innerWidth; H = window.innerHeight;
+    cv.width = W*dpr; cv.height = H*dpr;
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+  resize();
+  window.addEventListener("resize", resize);
+  function sprite(color){
+    const s = document.createElement("canvas"); s.width = s.height = 48;
+    const c = s.getContext("2d");
+    const g = c.createRadialGradient(24,24,0,24,24,24);
+    g.addColorStop(0, color); g.addColorStop(.4, color.replace("1)", ".35)")); g.addColorStop(1, "rgba(0,0,0,0)");
+    c.fillStyle = g; c.fillRect(0,0,48,48);
+    return s;
+  }
+  const sprites = [
+    sprite("rgba(140,255,238,1)"),
+    sprite("rgba(255,150,228,1)"),
+    sprite("rgba(255,200,160,1)")
+  ];
+  const N = 72, P = [];
+  for(let i=0;i<N;i++){
+    P.push({
+      x: Math.random()*W, y: Math.random()*H,
+      r: 5 + Math.random()*13,
+      s: .05 + Math.random()*.22,
+      ph: Math.random()*6.28,
+      k: (Math.random()<.62) ? 0 : (Math.random()<.7 ? 1 : 2)
+    });
+  }
+  function tick(t){
+    ctx.clearRect(0,0,W,H);
+    for(const p of P){
+      p.y -= p.s;
+      p.x += Math.sin(t*0.0004 + p.ph)*0.18;
+      if(p.y < -20){ p.y = H + 20; p.x = Math.random()*W; }
+      if(p.x < -20) p.x = W + 20; else if(p.x > W + 20) p.x = -20;
+      const a = .14 + .16*(0.5 + 0.5*Math.sin(t*0.001 + p.ph*2));
+      ctx.globalAlpha = a;
+      ctx.drawImage(sprites[p.k], p.x - p.r, p.y - p.r, p.r*2, p.r*2);
+    }
+    ctx.globalAlpha = 1;
+  }
+  return { tick };
+})();
+
+/* ============ glow cursor ============ */
+const CUR = (() => {
+  const dot = $("glowdot");
+  let tx = innerWidth/2, ty = innerHeight/2, x = tx, y = ty, seen = false;
+  window.addEventListener("pointermove", e => { tx = e.clientX; ty = e.clientY; seen = true; }, {passive:true});
+  function tick(){
+    if(!seen) return;
+    x += (tx - x)*0.22; y += (ty - y)*0.22;
+    dot.style.transform = "translate3d(" + x.toFixed(1) + "px," + y.toFixed(1) + "px,0)";
+  }
+  return { tick };
+})();
+
+/* ============ 1. TENTACLE ============ */
+const TEN = (() => {
+  const N = 15, SEG = 27, GAIN = 0.13, BX = 96;
+  const RANGES = [[0,4],[5,9],[10,14]];
+  const ang = new Array(N).fill(0), vel = new Array(N).fill(0);
+  const heat = [0,0,0], act = [0,0,0];
+  const on = [false,false,false];
+  let holdPtr = -1;
+  let lastPts = null;
+
+  const svg = $("tentSvg"), body = $("tenBody"), head = $("tenHead");
+  const eyeW = $("eyeW"), eyeP = $("eyeP");
+  const wires = [$("wire0"), $("wire1"), $("wire2")];
+  const mbs = [$("mb0"), $("mb1"), $("mb2")];
+  const pearlEl = $("pearl"), haloEl = $("pearlHalo"), moundEl = $("mound");
+  const noteEl = $("tentNote"), phaseEl = $("tentPhase");
+
+  /* suckers */
+  const NS = "http://www.w3.org/2000/svg";
+  const suckers = [];
+  for(let i=2;i<N;i+=2){
+    const c = document.createElementNS(NS, "circle");
+    c.setAttribute("fill", "rgba(190,255,245,.22)");
+    $("suckerG").appendChild(c);
+    suckers.push({ i, el:c });
+  }
+
+  /* pearl home = where the tip lands at full curl (guaranteed reachable) */
+  const pearl = { x:0, y:0, vx:0, vy:0, hx:0, hy:0, grab:false };
+  (function placePearl(){
+    let a = 0, x = BX, y = 132;
+    for(let i=0;i<N;i++){
+      let cur = 0.014;
+      for(let m=0;m<3;m++) if(i >= RANGES[m][0] && i <= RANGES[m][1]) cur += 1.0*GAIN;
+      a += cur; x += Math.cos(a)*SEG; y += Math.sin(a)*SEG;
+    }
+    pearl.hx = clamp(x + 4, 60, 660);
+    pearl.hy = clamp(y + 6, 80, 462);
+    pearl.x = pearl.hx; pearl.y = pearl.hy;
+    moundEl.setAttribute("cx", pearl.hx); moundEl.setAttribute("cy", pearl.hy + 15);
+  })();
+
+  /* tap-to-toggle current on each wire (latching, single-pointer friendly) */
+  mbs.forEach((b, m) => {
+    b.addEventListener("click", () => { on[m] = !on[m]; });
+  });
+
+  /* press the limb itself */
+  svg.addEventListener("pointerdown", e => {
+    if(!lastPts) return;
+    const r = svg.getBoundingClientRect();
+    const x = (e.clientX - r.left)/r.width*720, y = (e.clientY - r.top)/r.height*500;
+    let best = -1, bd = 70;
+    lastPts.forEach((p, i) => { const d = Math.hypot(p[0]-x, p[1]-y); if(d < bd){ bd = d; best = i; } });
+    if(best >= 0){
+      holdPtr = (best <= 5) ? 0 : (best <= 10 ? 1 : 2);
+      svg.setPointerCapture(e.pointerId);
+    }
+  });
+  const svgOff = () => { holdPtr = -1; };
+  svg.addEventListener("pointerup", svgOff);
+  svg.addEventListener("pointercancel", svgOff);
+
+  let note = "", noteHold = 0;
+  function setNote(msg, sticky){
+    if(msg === note) return;
+    note = msg; noteEl.innerHTML = msg;
+    noteHold = sticky ? performance.now() + 2600 : 0;
+  }
+
+  function tick(t){
+    const bob = Math.sin(t*0.0011)*4;
+    const by = 132 + bob;
+
+    /* heat: current on → joule heating; current off → slow ocean cooling */
+    for(let m=0;m<3;m++){
+      if(on[m] || holdPtr === m) heat[m] = Math.min(1, heat[m] + 0.05);
+      else heat[m] *= 0.985;
+      act[m] = sstep((heat[m] - 0.18)/0.55);
+      mbs[m].style.setProperty("--heat", heat[m].toFixed(2));
+      mbs[m].classList.toggle("on", on[m]);
+    }
+
+    /* segment springs (squishy overshoot) */
+    for(let i=0;i<N;i++){
+      let target = 0.014 + Math.sin(t*0.0013 + i*0.5)*0.02*(i/N + 0.3);
+      for(let m=0;m<3;m++) if(i >= RANGES[m][0] && i <= RANGES[m][1]) target += act[m]*GAIN;
+      vel[i] += (target - ang[i])*0.06;
+      vel[i] *= 0.84;
+      ang[i] += vel[i];
+    }
+
+    /* spine */
+    let a = Math.sin(t*0.0007)*0.04;
+    const pts = [[BX, by]], dirs = [];
+    let px = BX, py = by;
+    for(let i=0;i<N;i++){
+      a += ang[i];
+      const dx = Math.cos(a), dy = Math.sin(a);
+      dirs.push([dx, dy]);
+      px += dx*SEG; py += dy*SEG;
+      pts.push([px, py]);
+    }
+    lastPts = pts;
+
+    /* per-point normals (rotate dir +90° → underside) */
+    const norms = [], widths = [];
+    for(let i=0;i<=N;i++){
+      const d1 = dirs[Math.max(0, i-1)], d2 = dirs[Math.min(N-1, i)];
+      const nx = -(d1[1]+d2[1])/2, ny = (d1[0]+d2[0])/2;   /* rot +90° = underside */
+      const len = Math.hypot(nx, ny) || 1;
+      norms.push([nx/len, ny/len]);
+      widths.push(5 + 22*Math.pow(1 - i/N, 1.2));
+    }
+
+    /* body outline */
+    const up = [], dn = [];
+    for(let i=0;i<=N;i++){
+      const p = pts[i], n = norms[i], w = widths[i];
+      up.push([p[0] - n[0]*w, p[1] - n[1]*w]);
+      dn.push([p[0] + n[0]*w, p[1] + n[1]*w]);
+    }
+    const tipDir = dirs[N-1];
+    const outline = up.concat([[pts[N][0] + tipDir[0]*widths[N]*1.9, pts[N][1] + tipDir[1]*widths[N]*1.9]], dn.reverse());
+    body.setAttribute("d", smoothClosed(outline));
+
+    /* wires along the underside */
+    for(let m=0;m<3;m++){
+      const wp = [];
+      for(let i=RANGES[m][0]; i<=RANGES[m][1]+1; i++){
+        const p = pts[i], n = norms[i];
+        wp.push([p[0] + n[0]*widths[i]*0.42, p[1] + n[1]*widths[i]*0.42]);
+      }
+      const w = wires[m];
+      w.setAttribute("d", smoothOpen(wp));
+      w.setAttribute("stroke", mixc(COLD_WIRE, HOT_WIRE, heat[m]));
+      w.setAttribute("stroke-width", (2.6 + heat[m]*1.6).toFixed(2));
+      w.style.filter = heat[m] > 0.08
+        ? "drop-shadow(0 0 " + (9*heat[m]).toFixed(1) + "px rgba(255,138,92," + (0.9*heat[m]).toFixed(2) + "))"
+        : "none";
+    }
+
+    /* suckers */
+    for(const s of suckers){
+      const p = pts[s.i], n = norms[s.i];
+      s.el.setAttribute("cx", (p[0] + n[0]*widths[s.i]*0.82).toFixed(1));
+      s.el.setAttribute("cy", (p[1] + n[1]*widths[s.i]*0.82).toFixed(1));
+      s.el.setAttribute("r", (widths[s.i]*0.3).toFixed(1));
+    }
+
+    /* head + eye tracks the pearl */
+    head.setAttribute("cy", (130 + bob).toFixed(1));
+    head.setAttribute("rx", (50 + Math.sin(t*0.0016)*2.5).toFixed(1));
+    const ex = 78, ey = 114 + bob;
+    eyeW.setAttribute("cy", ey.toFixed(1));
+    let lx = pearl.x - ex, ly = pearl.y - ey;
+    const ll = Math.hypot(lx, ly) || 1;
+    eyeP.setAttribute("cx", (ex + lx/ll*4).toFixed(1));
+    eyeP.setAttribute("cy", (ey + ly/ll*4).toFixed(1));
+
+    /* pearl grab / release */
+    const tip = pts[N], tn = norms[N];
+    const dist = Math.hypot(tip[0] - pearl.x, tip[1] - pearl.y);
+    if(!pearl.grab && act[2] > 0.5 && dist < 38){
+      pearl.grab = true;
+      setNote("✦ <b>Got it!</b> The curled tip holds the pearl. Let the tip wire cool to release.", true);
+    }
+    if(pearl.grab){
+      if(act[2] < 0.3){
+        pearl.grab = false; pearl.vx = 0; pearl.vy = 0;
+        setNote("Released — a cooling muscle always lets go. It drifts home…", true);
+      } else {
+        pearl.x += (tip[0] + tn[0]*9 - pearl.x)*0.4;
+        pearl.y += (tip[1] + tn[1]*9 - pearl.y)*0.4;
+      }
+    } else {
+      pearl.vx += (pearl.hx - pearl.x)*0.004; pearl.vx *= 0.95;
+      pearl.vy += (pearl.hy - pearl.y)*0.004; pearl.vy *= 0.95;
+      pearl.x += pearl.vx; pearl.y += pearl.vy;
+    }
+    const pBob = pearl.grab ? 0 : Math.sin(t*0.0019)*2;
+    pearlEl.setAttribute("cx", pearl.x.toFixed(1)); pearlEl.setAttribute("cy", (pearl.y + pBob).toFixed(1));
+    haloEl.setAttribute("cx", pearl.x.toFixed(1)); haloEl.setAttribute("cy", (pearl.y + pBob).toFixed(1));
+    haloEl.setAttribute("r", (20 + Math.sin(t*0.003)*3).toFixed(1));
+
+    /* phase pill */
+    const maxHeat = Math.max(heat[0], heat[1], heat[2]);
+    let pTxt, pCls;
+    if(maxHeat < 0.2){ pTxt = "muscles cold · martensite"; pCls = "cold"; }
+    else if(maxHeat < 0.7){ pTxt = "warming · transforming…"; pCls = "mid"; }
+    else { pTxt = "hot wire · austenite, contracted"; pCls = "hot"; }
+    if(phaseEl.textContent !== pTxt){ phaseEl.textContent = pTxt; phaseEl.className = "pill " + pCls; }
+
+    if(noteHold && t > noteHold && !pearl.grab){
+      setNote("Tap a wire to switch its current on or off — or press &amp; hold the limb itself.");
+    }
+  }
+  return { tick };
+})();
+
+/* ============ 2. PLANKTON PHASE ============ */
+const PHA = (() => {
+  const cv = $("phaseCv"), ctx = cv.getContext("2d");
+  const W = 560, H = 300;
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  cv.width = W*dpr; cv.height = H*dpr;
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+
+  function glowSprite(color){
+    const s = document.createElement("canvas"); s.width = s.height = 64;
+    const c = s.getContext("2d");
+    const g = c.createRadialGradient(32,32,0,32,32,32);
+    g.addColorStop(0, color); g.addColorStop(.35, color.replace("1)", ".3)")); g.addColorStop(1, "rgba(0,0,0,0)");
+    c.fillStyle = g; c.fillRect(0,0,64,64);
+    return s;
+  }
+  const sprA = glowSprite("rgba(110,255,235,1)");
+  const sprM = glowSprite("rgba(255,150,228,1)");
+
+  const ROWS = 6, COLS = 8, SP = 42;
+  const OX = (W - (COLS-1)*SP)/2, OY = (H - (ROWS-1)*SP)/2 + 4;
+  const HER = [0, 14, 28, 14];
+  const atoms = [];
+  for(let r=0;r<ROWS;r++) for(let c=0;c<COLS;c++){
+    atoms.push({
+      r, c,
+      ax: OX + c*SP, ay: OY + r*SP,
+      mx: OX + c*SP + HER[r%4] - 14 + (Math.random()*8 - 4),
+      my: OY + r*SP*1.04 - 4 + (Math.random()*8 - 4),
+      x: 0, y: 0, ph: Math.random()*6.28,
+      ni: (r + c)%2 === 0
+    });
+  }
+  for(const a of atoms){ a.x = a.mx; a.y = a.my; }
+
+  let mix = 0;
+  const slider = $("ventSlider"), pill = $("phState");
+
+  function tick(t){
+    const target = clamp((+slider.value - 38)/34, 0, 1);
+    mix += (target - mix)*0.06;
+    ctx.clearRect(0,0,W,H);
+
+    for(const a of atoms){
+      const wob = 1 - mix;
+      const wx = Math.sin(t*0.0006 + a.ph)*6*wob;
+      const wy = Math.cos(t*0.0005 + a.ph*1.7)*5*wob;
+      const tx = lerp(a.mx + wx, a.ax, mix);
+      const ty = lerp(a.my + wy, a.ay, mix);
+      a.x += (tx - a.x)*0.08;
+      a.y += (ty - a.y)*0.08;
+    }
+
+    /* constellation bonds fade in as the school crystallises */
+    const bondA = clamp((mix - 0.45)/0.55, 0, 1)*0.32;
+    if(bondA > 0.01){
+      ctx.strokeStyle = "rgba(140,255,238," + bondA.toFixed(3) + ")";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      for(const a of atoms){
+        if(a.c < COLS-1){ const b = atoms[a.r*COLS + a.c + 1]; ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); }
+        if(a.r < ROWS-1){ const b = atoms[(a.r+1)*COLS + a.c]; ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); }
+      }
+      ctx.stroke();
+    }
+
+    for(const a of atoms){
+      const glow = 22 + mix*14 + Math.sin(t*0.002 + a.ph)*3;
+      ctx.globalAlpha = 0.5 + 0.4*mix;
+      ctx.drawImage(a.ni ? sprA : sprM, a.x - glow/2, a.y - glow/2, glow, glow);
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = a.ni ? "#bafff2" : "#ffd2f1";
+      ctx.beginPath();
+      ctx.arc(a.x, a.y, 3.6 + mix*0.8, 0, 6.2832);
+      ctx.fill();
+    }
+
+    let txt, cls;
+    if(mix < 0.25){ txt = "martensite · sleepy drift (soft, stretchy)"; cls = "cold"; }
+    else if(mix < 0.75){ txt = "transforming — the school stirs…"; cls = "mid"; }
+    else { txt = "austenite · formation! (rigid, contracted)"; cls = "hot"; }
+    if(pill.textContent !== txt){ pill.textContent = txt; pill.className = "pill " + cls; }
+  }
+  return { tick };
+})();
+
+/* ============ 3. JELLYFISH ============ */
+const JEL = (() => {
+  const bell = $("jelBell"), ring = $("jelRing"), organ = $("jelOrgan");
+  const pill = $("jelState"), autoBtn = $("jelAuto");
+  const NS = "http://www.w3.org/2000/svg";
+  const tentEls = [];
+  const OFFS = [-0.72, -0.36, 0, 0.36, 0.72];
+  for(let i=0;i<5;i++){
+    const p = document.createElementNS(NS, "path");
+    p.setAttribute("fill", "none");
+    p.setAttribute("stroke", "rgba(190,160,255,.5)");
+    p.setAttribute("stroke-width", "3");
+    p.setAttribute("stroke-linecap", "round");
+    $("jelTents").appendChild(p);
+    tentEls.push(p);
+  }
+
+  const J = { y:230, vy:0, heat:0, c:0, pulseUntil:0, auto:false, lastAuto:0 };
+  function pulse(){ J.pulseUntil = performance.now() + 380; }
+  $("jelPulse").addEventListener("click", pulse);
+  autoBtn.addEventListener("click", () => {
+    J.auto = !J.auto;
+    autoBtn.classList.toggle("on", J.auto);
+    autoBtn.setAttribute("aria-pressed", J.auto ? "true" : "false");
+    if(J.auto){ pulse(); J.lastAuto = performance.now(); }
+  });
+
+  function tick(t){
+    if(J.auto && t - J.lastAuto > 2400){ pulse(); J.lastAuto = t; }
+    if(t < J.pulseUntil) J.heat = Math.min(1, J.heat + 0.09);
+    else J.heat = Math.max(0, J.heat - 0.012);   /* cooling is the slow part */
+    const actv = sstep(J.heat);
+    const prev = J.c;
+    J.c += (actv - J.c)*0.16;
+    const dc = J.c - prev;
+
+    if(dc > 0) J.vy -= dc*30;        /* squeeze → jet → rise */
+    J.vy += 0.02;                    /* gentle sinking */
+    J.vy *= 0.985;
+    J.y += J.vy;
+    if(J.y > 305){ J.y = 305; J.vy *= -0.25; }
+    if(J.y < 92){ J.y = 92; J.vy = 0; }
+
+    const x = 170, y = J.y, c = J.c;
+    const hw = 62 - 20*c, hb = 50 + 30*c;
+    bell.setAttribute("d",
+      "M" + (x-hw) + " " + y.toFixed(1) +
+      " C " + (x-hw) + " " + (y-hb).toFixed(1) + ", " + (x+hw) + " " + (y-hb).toFixed(1) + ", " + (x+hw) + " " + y.toFixed(1) +
+      " Q " + x + " " + (y + 13 - 11*c).toFixed(1) + " " + (x-hw) + " " + y.toFixed(1) + " Z");
+    ring.setAttribute("d",
+      "M" + (x-hw) + " " + y.toFixed(1) +
+      " Q " + x + " " + (y + 13 - 11*c).toFixed(1) + " " + (x+hw) + " " + y.toFixed(1));
+    ring.setAttribute("stroke", mixc("#5a4a8c", "#ff8a5c", J.heat));
+    ring.style.filter = J.heat > 0.08
+      ? "drop-shadow(0 0 " + (10*J.heat).toFixed(1) + "px rgba(255,138,92," + (0.9*J.heat).toFixed(2) + "))"
+      : "none";
+    organ.setAttribute("cx", x); organ.setAttribute("cy", (y - hb*0.45).toFixed(1));
+    organ.setAttribute("rx", (14 - 4*c).toFixed(1));
+
+    for(let i=0;i<5;i++){
+      const sx = x + OFFS[i]*hw;
+      const pts = [];
+      for(let j=0;j<=6;j++){
+        const yy = j/6*82;
+        const swing = Math.sin(t*0.0035 + i*1.9 + j*0.85)*5*(j/6) - J.vy*9*(j/6);
+        pts.push([sx + swing, y + 4 + yy]);
+      }
+      tentEls[i].setAttribute("d", smoothOpen(pts));
+    }
+
+    let txt, cls;
+    if(J.heat < 0.15){ txt = "ring cool · bell open"; cls = "cold"; }
+    else if(J.c > 0.55){ txt = "ring hot · bell squeezed — jet!"; cls = "hot"; }
+    else { txt = "contracting…"; cls = "mid"; }
+    if(pill.textContent !== txt){ pill.textContent = txt; pill.className = "pill " + cls; }
+  }
+  return { tick };
+})();
+
+/* ============ 4. ONE WIRE, MANY BODIES ============ */
+const TRIO = (() => {
+  const slider = $("trioSlider");
+  let ws = 0, tailA = 0, tailV = 0;
+  const wormBody = $("wormBody"), wormWire = $("wormWire"), wormEye = $("wormEye"), wormPct = $("wormPct");
+  const inchBody = $("inchBody"), inchCoil = $("inchCoil"), inchFoot = $("inchFoot"), inchEye = $("inchEye"), inchPct = $("inchPct");
+  const fishTail = $("fishTail"), fishWT = $("fishWireT"), fishWB = $("fishWireB");
+
+  function tick(t){
+    const w = +slider.value/100;
+    ws += (w - ws)*0.09;
+
+    /* worm: bare wire, ~5% scrunch, plumps as it shortens */
+    const L = 150*(1 - 0.05*ws);
+    wormBody.setAttribute("d", "M35 76 Q" + (35 + L/2).toFixed(1) + " " + (76 - 10*ws).toFixed(1) + " " + (35 + L).toFixed(1) + " 76");
+    wormBody.setAttribute("stroke-width", (24 + 7*ws).toFixed(1));
+    wormWire.setAttribute("x2", (35 + L - 10).toFixed(1));
+    wormWire.setAttribute("stroke", mixc(COLD_WIRE, HOT_WIRE, ws));
+    wormWire.style.filter = ws > 0.1 ? "drop-shadow(0 0 6px rgba(255,138,92," + (0.8*ws).toFixed(2) + "))" : "none";
+    wormEye.setAttribute("cx", (35 + L - 4).toFixed(1));
+    wormPct.textContent = (5*ws).toFixed(1) + "% shorter";
+
+    /* inchworm: coiled muscle → big scrunch + arch */
+    const xb = 185 - 150*0.42*ws;
+    const arch = 14 + 64*ws;
+    inchBody.setAttribute("d", "M35 106 Q" + ((35 + xb)/2).toFixed(1) + " " + (106 - arch).toFixed(1) + " " + xb.toFixed(1) + " 106");
+    inchFoot.setAttribute("cx", xb.toFixed(1));
+    inchEye.setAttribute("cx", xb.toFixed(1));
+    inchEye.setAttribute("cy", (98 - 4*ws).toFixed(1));
+    let zig = "M41 102";
+    const zn = 9, zx0 = 41, zx1 = xb - 6;
+    for(let i=1;i<=zn;i++){
+      const zx = zx0 + (zx1 - zx0)*i/zn;
+      const zy = 102 + ((i%2) ? -(5 + 2.5*ws) : (5 + 2.5*ws));
+      zig += " L" + zx.toFixed(1) + " " + zy.toFixed(1);
+    }
+    inchCoil.setAttribute("d", zig);
+    inchCoil.setAttribute("stroke", mixc(COLD_WIRE, HOT_WIRE, ws));
+    inchCoil.style.filter = ws > 0.1 ? "drop-shadow(0 0 6px rgba(255,138,92," + (0.8*ws).toFixed(2) + "))" : "none";
+    inchPct.textContent = Math.round(42*ws) + "% scrunch";
+
+    /* fish: antagonistic pair — the dial routes current top/bottom; alternate to wag */
+    const target = (0.5 - ws)*1.05;   /* hot bottom wire pulls tail down, hot top pulls up */
+    tailV += (target - tailA)*0.09;
+    tailV *= 0.86;
+    tailA += tailV;
+    const pvx = 120, pvy = 65, fl = 48;
+    const ux = pvx + Math.cos(tailA - 0.34)*fl, uy = pvy + Math.sin(tailA - 0.34)*fl;
+    const dx = pvx + Math.cos(tailA + 0.34)*fl, dy = pvy + Math.sin(tailA + 0.34)*fl;
+    fishTail.setAttribute("d", "M" + pvx + " " + pvy + " L" + ux.toFixed(1) + " " + uy.toFixed(1) +
+      " Q" + (pvx + Math.cos(tailA)*fl*0.7).toFixed(1) + " " + (pvy + Math.sin(tailA)*fl*0.7).toFixed(1) +
+      " " + dx.toFixed(1) + " " + dy.toFixed(1) + " Z");
+    const hotT = clamp((ws - 0.5)*4, 0, 1), hotB = clamp((0.5 - ws)*4, 0, 1);
+    fishWT.setAttribute("d", "M92 52 Q112 50 " + ux.toFixed(1) + " " + uy.toFixed(1));
+    fishWB.setAttribute("d", "M92 78 Q112 80 " + dx.toFixed(1) + " " + dy.toFixed(1));
+    fishWT.setAttribute("stroke", mixc(COLD_WIRE, HOT_WIRE, hotT));
+    fishWB.setAttribute("stroke", mixc(COLD_WIRE, HOT_WIRE, hotB));
+    fishWT.style.filter = hotT > 0.15 ? "drop-shadow(0 0 5px rgba(255,138,92," + (0.8*hotT).toFixed(2) + "))" : "none";
+    fishWB.style.filter = hotB > 0.15 ? "drop-shadow(0 0 5px rgba(255,138,92," + (0.8*hotB).toFixed(2) + "))" : "none";
+  }
+  return { tick };
+})();
+
+/* ============ main loop ============ */
+function loop(now){
+  PK.tick(now);
+  CUR.tick();
+  if(VIS.tent)  TEN.tick(now);
+  if(VIS.phase) PHA.tick(now);
+  if(VIS.jelly) JEL.tick(now);
+  if(VIS.trio)  TRIO.tick(now);
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>

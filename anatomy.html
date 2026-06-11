@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>De Musculo Metallico — A Comparative Anatomy of the Nitinol Muscle</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,900;1,9..144,400;1,9..144,600&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Caveat:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#f4ecda; --paper2:#efe4cc; --panel:#f8f1e2;
+    --ink:#231a12; --ink-soft:#5a4d3c; --faint:#8b7c63;
+    --sepia:#9a8460; --rule:#cabd9e; --rule-soft:#ddd2b6;
+    --oxblood:#8b2a1c; --vermilion:#b53d22; --hot-glow:rgba(181,61,34,.55);
+    --steel:#7a7163;
+    --serif:"EB Garamond",Georgia,"Times New Roman",serif;
+    --disp:"Fraunces",Georgia,serif;
+    --hand:"Caveat","Segoe Script",cursive;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--paper); color:var(--ink);
+    font-family:var(--serif); font-size:19px; line-height:1.62;
+    -webkit-font-smoothing:antialiased; overflow-x:hidden;
+  }
+  /* paper grain */
+  body::before{
+    content:""; position:fixed; inset:0; z-index:9999; pointer-events:none;
+    opacity:.5; mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='200'%20height='200'%3E%3Cfilter%20id='n'%3E%3CfeTurbulence%20type='fractalNoise'%20baseFrequency='0.9'%20numOctaves='2'%20stitchTiles='stitch'/%3E%3C/filter%3E%3Crect%20width='100%25'%20height='100%25'%20filter='url(%23n)'%20opacity='0.35'/%3E%3C/svg%3E");
+  }
+  body::after{
+    content:""; position:fixed; inset:0; z-index:-1; pointer-events:none;
+    background:
+      radial-gradient(1200px 700px at 85% -5%, rgba(139,42,28,.05), transparent 60%),
+      radial-gradient(900px 800px at -5% 30%, rgba(120,100,60,.07), transparent 60%),
+      radial-gradient(circle at 50% 50%, transparent 55%, rgba(60,45,25,.10) 130%);
+  }
+
+  .wrap{max-width:1140px; margin:0 auto; padding:0 40px;}
+  @media(max-width:640px){ .wrap{padding:0 22px;} body{font-size:18px;} }
+
+  /* ---------- masthead ---------- */
+  .plate-frame{
+    border:2px solid var(--ink); margin:26px auto 0; max-width:1180px;
+    position:relative;
+  }
+  .plate-frame::before{
+    content:""; position:absolute; inset:5px; border:1px solid var(--sepia); pointer-events:none;
+  }
+  header{ padding:54px 0 30px; text-align:center; position:relative; }
+  .top-rule{ display:flex; align-items:center; gap:16px; justify-content:center;
+    font-family:var(--disp); font-size:12px; letter-spacing:.42em; text-transform:uppercase;
+    color:var(--oxblood); margin-bottom:30px; }
+  .top-rule::before,.top-rule::after{ content:""; height:1px; width:90px; background:var(--rule); }
+  h1{
+    font-family:var(--disp); font-optical-sizing:auto; font-weight:900;
+    font-size:clamp(38px,7vw,82px); line-height:.98; letter-spacing:-.015em;
+    text-wrap:balance;
+  }
+  h1 em{ font-style:italic; font-weight:400; color:var(--oxblood); }
+  .latin{ font-family:var(--disp); font-style:italic; font-weight:400;
+    font-size:clamp(15px,2vw,22px); color:var(--ink-soft); margin-top:14px; letter-spacing:.02em; }
+  .byline{ margin-top:22px; font-variant:small-caps; letter-spacing:.18em; font-size:13px;
+    color:var(--faint); }
+  .byline span{ color:var(--oxblood); }
+
+  /* ---------- hero plate ---------- */
+  .hero{ padding:14px 0 50px; }
+  .specimen-grid{
+    display:grid; grid-template-columns:1fr 1fr; gap:0;
+    border-top:1px solid var(--ink); border-bottom:1px solid var(--ink);
+  }
+  .specimen{ position:relative; padding:18px 24px 24px; }
+  .specimen:first-child{ border-right:1px solid var(--rule); }
+  @media(max-width:780px){
+    .specimen-grid{ grid-template-columns:1fr; }
+    .specimen:first-child{ border-right:none; border-bottom:1px solid var(--rule); }
+  }
+  .spec-head{ display:flex; justify-content:space-between; align-items:baseline;
+    font-variant:small-caps; letter-spacing:.12em; font-size:14px; color:var(--ink-soft);
+    border-bottom:1px solid var(--rule); padding-bottom:6px; margin-bottom:6px; }
+  .spec-head .gk{ font-family:var(--disp); font-style:italic; color:var(--oxblood); font-size:13px; }
+  .specimen svg{ width:100%; height:auto; display:block; }
+  .annot{ font-family:var(--hand); font-size:19px; color:var(--oxblood); line-height:1.15; }
+  .live-note{
+    font-family:var(--serif); font-style:italic; font-size:15px; color:var(--ink-soft);
+    min-height:46px; margin-top:8px; padding-left:14px; border-left:2px solid var(--vermilion);
+  }
+  .live-note b{ font-style:normal; color:var(--oxblood); font-variant-numeric:tabular-nums; }
+
+  /* ---------- controls (brass / ink) ---------- */
+  .console{
+    display:flex; flex-wrap:wrap; gap:18px 26px; align-items:center; justify-content:center;
+    padding:22px 14px 4px;
+  }
+  .btn{
+    font-family:var(--disp); font-weight:600; font-size:15px; letter-spacing:.04em;
+    color:var(--paper); background:var(--ink); border:1px solid var(--ink);
+    padding:11px 26px; cursor:pointer; position:relative;
+    transition:background .25s, color .25s, transform .12s;
+  }
+  .btn::after{ content:""; position:absolute; inset:3px; border:1px solid rgba(244,236,218,.35); pointer-events:none; }
+  .btn:hover{ background:var(--oxblood); border-color:var(--oxblood); }
+  .btn:active{ transform:translateY(1px); }
+  .btn.ghost{ background:transparent; color:var(--ink); }
+  .btn.ghost::after{ border-color:rgba(35,26,18,.25); }
+  .btn.ghost:hover{ background:var(--ink); color:var(--paper); }
+
+  /* brass lever */
+  .lever{
+    --p:0; position:relative; width:240px; height:46px; flex:0 0 auto;
+    border:1px solid var(--ink); background:
+      repeating-linear-gradient(90deg, transparent 0 9px, rgba(35,26,18,.12) 9px 10px);
+    touch-action:none; cursor:ew-resize; user-select:none;
+  }
+  .lever .scale{ position:absolute; inset:0; display:flex; justify-content:space-between;
+    align-items:center; padding:0 14px; font-variant:small-caps; letter-spacing:.14em;
+    font-size:11px; color:var(--faint); pointer-events:none; }
+  .lever .knob{ position:absolute; top:50%; left:calc(var(--p) * (100% - 30px) + 15px);
+    transform:translate(-50%,-50%); width:22px; height:34px; background:var(--oxblood);
+    border:1px solid var(--ink); box-shadow:inset 0 0 0 2px rgba(244,236,218,.4); }
+
+  /* native range styled as ink ruler-slider */
+  input[type=range]{
+    -webkit-appearance:none; appearance:none; width:210px; height:4px; background:var(--ink);
+    outline:none; cursor:pointer; border-radius:0;
+  }
+  input[type=range]::-webkit-slider-thumb{ -webkit-appearance:none; appearance:none;
+    width:16px; height:26px; background:var(--oxblood); border:1px solid var(--ink);
+    box-shadow:inset 0 0 0 2px rgba(244,236,218,.45); }
+  input[type=range]::-moz-range-thumb{ width:14px; height:24px; border-radius:0;
+    background:var(--oxblood); border:1px solid var(--ink); }
+  .ctl-label{ display:flex; flex-direction:column; gap:7px; font-variant:small-caps;
+    letter-spacing:.12em; font-size:13px; color:var(--ink-soft); }
+  .ctl-label .val{ font-family:var(--disp); font-variant:normal; font-size:14px; color:var(--oxblood);
+    font-variant-numeric:tabular-nums; letter-spacing:0; }
+
+  /* ---------- sections / editorial ---------- */
+  section{ padding:74px 0 20px; }
+  .fig-num{ font-family:var(--disp); font-style:italic; font-weight:600; color:var(--oxblood);
+    font-size:15px; letter-spacing:.04em; margin-bottom:6px; }
+  .fig-num::after{ content:" — "; color:var(--faint); }
+  h2{ font-family:var(--disp); font-weight:900; font-size:clamp(28px,4.4vw,48px);
+    line-height:1.03; letter-spacing:-.012em; margin-bottom:18px; text-wrap:balance; }
+  .hairline{ height:1px; background:var(--rule); margin:0 0 34px; position:relative; }
+  .hairline::before{ content:""; position:absolute; left:0; top:-2px; width:64px; height:5px;
+    background:var(--oxblood); }
+
+  .editorial{ display:grid; grid-template-columns:minmax(0,1fr) 280px; gap:42px; align-items:start; }
+  @media(max-width:880px){ .editorial{ grid-template-columns:1fr; gap:20px; } }
+  .lead{ font-size:1.05em; }
+  .lead.drop::first-letter{
+    font-family:var(--disp); font-weight:900; float:left; font-size:4.1em; line-height:.74;
+    padding:8px 12px 2px 0; color:var(--oxblood);
+  }
+  p+p{ margin-top:14px; }
+  .margin{ font-family:var(--serif); font-style:italic; font-size:15px; color:var(--ink-soft);
+    border-top:1px solid var(--rule); padding-top:12px; }
+  .margin .mk{ font-family:var(--disp); font-style:normal; font-variant:small-caps;
+    letter-spacing:.12em; font-size:12px; color:var(--oxblood); display:block; margin-bottom:6px; }
+  .marginalia-num{ font-family:var(--disp); color:var(--vermilion); font-weight:600; }
+
+  /* generic figure card */
+  .figure{
+    margin-top:30px; border:1px solid var(--ink); background:var(--panel); position:relative;
+    padding:26px 28px 22px;
+  }
+  .figure::after{ content:""; position:absolute; inset:5px; border:1px solid var(--rule); pointer-events:none; }
+  .figure > *{ position:relative; }
+  .figcap{ font-style:italic; color:var(--ink-soft); font-size:15px; margin-top:14px;
+    border-top:1px solid var(--rule); padding-top:10px; }
+  .figcap b{ font-style:normal; color:var(--oxblood); }
+  .figure svg{ width:100%; height:auto; display:block; }
+
+  /* thermometer */
+  .thermo-rig{ display:flex; gap:30px; align-items:stretch; }
+  .thermo{ width:54px; flex:0 0 auto; position:relative; touch-action:none; cursor:ns-resize; user-select:none; }
+  .thermo svg{ height:300px; width:54px; }
+  @media(max-width:560px){ .thermo svg{ height:240px; } }
+  .lat-wrap{ flex:1; min-width:0; }
+
+  /* lattice legend / state */
+  .state-tag{ display:inline-block; font-family:var(--disp); font-variant:small-caps;
+    letter-spacing:.1em; font-size:14px; padding:4px 14px; border:1px solid var(--ink);
+    color:var(--ink); background:var(--paper); }
+  .state-tag.hot{ color:var(--paper); background:var(--oxblood); border-color:var(--oxblood); }
+  .state-tag.mid{ color:var(--oxblood); border-color:var(--vermilion); }
+
+  /* twin panel for antagonistic + coil */
+  .duo{ display:grid; grid-template-columns:1fr; gap:0; }
+
+  /* specimen table */
+  .atlas-table{ width:100%; border-collapse:collapse; margin-top:24px; font-size:16px; }
+  .atlas-table caption{ font-family:var(--disp); font-style:italic; color:var(--ink-soft);
+    text-align:left; padding-bottom:10px; }
+  .atlas-table th,.atlas-table td{ border:1px solid var(--rule); padding:11px 13px; text-align:left;
+    vertical-align:top; }
+  .atlas-table thead th{ font-family:var(--disp); font-variant:small-caps; letter-spacing:.08em;
+    font-size:14px; background:var(--paper2); border-color:var(--ink); }
+  .atlas-table thead th:first-child{ background:transparent; border-top:none; border-left:none; }
+  .atlas-table tbody th{ font-variant:small-caps; letter-spacing:.05em; font-weight:500;
+    width:21%; background:var(--paper2); }
+  .atlas-table .col-niti{ background:rgba(181,61,34,.07); }
+  .atlas-table .num{ font-variant-numeric:tabular-nums; }
+  .verdict{ color:var(--oxblood); font-style:italic; }
+  .table-scroll{ overflow-x:auto; }
+
+  /* application plates */
+  .plates{ display:grid; grid-template-columns:repeat(3,1fr); gap:0;
+    border:1px solid var(--ink); }
+  @media(max-width:820px){ .plates{ grid-template-columns:repeat(2,1fr); } }
+  @media(max-width:520px){ .plates{ grid-template-columns:1fr; } }
+  .plate{ padding:22px 22px 20px; border-right:1px solid var(--rule); border-bottom:1px solid var(--rule);
+    position:relative; }
+  .plate svg{ width:100%; height:120px; display:block; margin-bottom:12px; }
+  .plate .pl-num{ font-family:var(--disp); font-style:italic; color:var(--oxblood); font-size:14px; }
+  .plate h3{ font-family:var(--disp); font-weight:600; font-size:21px; margin:2px 0 6px; }
+  .plate p{ font-size:15px; color:var(--ink-soft); }
+
+  /* scroll reveal */
+  .reveal{ opacity:0; transform:translateY(22px); transition:opacity 1s ease, transform 1s ease; }
+  .reveal.seen{ opacity:1; transform:none; }
+  .ink-draw{ stroke-dasharray:var(--len); stroke-dashoffset:var(--len);
+    transition:stroke-dashoffset 1.6s ease; }
+  .seen .ink-draw{ stroke-dashoffset:0; }
+
+  /* engraving hatch text helpers */
+  text{ font-family:var(--serif); }
+  .eng-label{ font-family:var(--disp); font-variant:small-caps; letter-spacing:.06em; }
+
+  footer{ padding:64px 0 70px; text-align:center; color:var(--faint); }
+  footer .colophon{ font-family:var(--disp); font-style:italic; font-size:16px; color:var(--ink-soft);
+    max-width:640px; margin:0 auto; }
+  footer .mk{ font-variant:small-caps; letter-spacing:.22em; font-size:12px; color:var(--oxblood);
+    margin-bottom:14px; }
+</style>
+</head>
+<body>
+
+<div class="plate-frame">
+<header class="wrap">
+  <div class="top-rule">Plate I · Comparative Myology</div>
+  <h1>De Musculo<br><em>Metallico</em></h1>
+  <div class="latin">A Comparative Anatomy of the Human Muscle &amp; the Metal That Remembers</div>
+  <div class="byline">Being a study of <span>Nitinol</span> — the nickel-titanium shape-memory alloy — as artificial sinew</div>
+</header>
+
+<!-- ============ HERO: THE TWO BICEPS ============ -->
+<div class="hero wrap">
+  <div class="specimen-grid">
+    <!-- ANATOMICAL ARM -->
+    <figure class="specimen">
+      <div class="spec-head"><span>Fig. 1a — The Living Bicep</span><span class="gk">Musculus biceps brachii</span></div>
+      <svg id="anatSvg" viewBox="0 0 320 360" aria-label="Anatomical flexing arm with biceps highlighted">
+        <defs>
+          <pattern id="fleshHatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(34)">
+            <line x1="0" y1="0" x2="0" y2="7" stroke="#8b2a1c" stroke-width="1" opacity="0.55"/>
+          </pattern>
+          <pattern id="boneHatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(-20)">
+            <line x1="0" y1="0" x2="0" y2="6" stroke="#5a4d3c" stroke-width="0.7" opacity="0.4"/>
+          </pattern>
+        </defs>
+        <!-- humerus -->
+        <path class="ink-draw" d="M96 64 q-10 70 -2 150" fill="none" stroke="#3a3022" stroke-width="2.4" stroke-linecap="round"/>
+        <path d="M84 60 q26 6 28 0 q4 76 -4 154 q-18 8 -24 0 q-6 -78 0 -154Z" fill="url(#boneHatch)" stroke="#3a3022" stroke-width="1.4"/>
+        <!-- biceps muscle (dynamic) -->
+        <path id="anatMuscle" fill="url(#fleshHatch)" stroke="#8b2a1c" stroke-width="2"/>
+        <path id="anatTendonTop" stroke="#7a3326" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <path id="anatTendonBot" stroke="#7a3326" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <!-- forearm group (rotates) -->
+        <g id="anatFore">
+          <path d="M214 0 q26 6 28 0 q4 70 -2 132 q-18 8 -24 0 q-6 -66 -2 -132Z"
+                transform="translate(-130,214)" fill="url(#boneHatch)" stroke="#3a3022" stroke-width="1.4"/>
+          <path d="M84 214 q-4 70 0 128 q9 18 24 14 q12 -64 6 -142Z" fill="url(#boneHatch)" stroke="#3a3022" stroke-width="1.2" opacity="0.85"/>
+          <!-- hand -->
+          <path d="M84 338 q-6 18 4 30 q14 12 30 4 q10 -8 6 -24 q-4 -16 -16 -18Z" fill="url(#boneHatch)" stroke="#3a3022" stroke-width="1.3"/>
+        </g>
+        <!-- joint -->
+        <circle id="anatElbow" cx="96" cy="214" r="9" fill="var(--paper)" stroke="#3a3022" stroke-width="2"/>
+        <circle cx="96" cy="64" r="6" fill="var(--paper)" stroke="#3a3022" stroke-width="1.8"/>
+        <!-- annotation -->
+        <line id="anatLead" stroke="#8b2a1c" stroke-width="0.8" stroke-dasharray="2 3"/>
+        <text id="anatTag" class="annot" x="150" y="150" font-family="Caveat, cursive" font-size="17" fill="#8b2a1c">actin &amp; myosin</text>
+      </svg>
+      <div class="live-note" id="anatNote">Relaxed. Sarcomeres at full length; the filaments lie side by side, awaiting the nerve.</div>
+    </figure>
+    <!-- ROBOT ARM -->
+    <figure class="specimen">
+      <div class="spec-head"><span>Fig. 1b — The Metal Bicep</span><span class="gk">Filum nitinolicum</span></div>
+      <svg id="roboSvg" viewBox="0 0 320 360" aria-label="Skeletal robot arm with a nitinol coil bicep">
+        <defs>
+          <pattern id="steelHatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(34)">
+            <line x1="0" y1="0" x2="0" y2="6" stroke="#5a4d3c" stroke-width="0.7" opacity="0.5"/>
+          </pattern>
+        </defs>
+        <!-- upper strut -->
+        <rect x="82" y="60" width="28" height="156" fill="url(#steelHatch)" stroke="#3a3022" stroke-width="1.6"/>
+        <circle cx="96" cy="68" r="3.6" fill="#3a3022"/>
+        <circle cx="96" cy="206" r="3.6" fill="#3a3022"/>
+        <!-- coil bicep (dynamic) -->
+        <path id="roboCoil" fill="none" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle id="roboAnchor" cx="120" cy="80" r="5" fill="var(--paper)" stroke="#3a3022" stroke-width="2"/>
+        <circle id="roboAttach" r="5" fill="var(--paper)" stroke="#3a3022" stroke-width="2"/>
+        <!-- forearm group (rotates) -->
+        <g id="roboFore">
+          <rect x="84" y="214" width="24" height="132" rx="4" transform="translate(0,0)" fill="url(#steelHatch)" stroke="#3a3022" stroke-width="1.6"/>
+          <!-- gripper hand -->
+          <path d="M84 346 q-4 14 2 24 M108 346 q4 14 -2 24" fill="none" stroke="#3a3022" stroke-width="3" stroke-linecap="round"/>
+          <rect x="82" y="340" width="28" height="9" fill="url(#steelHatch)" stroke="#3a3022" stroke-width="1.4"/>
+        </g>
+        <circle id="roboElbow" cx="96" cy="214" r="9" fill="var(--paper)" stroke="#3a3022" stroke-width="2.4"/>
+        <circle cx="96" cy="214" r="2.4" fill="#3a3022"/>
+        <line id="roboLead" stroke="#8b2a1c" stroke-width="0.8" stroke-dasharray="2 3"/>
+        <text id="roboTag" class="annot" x="150" y="150" font-family="Caveat, cursive" font-size="17" fill="#8b2a1c">austenite</text>
+      </svg>
+      <div class="live-note" id="roboNote">Cold martensite. The coil hangs slack; no current, no contraction, no force.</div>
+    </figure>
+  </div>
+
+  <div class="console">
+    <button class="btn" id="flexBtn">Flex Both</button>
+    <div class="lever" id="flexLever" role="slider" aria-label="Flex lever" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0">
+      <span class="knob"></span>
+      <span class="scale"><span>Relax</span><span>Flex</span></span>
+    </div>
+    <button class="btn ghost" id="relaxBtn">Relax</button>
+  </div>
+  <p style="text-align:center; font-style:italic; color:var(--ink-soft); font-size:15px; max-width:640px; margin:16px auto 0;">
+    One motion, two mechanisms. The nerve fires; the current flows. Pull the brass lever — or strike <b style="font-style:normal;color:var(--oxblood)">Flex Both</b> — and watch flesh and metal contract in concert.
+  </p>
+</div>
+</div><!-- /plate-frame -->
+
+<!-- ============ ESSAY OPENING ============ -->
+<section class="wrap">
+  <div class="reveal">
+    <div class="fig-num">Preface</div>
+    <h2>Two muscles, one principle</h2>
+    <div class="hairline"></div>
+    <div class="editorial">
+      <div>
+        <p class="lead drop">Nature solved the problem of motion with protein; the engineer solved it again with metal. A skeletal muscle and a length of nitinol wire could not look more different, yet both obey a single, severe rule of anatomy: <b style="font-style:normal">a muscle may only pull</b>. It shortens and develops tension — it can never push itself back out. Whatever lengthens it must come from outside: an antagonist, a spring, or mere gravity.</p>
+        <p>The living muscle shortens when its myosin heads ratchet along actin filaments, drawing the sarcomeres tighter. Nitinol — an alloy of roughly equal parts <b style="font-style:normal">ni</b>ckel and <b style="font-style:normal">ti</b>tanium, named for the Naval Ordnance Laboratory — shortens by an entirely different trick: heat. Pass an electric current through the wire and it warms itself by Joule heating. Above a critical temperature its crystal rearranges from soft <em>martensite</em> into rigid <em>austenite</em>, and in doing so the wire contracts by some four to five percent — pulling, per unit of cross-section, with hundreds of times the force of flesh.</p>
+        <p>What follows is a comparative dissection: plate by plate, we lay the two side by side.</p>
+      </div>
+      <aside class="margin">
+        <span class="mk">Marginalia <span class="marginalia-num">№ 1</span></span>
+        The contraction of nitinol is small — a few percent — but its stress is enormous, near <b style="font-style:normal;color:var(--oxblood)">200&nbsp;MPa</b>. Skeletal muscle musters only ~0.35&nbsp;MPa. The metal trades stroke for strength; the coil, as we shall see in Fig. 4, trades it back.
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FIG 2: PHASE CHANGE ============ -->
+<section class="wrap">
+  <div class="reveal">
+    <div class="fig-num">Fig. 2</div>
+    <h2>The crystal that changes its mind</h2>
+    <div class="hairline"></div>
+    <div class="editorial">
+      <div>
+        <p>The whole faculty of memory lives in the lattice. Cold, the atoms settle into <em>martensite</em> — a low, leaning <span style="color:var(--oxblood)">herringbone</span> easily deformed. Warmed past its transformation point, they snap upright into the cubic order of <em>austenite</em>, the single arrangement in which the trained shape is encoded. Drag the thermometer and watch the atoms march.</p>
+        <div class="figure">
+          <div class="thermo-rig">
+            <div class="thermo" id="thermo" role="slider" aria-label="Temperature" aria-valuemin="0" aria-valuemax="120" aria-valuenow="20" tabindex="0">
+              <svg viewBox="0 0 54 300" aria-hidden="true">
+                <rect x="22" y="14" width="10" height="232" rx="5" fill="var(--paper2)" stroke="#3a3022" stroke-width="1.4"/>
+                <circle cx="27" cy="262" r="18" fill="var(--paper2)" stroke="#3a3022" stroke-width="1.4"/>
+                <rect id="mercury" x="24.5" y="120" width="5" height="126" fill="#8b2a1c"/>
+                <circle cx="27" cy="262" r="13" fill="#8b2a1c"/>
+                <g stroke="#5a4d3c" stroke-width="1">
+                  <line x1="32" y1="40" x2="42" y2="40"/><line x1="32" y1="80" x2="42" y2="80"/>
+                  <line x1="32" y1="120" x2="44" y2="120"/><line x1="32" y1="160" x2="42" y2="160"/>
+                  <line x1="32" y1="200" x2="42" y2="200"/>
+                </g>
+                <circle id="thermoHandle" cx="27" cy="200" r="7" fill="var(--paper)" stroke="#8b2a1c" stroke-width="2"/>
+              </svg>
+            </div>
+            <div class="lat-wrap">
+              <svg id="latSvg" viewBox="0 0 420 300" aria-label="Crystal lattice morphing between martensite and austenite"></svg>
+              <div style="margin-top:14px; display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
+                <span class="state-tag" id="latState">—</span>
+                <span style="font-family:var(--disp);font-variant:small-caps;letter-spacing:.1em;font-size:14px;color:var(--ink-soft)">Temperature: <b id="latTempVal" style="color:var(--oxblood);font-variant-numeric:tabular-nums">20</b>&nbsp;°C</span>
+              </div>
+            </div>
+          </div>
+          <div class="figcap"><b>Fig. 2.</b> The diffusionless transformation. No atom travels more than a fraction of a nanometre, yet the whole wire remembers. Cooling below <b>Mf</b> returns the herringbone; heating above <b>Af</b> restores the cube.</div>
+        </div>
+      </div>
+      <aside class="margin">
+        <span class="mk">Marginalia <span class="marginalia-num">№ 2</span></span>
+        The change is <em>hysteretic</em>: the metal heats to austenite at one temperature and cools back to martensite at a lower one. This lag is why nitinol holds its state — and why cooling, not heating, sets the speed of the metal muscle.
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FIG 3: ANTAGONISTIC PAIR ============ -->
+<section class="wrap">
+  <div class="reveal">
+    <div class="fig-num">Fig. 3</div>
+    <h2>A muscle can only pull</h2>
+    <div class="hairline"></div>
+    <div class="editorial">
+      <div>
+        <p>Because neither flesh nor wire can push, the body pairs them in opposition: the <b style="font-style:normal;color:var(--oxblood)">biceps</b> flexes the elbow, the <b style="font-style:normal;color:var(--oxblood)">triceps</b> extends it. The robot copies the arrangement exactly — two nitinol wires across one joint, a <em>flexor</em> and an <em>extensor</em>. Heat one and it wins; the resting angle is simply the truce between two contractions. Warm them both and they lock the joint rigid.</p>
+        <div class="figure">
+          <svg id="antSvg" viewBox="0 0 460 300" aria-label="Antagonistic pair of nitinol wires controlling a joint"></svg>
+          <div class="console" style="justify-content:flex-start; padding:18px 0 0;">
+            <label class="ctl-label">Flexor wire — "biceps"
+              <input type="range" id="flexHeat" min="20" max="100" value="20">
+              <span class="val"><span id="flexHeatVal">20</span> °C</span>
+            </label>
+            <label class="ctl-label">Extensor wire — "triceps"
+              <input type="range" id="extHeat" min="20" max="100" value="20">
+              <span class="val"><span id="extHeatVal">20</span> °C</span>
+            </label>
+            <span style="font-family:var(--disp);font-variant:small-caps;letter-spacing:.1em;font-size:14px;color:var(--ink-soft)">Joint angle: <b id="antAngle" style="color:var(--oxblood);font-variant-numeric:tabular-nums">0°</b></span>
+          </div>
+          <div class="figcap"><b>Fig. 3.</b> The joint finds its balance. A single wire could flex but never return; only the antagonist (or a bias spring) restores it — precisely the bargain your own arm strikes.</div>
+        </div>
+      </div>
+      <aside class="margin">
+        <span class="mk">Marginalia <span class="marginalia-num">№ 3</span></span>
+        The cool wire is the soft one. As the hot flexor contracts, it must stretch its cold, martensitic antagonist back out — which is why both wires are gently pre-tensioned, like the resting tone of a living limb.
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FIG 4: COILING GEAR RATIO ============ -->
+<section class="wrap">
+  <div class="reveal">
+    <div class="fig-num">Fig. 4</div>
+    <h2>The gear ratio of the coil</h2>
+    <div class="hairline"></div>
+    <div class="editorial">
+      <div>
+        <p>A straight wire gives barely four or five percent of its length — a strong but stingy tug. Wind that same wire into a helix and the small contraction of each turn accumulates into a great stroke, much as a tendon's force is geared by a joint. The coil trades the wire's ferocious stress for generous travel. Raise the temperature and measure both against the engraved rule.</p>
+        <div class="figure">
+          <svg id="coilSvg" viewBox="0 0 460 340" aria-label="Straight wire versus coiled wire contraction measured on a ruler"></svg>
+          <div class="console" style="justify-content:flex-start; padding:18px 0 0;">
+            <label class="ctl-label">Temperature
+              <input type="range" id="coilHeat" min="20" max="100" value="20">
+              <span class="val"><span id="coilHeatVal">20</span> °C</span>
+            </label>
+            <span style="font-family:var(--disp);font-variant:small-caps;letter-spacing:.1em;font-size:14px;color:var(--ink-soft)">Straight stroke: <b id="straightStroke" style="color:var(--oxblood);font-variant-numeric:tabular-nums">0 mm</b></span>
+            <span style="font-family:var(--disp);font-variant:small-caps;letter-spacing:.1em;font-size:14px;color:var(--ink-soft)">Coil stroke: <b id="coilStroke" style="color:var(--oxblood);font-variant-numeric:tabular-nums">0 mm</b></span>
+          </div>
+          <div class="figcap"><b>Fig. 4.</b> Same wire, same heat. The straight specimen lifts its load only a hair; the coiled specimen — the metal answer to a long tendon — hauls it many times further.</div>
+        </div>
+      </div>
+      <aside class="margin">
+        <span class="mk">Marginalia <span class="marginalia-num">№ 4</span></span>
+        Nothing is free. The coil's long stroke comes at the price of force: it cannot pull as hard as the straight wire, just as a low gear multiplies distance and divides torque.
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FIG 5: COMPARATIVE TABLE ============ -->
+<section class="wrap">
+  <div class="reveal">
+    <div class="fig-num">Fig. 5</div>
+    <h2>The specimen plate</h2>
+    <div class="hairline"></div>
+    <p style="max-width:760px; margin-bottom:8px;">Three actuators laid out for dissection — the living muscle, the nitinol wire, and the electric motor — measured honestly, virtues and failings alike.</p>
+    <div class="table-scroll">
+    <table class="atlas-table">
+      <caption>Comparative properties (order-of-magnitude; values vary with alloy, training &amp; design)</caption>
+      <thead>
+        <tr><th></th><th>Skeletal muscle</th><th class="col-niti">Nitinol (NiTi)</th><th>DC electric motor</th></tr>
+      </thead>
+      <tbody>
+        <tr><th>Actuation stress</th><td class="num">~0.35 MPa</td><td class="num col-niti">~200 MPa</td><td class="num">via gearing</td></tr>
+        <tr><th>Max strain / stroke</th><td class="num">~40%</td><td class="num col-niti">~4–5% wire · &gt;100% coiled</td><td class="num">rotary (unlimited)</td></tr>
+        <tr><th>Power-to-weight</th><td>moderate</td><td class="col-niti">very high (peak)</td><td>high</td></tr>
+        <tr><th>Efficiency</th><td class="num">~25%</td><td class="num col-niti">&lt;5%</td><td class="num">~70–90%</td></tr>
+        <tr><th>Speed / bandwidth</th><td>fast</td><td class="col-niti">cooling-limited (slow cycle)</td><td>fast</td></tr>
+        <tr><th>Noise</th><td>silent</td><td class="col-niti">silent · solid-state</td><td>audible (gears, brushes)</td></tr>
+        <tr><th>Scalability</th><td>biological only</td><td class="col-niti">micron → metre, no gears</td><td>poor at micro-scale</td></tr>
+        <tr><th class="verdict">Verdict</th><td class="verdict">the original</td><td class="verdict col-niti">strong, silent, thirsty &amp; slow</td><td class="verdict">efficient but bulky</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <aside class="margin" style="margin-top:24px;">
+      <span class="mk">On honesty</span>
+      Nitinol's weaknesses are real: an efficiency below five percent, a cycle speed throttled by how fast it sheds heat, and a finite fatigue life. Its gifts — colossal stress, silence, and a single moving part — are equally real. The engineer chooses accordingly.
+    </aside>
+  </div>
+</section>
+
+<!-- ============ FIG 6: APPLICATIONS ============ -->
+<section class="wrap">
+  <div class="reveal">
+    <div class="fig-num">Fig. 6</div>
+    <h2>Plates of application</h2>
+    <div class="hairline"></div>
+    <div class="plates" id="plates"></div>
+  </div>
+</section>
+
+<footer class="wrap">
+  <div class="mk">Colophon</div>
+  <div class="colophon">Drawn after the manner of the nineteenth-century anatomical atlas. All diagrams are schematic; true transformation temperatures (Mf, Ms, As, Af), strains and stresses depend upon the alloy's composition and training. <em>De Musculo Metallico</em>, Plate I.</div>
+</footer>
+
+<script>
+"use strict";
+/* ===================== shared helpers ===================== */
+const SVGNS="http://www.w3.org/2000/svg";
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const ease=t=>t<0.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
+const TAU=Math.PI*2, D2R=Math.PI/180;
+function mk(parent,tag,attrs){
+  const e=document.createElementNS(SVGNS,tag);
+  if(attrs)for(const k in attrs)e.setAttribute(k,attrs[k]);
+  parent.appendChild(e); return e;
+}
+function hx(h){return [parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)];}
+function mix(c1,c2,t){
+  const a=hx(c1),b=hx(c2);
+  return `rgb(${Math.round(lerp(a[0],b[0],t))},${Math.round(lerp(a[1],b[1],t))},${Math.round(lerp(a[2],b[2],t))})`;
+}
+const COLD_STEEL="#7a7163", OXBLOOD="#8b2a1c", VERMILION="#b53d22";
+const As=45, Af=72; /* transformation window, °C */
+const phaseFrac=temp=>clamp((temp-As)/(Af-As),0,1);
+
+/* ===================== scroll reveal + ink draw-in ===================== */
+const io=new IntersectionObserver(es=>es.forEach(e=>{
+  if(e.isIntersecting){ e.target.classList.add("seen"); io.unobserve(e.target); }
+}),{threshold:0.14});
+document.querySelectorAll(".reveal").forEach(el=>io.observe(el));
+document.querySelectorAll(".ink-draw").forEach(p=>{
+  try{ const L=p.getTotalLength(); p.style.setProperty("--len",L.toFixed(1)); }catch(e){ p.style.setProperty("--len","600"); }
+});
+
+/* ===================== generic pointer-drag track ===================== */
+function dragTrack(el,onFrac,axis){
+  function frac(e){
+    const r=el.getBoundingClientRect();
+    if(axis==="y"){ return clamp(1-(e.clientY-r.top)/r.height,0,1); }
+    return clamp((e.clientX-r.left)/r.width,0,1);
+  }
+  let active=false;
+  const down=e=>{ active=true; el.setPointerCapture(e.pointerId); onFrac(frac(e)); e.preventDefault(); };
+  const move=e=>{ if(active) onFrac(frac(e)); };
+  const up=e=>{ active=false; try{el.releasePointerCapture(e.pointerId);}catch(_){} };
+  el.addEventListener("pointerdown",down);
+  el.addEventListener("pointermove",move);
+  el.addEventListener("pointerup",up);
+  el.addEventListener("pointercancel",up);
+}
+
+/* ===================== HERO: the two biceps ===================== */
+const HERO={ flex:0, target:0 };
+const REST=8, MAX=148;              /* forearm rotation, degrees */
+const E={x:96,y:214};               /* elbow pivot (shared in both viewBoxes) */
+const anatFore=document.getElementById("anatFore");
+const roboFore=document.getElementById("roboFore");
+const anatMuscle=document.getElementById("anatMuscle");
+const anatTTop=document.getElementById("anatTendonTop");
+const anatTBot=document.getElementById("anatTendonBot");
+const roboCoil=document.getElementById("roboCoil");
+const roboAttach=document.getElementById("roboAttach");
+const anatNote=document.getElementById("anatNote");
+const roboNote=document.getElementById("roboNote");
+const anatLead=document.getElementById("anatLead");
+const roboLead=document.getElementById("roboLead");
+const anatTag=document.getElementById("anatTag");
+const roboTag=document.getElementById("roboTag");
+
+/* rotate a point about elbow by angle deg (SVG clockwise positive) */
+function rot(px,py,deg){
+  const a=deg*D2R, c=Math.cos(a), s=Math.sin(a);
+  const dx=px-E.x, dy=py-E.y;
+  return { x:E.x+dx*c-dy*s, y:E.y+dx*s+dy*c };
+}
+/* insertion point: a spot down the forearm (straight-down rest), rotated */
+function insertion(deg,down){ return rot(E.x, E.y+down, deg); }
+
+function coilPath(A,B,contract){
+  const dx=B.x-A.x, dy=B.y-A.y, len=Math.hypot(dx,dy)||1;
+  const ux=dx/len, uy=dy/len, nx=-uy, ny=ux;
+  const segs=20, amp=5+contract*7;
+  let d=`M${A.x.toFixed(1)} ${A.y.toFixed(1)}`;
+  for(let k=1;k<segs;k++){
+    const t=k/segs, env=Math.sin(Math.PI*t);
+    const off=(k%2?1:-1)*amp*env;
+    d+=` L${(A.x+ux*len*t+nx*off).toFixed(1)} ${(A.y+uy*len*t+ny*off).toFixed(1)}`;
+  }
+  return d+` L${B.x.toFixed(1)} ${B.y.toFixed(1)}`;
+}
+
+const flexBtn=document.getElementById("flexBtn");
+const relaxBtn=document.getElementById("relaxBtn");
+const flexLever=document.getElementById("flexLever");
+flexBtn.addEventListener("click",()=>HERO.target=1);
+relaxBtn.addEventListener("click",()=>HERO.target=0);
+dragTrack(flexLever,f=>{ HERO.target=f; },"x");
+flexLever.addEventListener("keydown",e=>{
+  if(e.key==="ArrowRight"||e.key==="ArrowUp"){ HERO.target=clamp(HERO.target+0.12,0,1); e.preventDefault(); }
+  if(e.key==="ArrowLeft"||e.key==="ArrowDown"){ HERO.target=clamp(HERO.target-0.12,0,1); e.preventDefault(); }
+});
+
+let heroAnatTxt="", heroRoboTxt="";
+function heroTick(){
+  HERO.flex+=(HERO.target-HERO.flex)*0.09;
+  const f=HERO.flex;
+  const deg=lerp(REST,MAX,f);
+  const heat=f; /* robot heats as it flexes */
+
+  /* forearms */
+  anatFore.setAttribute("transform",`rotate(${deg.toFixed(2)} ${E.x} ${E.y})`);
+  roboFore.setAttribute("transform",`rotate(${deg.toFixed(2)} ${E.x} ${E.y})`);
+
+  /* --- anatomical biceps muscle --- */
+  const O={x:118,y:80};                       /* origin (upper, fixed) */
+  const I=insertion(deg,42);                   /* insertion travels with forearm */
+  const mx=(O.x+I.x)/2, my=(O.y+I.y)/2;
+  let vx=I.x-O.x, vy=I.y-O.y; const vl=Math.hypot(vx,vy)||1; vx/=vl; vy/=vl;
+  const nx=vy, ny=-vx;                          /* normal toward +x (front) */
+  const bulge=16+30*f;
+  const c1={x:mx+nx*bulge,y:my+ny*bulge};
+  const c2={x:mx-nx*bulge*0.45,y:my-ny*bulge*0.45};
+  anatMuscle.setAttribute("d",
+    `M${O.x.toFixed(1)} ${O.y.toFixed(1)} Q${c1.x.toFixed(1)} ${c1.y.toFixed(1)} ${I.x.toFixed(1)} ${I.y.toFixed(1)} Q${c2.x.toFixed(1)} ${c2.y.toFixed(1)} ${O.x.toFixed(1)} ${O.y.toFixed(1)} Z`);
+  anatTTop.setAttribute("d",`M96 66 Q108 74 ${O.x.toFixed(1)} ${O.y.toFixed(1)}`);
+  anatTBot.setAttribute("d",`M${I.x.toFixed(1)} ${I.y.toFixed(1)} L${(I.x-6).toFixed(1)} ${(I.y+14).toFixed(1)}`);
+  anatLead.setAttribute("x1",c1.x.toFixed(1)); anatLead.setAttribute("y1",c1.y.toFixed(1));
+  anatLead.setAttribute("x2",(c1.x+40).toFixed(1)); anatLead.setAttribute("y2",(c1.y-10).toFixed(1));
+  anatTag.setAttribute("x",(c1.x+44).toFixed(1)); anatTag.setAttribute("y",(c1.y-12).toFixed(1));
+
+  /* --- robot coil --- */
+  const Ar={x:120,y:80};
+  const Br=insertion(deg,44);
+  roboAttach.setAttribute("cx",Br.x.toFixed(1)); roboAttach.setAttribute("cy",Br.y.toFixed(1));
+  roboCoil.setAttribute("d",coilPath(Ar,Br,f));
+  roboCoil.setAttribute("stroke",mix(COLD_STEEL,VERMILION,heat));
+  roboCoil.style.filter = heat>0.18 ? `drop-shadow(0 0 ${7*heat}px var(--hot-glow))` : "none";
+  const cmx=(Ar.x+Br.x)/2, cmy=(Ar.y+Br.y)/2;
+  roboLead.setAttribute("x1",(cmx+8).toFixed(1)); roboLead.setAttribute("y1",cmy.toFixed(1));
+  roboLead.setAttribute("x2",(cmx+48).toFixed(1)); roboLead.setAttribute("y2",(cmy-12).toFixed(1));
+  roboTag.setAttribute("x",(cmx+52).toFixed(1)); roboTag.setAttribute("y",(cmy-14).toFixed(1));
+  roboTag.setAttribute("fill",mix("#8b7c63",OXBLOOD,heat));
+
+  /* notes */
+  let aTxt, rTxt;
+  if(f<0.1){ aTxt="Relaxed. Sarcomeres at full length; the filaments lie side by side, awaiting the nerve."; }
+  else if(f<0.85){ aTxt=`Contracting — myosin heads ratchet along actin, shortening each sarcomere. (${Math.round(f*100)}%)`; }
+  else{ aTxt="Fully flexed. The bicep belly bulges as its filaments overlap to the limit."; }
+  if(f<0.1){ rTxt="Cold martensite. The coil hangs slack; no current, no contraction, no force."; }
+  else if(f<0.85){ rTxt=`Joule heating drives martensite → austenite; the coil contracts. (≈${Math.round(phaseFrac(20+heat*70)*100)}% transformed)`; }
+  else{ rTxt="Austenite. The coil has shortened and pulls with ~200 MPa, lifting the limb."; }
+  if(aTxt!==heroAnatTxt){ heroAnatTxt=aTxt; anatNote.innerHTML=aTxt.replace(/(\d+%|\d+|≈\d+%)/g,m=>`<b>${m}</b>`); }
+  if(rTxt!==heroRoboTxt){ heroRoboTxt=rTxt; roboNote.innerHTML=rTxt.replace(/(≈?\d+%|~200 MPa)/g,m=>`<b>${m}</b>`); }
+  flexLever.style.setProperty("--p",f.toFixed(3));
+  flexLever.setAttribute("aria-valuenow",Math.round(f*100));
+}
+
+/* ===================== FIG 2: lattice + thermometer ===================== */
+const latSvg=document.getElementById("latSvg");
+const LAT={ rows:5, cols:8, s:46, ox:30, oy:34, atoms:[], bonds:[], m:1, mTarget:1 };
+(function buildLat(){
+  /* bonds first */
+  for(let r=0;r<LAT.rows;r++)for(let c=0;c<LAT.cols;c++){
+    if(c<LAT.cols-1) LAT.bonds.push({r,c,r2:r,c2:c+1,el:mk(latSvg,"line",{stroke:"#bfae8a","stroke-width":1.5})});
+    if(r<LAT.rows-1) LAT.bonds.push({r,c,r2:r+1,c2:c,el:mk(latSvg,"line",{stroke:"#bfae8a","stroke-width":1.5})});
+  }
+  for(let r=0;r<LAT.rows;r++)for(let c=0;c<LAT.cols;c++){
+    const ni=(r+c)%2===0;
+    LAT.atoms.push({r,c,el:mk(latSvg,"circle",{r:8.5,
+      fill:ni?"#3a3022":"#f4ecda", stroke:"#3a3022","stroke-width":1.6})});
+  }
+})();
+/* martensite = sheared herringbone (alternating lean); austenite = square */
+function latPos(r,c){
+  const tri=[0,1,2,1][r%4];                   /* herringbone triangle wave */
+  const shear=lerp(0,(tri-1)*14,LAT.m);
+  const squash=lerp(1,0.9,LAT.m);
+  return [ LAT.ox+c*LAT.s+shear, LAT.oy+r*LAT.s*squash + (LAT.m*4) ];
+}
+const latStateEl=document.getElementById("latState");
+const latTempVal=document.getElementById("latTempVal");
+const mercury=document.getElementById("mercury");
+const thermoHandle=document.getElementById("thermoHandle");
+const thermo=document.getElementById("thermo");
+let latTemp=20;
+function setTemp(t){ latTemp=clamp(t,0,120); LAT.mTarget=clamp((Af+8-latTemp)/((Af+8)-(As-8)),0,1); }
+setTemp(20);
+dragTrack(thermo,f=>setTemp(f*120),"y");
+thermo.addEventListener("keydown",e=>{
+  if(e.key==="ArrowUp"||e.key==="ArrowRight"){ setTemp(latTemp+6); e.preventDefault(); }
+  if(e.key==="ArrowDown"||e.key==="ArrowLeft"){ setTemp(latTemp-6); e.preventDefault(); }
+});
+let latTxt="";
+function latTick(){
+  LAT.m+=(LAT.mTarget-LAT.m)*0.08;
+  for(const a of LAT.atoms){ const p=latPos(a.r,a.c); a.el.setAttribute("cx",p[0].toFixed(1)); a.el.setAttribute("cy",p[1].toFixed(1)); }
+  for(const b of LAT.bonds){
+    const p1=latPos(b.r,b.c), p2=latPos(b.r2,b.c2);
+    b.el.setAttribute("x1",p1[0].toFixed(1)); b.el.setAttribute("y1",p1[1].toFixed(1));
+    b.el.setAttribute("x2",p2[0].toFixed(1)); b.el.setAttribute("y2",p2[1].toFixed(1));
+  }
+  /* heat tint atoms */
+  const heat=phaseFrac(latTemp);
+  for(const a of LAT.atoms){ const ni=(a.r+a.c)%2===0; if(ni) a.el.setAttribute("fill",mix("#3a3022",OXBLOOD,heat)); }
+  /* thermometer visuals */
+  const mtop=246-(clamp(latTemp,0,120)/120)*226;
+  mercury.setAttribute("y",mtop.toFixed(1));
+  mercury.setAttribute("height",(246-mtop).toFixed(1));
+  thermoHandle.setAttribute("cy",mtop.toFixed(1));
+  latTempVal.textContent=Math.round(latTemp);
+  thermo.setAttribute("aria-valuenow",Math.round(latTemp));
+  let txt,cls;
+  if(LAT.m<0.25){ txt="Austenite · rigid cube"; cls="hot"; }
+  else if(LAT.m<0.75){ txt="Transforming…"; cls="mid"; }
+  else{ txt="Martensite · soft herringbone"; cls=""; }
+  if(txt!==latTxt){ latTxt=txt; latStateEl.textContent=txt; latStateEl.className="state-tag "+cls; }
+}
+
+/* ===================== FIG 3: antagonistic pair ===================== */
+const antSvg=document.getElementById("antSvg");
+const ANT={ ang:0, target:0, fT:20, eT:20 };
+const aPivot={x:230,y:150}, aLen=120;
+/* static scene */
+mk(antSvg,"rect",{x:30,y:40,width:18,height:220,fill:"#efe4cc",stroke:"#3a3022","stroke-width":1.5}); /* post */
+mk(antSvg,"line",{x1:39,y1:40,x2:39,y2:260,stroke:"#bfae8a","stroke-width":1}).setAttribute("stroke-dasharray","2 4");
+const antFlexAnchor={x:48,y:62}, antExtAnchor={x:48,y:238};
+mk(antSvg,"circle",{cx:antFlexAnchor.x,cy:antFlexAnchor.y,r:4,fill:"#3a3022"});
+mk(antSvg,"circle",{cx:antExtAnchor.x,cy:antExtAnchor.y,r:4,fill:"#3a3022"});
+const antFlexWire=mk(antSvg,"path",{fill:"none","stroke-width":3.5,"stroke-linecap":"round"});
+const antExtWire=mk(antSvg,"path",{fill:"none","stroke-width":3.5,"stroke-linecap":"round"});
+const antBone=mk(antSvg,"line",{stroke:"#5a4d3c","stroke-width":12,"stroke-linecap":"round"});
+const antHand=mk(antSvg,"circle",{r:9,fill:"#efe4cc",stroke:"#3a3022","stroke-width":2});
+mk(antSvg,"circle",{cx:aPivot.x,cy:aPivot.y,r:10,fill:"#f4ecda",stroke:"#3a3022","stroke-width":2.5});
+mk(antSvg,"circle",{cx:aPivot.x,cy:aPivot.y,r:2.4,fill:"#3a3022"});
+/* labels */
+const tF=mk(antSvg,"text",{x:120,y:34,"font-family":"Caveat, cursive","font-size":16,fill:OXBLOOD}); tF.textContent="flexor (biceps)";
+const tE=mk(antSvg,"text",{x:118,y:280,"font-family":"Caveat, cursive","font-size":16,fill:OXBLOOD}); tE.textContent="extensor (triceps)";
+const flexHeat=document.getElementById("flexHeat"), extHeat=document.getElementById("extHeat");
+const flexHeatVal=document.getElementById("flexHeatVal"), extHeatVal=document.getElementById("extHeatVal");
+const antAngleEl=document.getElementById("antAngle");
+flexHeat.addEventListener("input",()=>{ ANT.fT=+flexHeat.value; flexHeatVal.textContent=ANT.fT; });
+extHeat.addEventListener("input",()=>{ ANT.eT=+extHeat.value; extHeatVal.textContent=ANT.eT; });
+function wirePath(A,B,slack){
+  const mx=(A.x+B.x)/2, my=(A.y+B.y)/2+slack;
+  return `M${A.x} ${A.y} Q${mx.toFixed(1)} ${my.toFixed(1)} ${B.x.toFixed(1)} ${B.y.toFixed(1)}`;
+}
+function antTick(){
+  const fc=phaseFrac(ANT.fT), ec=phaseFrac(ANT.eT);
+  ANT.target=-(fc-ec)*52;                       /* degrees on screen; flexor pulls up = negative */
+  ANT.ang+=(ANT.target-ANT.ang)*0.08;
+  const a=ANT.ang*D2R;
+  /* lever points left from pivot, rises with flex */
+  const hx2=aPivot.x-Math.cos(a)*aLen;
+  const hy2=aPivot.y+Math.sin(a)*aLen;
+  antBone.setAttribute("x1",aPivot.x); antBone.setAttribute("y1",aPivot.y);
+  antBone.setAttribute("x2",hx2.toFixed(1)); antBone.setAttribute("y2",hy2.toFixed(1));
+  antHand.setAttribute("cx",hx2.toFixed(1)); antHand.setAttribute("cy",hy2.toFixed(1));
+  /* attach points on lever (near pivot) */
+  const upAtt={x:aPivot.x-Math.cos(a)*42, y:aPivot.y+Math.sin(a)*42-9};
+  const dnAtt={x:aPivot.x-Math.cos(a)*42, y:aPivot.y+Math.sin(a)*42+9};
+  antFlexWire.setAttribute("d",wirePath(antFlexAnchor,upAtt,(1-fc)*18));
+  antExtWire.setAttribute("d",wirePath(antExtAnchor,dnAtt,-(1-ec)*18));
+  antFlexWire.setAttribute("stroke",mix(COLD_STEEL,VERMILION,fc));
+  antExtWire.setAttribute("stroke",mix(COLD_STEEL,VERMILION,ec));
+  antFlexWire.style.filter=fc>0.2?`drop-shadow(0 0 ${5*fc}px var(--hot-glow))`:"none";
+  antExtWire.style.filter=ec>0.2?`drop-shadow(0 0 ${5*ec}px var(--hot-glow))`:"none";
+  antAngleEl.textContent=Math.round(-ANT.ang)+"°";
+}
+
+/* ===================== FIG 4: coiling gear ratio ===================== */
+const coilSvg=document.getElementById("coilSvg");
+const COIL={ t:20 };
+/* layout */
+const strX=120, coX=320, topY=46, baseLen=180;
+const STRAIGHT_PCT=0.045, COIL_PCT=0.55;
+/* engraved ruler in middle */
+(function buildRuler(){
+  mk(coilSvg,"line",{x1:230,y1:topY,x2:230,y2:topY+baseLen+24,stroke:"#3a3022","stroke-width":1.4});
+  for(let i=0;i<=18;i++){
+    const y=topY+i*((baseLen+24)/18);
+    const major=i%5===0;
+    mk(coilSvg,"line",{x1:230,y1:y,x2:major?218:224,y2:y,stroke:"#5a4d3c","stroke-width":major?1.3:0.8});
+    if(major){ const t=mk(coilSvg,"text",{x:214,y:y+3,"text-anchor":"end","font-size":9,fill:"#8b7c63"}); t.textContent=(i*10); }
+  }
+  const cap=mk(coilSvg,"text",{x:230,y:topY+baseLen+40,"text-anchor":"middle","font-size":10,fill:"#8b7c63","font-family":"Fraunces, serif","font-style":"italic"}); cap.textContent="mm";
+})();
+/* fixed mounts */
+mk(coilSvg,"rect",{x:strX-26,y:topY-12,width:52,height:10,fill:"#efe4cc",stroke:"#3a3022","stroke-width":1.4});
+mk(coilSvg,"rect",{x:coX-26,y:topY-12,width:52,height:10,fill:"#efe4cc",stroke:"#3a3022","stroke-width":1.4});
+mk(coilSvg,"text",{x:strX,y:topY-18,"text-anchor":"middle","font-size":11,fill:"#5a4d3c","font-family":"Fraunces, serif"}).textContent="STRAIGHT";
+mk(coilSvg,"text",{x:coX,y:topY-18,"text-anchor":"middle","font-size":11,fill:"#5a4d3c","font-family":"Fraunces, serif"}).textContent="COILED";
+const strWire=mk(coilSvg,"line",{"stroke-width":4,"stroke-linecap":"round"});
+const strWeight=mk(coilSvg,"rect",{x:strX-20,width:40,height:26,rx:2,fill:"url(#steelHatch)",stroke:"#3a3022","stroke-width":1.5});
+const coWire=mk(coilSvg,"path",{fill:"none","stroke-width":4,"stroke-linecap":"round","stroke-linejoin":"round"});
+const coWeight=mk(coilSvg,"rect",{x:coX-20,width:40,height:26,rx:2,fill:"url(#steelHatch)",stroke:"#3a3022","stroke-width":1.5});
+/* dashed ghosts of relaxed bottom */
+mk(coilSvg,"line",{x1:strX-30,y1:topY+baseLen,x2:strX+30,y2:topY+baseLen,stroke:"#bfae8a","stroke-width":1,"stroke-dasharray":"3 4"});
+mk(coilSvg,"line",{x1:coX-30,y1:topY+baseLen,x2:coX+30,y2:topY+baseLen,stroke:"#bfae8a","stroke-width":1,"stroke-dasharray":"3 4"});
+const coilHeat=document.getElementById("coilHeat"), coilHeatVal=document.getElementById("coilHeatVal");
+const straightStroke=document.getElementById("straightStroke"), coilStrokeEl=document.getElementById("coilStroke");
+let coilDisp=0;
+coilHeat.addEventListener("input",()=>{ COIL.t=+coilHeat.value; coilHeatVal.textContent=COIL.t; });
+function coilHelix(x,top,bottom){
+  const len=bottom-top, turns=9, amp=14;
+  let d=`M${x} ${top}`;
+  const steps=turns*8;
+  for(let i=1;i<=steps;i++){
+    const tt=i/steps;
+    const xx=x+Math.sin(tt*turns*TAU)*amp;
+    const yy=top+tt*len;
+    d+=` L${xx.toFixed(1)} ${yy.toFixed(1)}`;
+  }
+  return d+` L${x} ${bottom.toFixed(1)}`;
+}
+function coilTick(){
+  const target=phaseFrac(COIL.t);
+  coilDisp+=(target-coilDisp)*0.08;
+  const heat=phaseFrac(COIL.t);
+  /* straight */
+  const sBot=topY+baseLen*(1-STRAIGHT_PCT*coilDisp);
+  strWire.setAttribute("x1",strX); strWire.setAttribute("y1",topY);
+  strWire.setAttribute("x2",strX); strWire.setAttribute("y2",sBot.toFixed(1));
+  strWire.setAttribute("stroke",mix(COLD_STEEL,VERMILION,heat));
+  strWire.style.filter=heat>0.2?`drop-shadow(0 0 ${5*heat}px var(--hot-glow))`:"none";
+  strWeight.setAttribute("y",sBot.toFixed(1));
+  /* coiled */
+  const cBot=topY+baseLen*(1-COIL_PCT*coilDisp);
+  coWire.setAttribute("d",coilHelix(coX,topY,cBot));
+  coWire.setAttribute("stroke",mix(COLD_STEEL,VERMILION,heat));
+  coWire.style.filter=heat>0.2?`drop-shadow(0 0 ${5*heat}px var(--hot-glow))`:"none";
+  coWeight.setAttribute("y",cBot.toFixed(1));
+  /* readouts (scale: full ruler 180px ≈ 180mm region; show stroke mm) */
+  straightStroke.textContent=Math.round(baseLen*STRAIGHT_PCT*coilDisp)+" mm";
+  coilStrokeEl.textContent=Math.round(baseLen*COIL_PCT*coilDisp)+" mm";
+}
+
+/* ===================== FIG 6: application plates ===================== */
+const PLATES=[
+  {n:"Plate i",t:"Prosthetic Hand",d:"Thread-thin SMA wires flex the fingers — silent tendons that no whirring motor can match.",
+   svg:`<path class="ink-draw" d="M30 95 q0 -55 14 -60 q8 -2 8 8 l0 30 m10 0 l0 -42 q0 -8 8 -8 q8 0 8 8 l0 42 m10 0 l0 -40 q0 -8 8 -8 q8 0 8 8 l0 40 m10 4 l0 -30 q0 -8 8 -8 q8 0 8 8 l4 30" fill="none" stroke="#3a3022" stroke-width="2" stroke-linecap="round"/><path d="M30 95 q40 18 92 4 l0 14 q-46 14 -92 -2Z" fill="url(#steelHatch)" stroke="#3a3022" stroke-width="1.4"/>`},
+  {n:"Plate ii",t:"Soft Octopus Arm",d:"Embedded coils curl a continuous limb in any direction — a boneless muscle, all the way down.",
+   svg:`<path class="ink-draw" d="M60 12 q44 6 40 40 q-6 30 -34 36 q-26 6 -20 32 q4 22 30 24" fill="none" stroke="#3a3022" stroke-width="3" stroke-linecap="round"/><g stroke="#8b2a1c" stroke-width="1.4" fill="none"><circle cx="78" cy="40" r="3"/><circle cx="62" cy="70" r="3"/><circle cx="48" cy="96" r="3"/></g>`},
+  {n:"Plate iii",t:"Micro-Gripper",d:"Two opposing wires close jaws finer than a hair — surgery and micro-assembly without a single gear.",
+   svg:`<path class="ink-draw" d="M40 20 L60 56 M84 20 L64 56 M62 56 L62 100" fill="none" stroke="#3a3022" stroke-width="3" stroke-linecap="round"/><path d="M40 18 q-10 4 -4 14 M84 18 q10 4 4 14" fill="none" stroke="#8b2a1c" stroke-width="2"/>`},
+  {n:"Plate iv",t:"Camera Autofocus",d:"A tiny wire nudges the lens with sub-micron precision — the SMA muscle hiding in your phone.",
+   svg:`<g stroke="#3a3022" stroke-width="2" fill="none"><circle cx="62" cy="55" r="34"/><circle cx="62" cy="55" r="20"/></g><path class="ink-draw" d="M28 55 L96 55" stroke="#8b2a1c" stroke-width="2" stroke-dasharray="3 4"/><line x1="62" y1="10" x2="62" y2="22" stroke="#3a3022" stroke-width="2"/>`},
+  {n:"Plate v",t:"Heart Stent",d:"The passive cousin: superelastic nitinol springs open in the artery and holds — memory without heat.",
+   svg:`<g stroke="#8b2a1c" stroke-width="1.8" fill="none"><path d="M34 14 l18 16 l-18 16 l18 16 l-18 16 l18 16"/><path d="M62 14 l18 16 l-18 16 l18 16 l-18 16 l18 16"/><path d="M90 14 l-18 16 l18 16 l-18 16 l18 16 l-18 16"/></g>`},
+  {n:"Plate vi",t:"Morphing Surfaces",d:"From jet-engine chevrons to satellite latches, SMA actuators reshape structures with no motor at all.",
+   svg:`<path class="ink-draw" d="M22 80 q40 -50 100 -8" fill="none" stroke="#3a3022" stroke-width="2"/><path d="M22 90 q40 -36 100 0 l0 14 q-58 -34 -100 2Z" fill="url(#steelHatch)" stroke="#3a3022" stroke-width="1.4"/>`}
+];
+(function buildPlates(){
+  const host=document.getElementById("plates");
+  PLATES.forEach(p=>{
+    const div=document.createElement("div");
+    div.className="plate";
+    div.innerHTML=`<svg viewBox="0 0 124 124" aria-hidden="true">${p.svg}</svg>`+
+      `<div class="pl-num">${p.n}</div><h3>${p.t}</h3><p>${p.d}</p>`;
+    host.appendChild(div);
+  });
+  /* prime ink-draw lengths for plate svgs */
+  host.querySelectorAll(".ink-draw").forEach(pp=>{
+    try{ const L=pp.getTotalLength(); pp.style.setProperty("--len",L.toFixed(1)); }catch(e){ pp.style.setProperty("--len","400"); }
+  });
+})();
+
+/* ===================== single rAF loop ===================== */
+function loop(){
+  heroTick();
+  latTick();
+  antTick();
+  coilTick();
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>

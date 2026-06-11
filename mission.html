@@ -1,0 +1,1261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MISSION: METAL MUSCLE — Nitinol Flight Manual</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F2EAD6; --paper2:#E9DDC0; --ink:#20243A;
+  --navy:#1B2A52; --navy2:#13203F; --line:#3A4D85;
+  --orange:#D6491F; --orange2:#E96E2E; --gold:#DFA32E; --cream:#F2EAD6;
+  --disp:'Archivo Black','Arial Black','Helvetica Neue',sans-serif;
+  --body:'Archivo',Helvetica,Arial,sans-serif;
+  --mono:'IBM Plex Mono','Courier New',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--paper); color:var(--ink); font-family:var(--body);
+  line-height:1.55; overflow-x:hidden; font-size:16px;
+}
+/* paper grain */
+body::before{
+  content:""; position:fixed; inset:0; z-index:9; pointer-events:none; opacity:.5;
+  background-image:radial-gradient(rgba(32,36,58,.05) 1px, transparent 1.4px);
+  background-size:5px 5px; mix-blend-mode:multiply;
+}
+.wrap{max-width:1100px; margin:0 auto; padding:0 22px;}
+::selection{background:var(--orange); color:var(--cream);}
+
+/* ---------- motifs ---------- */
+.stripes3{
+  height:14px; margin-top:14px;
+  background:linear-gradient(to bottom,
+    var(--orange) 0 26%, transparent 26% 37%,
+    var(--gold) 37% 63%, transparent 63% 74%,
+    var(--navy) 74% 100%);
+}
+.divider{
+  height:42px; margin:54px 0; transform:skewY(-1.7deg);
+  background:linear-gradient(to bottom,
+    var(--orange) 0 24%, transparent 24% 38%,
+    var(--gold) 38% 62%, transparent 62% 76%,
+    var(--navy) 76% 100%);
+}
+.halftone{position:relative;}
+.halftone::after{
+  content:""; position:absolute; inset:0; pointer-events:none;
+  background-image:radial-gradient(rgba(242,234,214,.09) 1.1px, transparent 1.6px);
+  background-size:9px 9px;
+}
+
+/* ---------- reveal ---------- */
+.rv{opacity:0; transform:translateY(26px); transition:opacity .65s ease, transform .65s ease; transition-delay:calc(var(--i,0)*.09s);}
+.sec.in .rv, .in.rv{opacity:1; transform:none;}
+
+/* ---------- topbar ---------- */
+.topbar{
+  background:var(--navy); color:var(--cream); font-family:var(--mono);
+  font-size:11px; letter-spacing:.18em; text-transform:uppercase;
+  padding:8px 0;
+}
+.topbar .wrap{display:flex; justify-content:space-between; gap:14px; flex-wrap:wrap;}
+.topbar b{color:var(--gold); font-weight:500;}
+
+/* ---------- hero ---------- */
+.hero{padding:58px 0 30px; position:relative; overflow:hidden;}
+.hero::before{ /* halftone corner */
+  content:""; position:absolute; right:-120px; top:-120px; width:480px; height:480px;
+  border-radius:50%; pointer-events:none;
+  background-image:radial-gradient(rgba(214,73,31,.30) 2px, transparent 2.6px);
+  background-size:13px 13px;
+  -webkit-mask-image:radial-gradient(circle at center, #000 0 55%, transparent 72%);
+  mask-image:radial-gradient(circle at center, #000 0 55%, transparent 72%);
+}
+.hero-grid{display:grid; grid-template-columns:1fr 290px; gap:34px; align-items:center;}
+.kicker{
+  font-family:var(--mono); font-size:12px; letter-spacing:.32em; text-transform:uppercase;
+  color:var(--orange); margin-bottom:14px;
+}
+.kicker::before{content:"▸ ";color:var(--gold);}
+h1{
+  font-family:var(--disp); text-transform:uppercase; line-height:.92;
+  font-size:clamp(28px,8.2vw,104px); letter-spacing:-.01em;
+}
+h1 .l1{color:var(--navy); display:block;}
+h1 .l2{color:var(--orange); display:block; text-shadow:5px 5px 0 var(--navy);}
+.hero-sub{
+  margin-top:22px; max-width:560px; font-size:17px;
+}
+.hero-sub b{color:var(--orange);}
+.hero-tag{
+  display:inline-block; margin-top:18px; font-family:var(--mono); font-size:12px;
+  letter-spacing:.22em; text-transform:uppercase; color:var(--cream);
+  background:var(--navy); padding:7px 16px;
+  box-shadow:5px 5px 0 var(--gold);
+}
+.badge-wrap{display:flex; justify-content:center;}
+.badge-wrap svg{width:270px; max-width:100%; animation:badgespin 60s linear infinite;}
+@keyframes badgespin{to{transform:rotate(360deg);}}
+@media(prefers-reduced-motion:reduce){.badge-wrap svg{animation:none;}}
+.hero-stats{
+  margin-top:44px; display:grid; grid-template-columns:repeat(4,1fr);
+  border:3px solid var(--ink); background:var(--cream); box-shadow:8px 8px 0 var(--navy);
+}
+.hstat{padding:16px 14px; border-left:3px solid var(--ink);}
+.hstat:first-child{border-left:none;}
+.hstat .v{font-family:var(--disp); font-size:clamp(22px,3.4vw,38px); color:var(--navy); line-height:1; white-space:nowrap;}
+.hstat .v .roll{font-family:inherit;}
+.hstat .v small{font-size:.45em; color:var(--orange); letter-spacing:.04em;}
+.hstat .k{font-family:var(--mono); font-size:10.5px; letter-spacing:.2em; text-transform:uppercase; color:var(--ink); opacity:.75; margin-top:6px;}
+@media(max-width:820px){.hero-grid{grid-template-columns:1fr;} .badge-wrap{order:-1;} .badge-wrap svg{width:190px;}}
+@media(max-width:640px){.hero-stats{grid-template-columns:1fr 1fr;} .hstat:nth-child(3){border-left:none;} .hstat{border-top:3px solid var(--ink);} .hstat:nth-child(-n+2){border-top:none;}}
+
+/* ---------- sections ---------- */
+.sec{padding:30px 0 10px;}
+.sec-head{display:flex; gap:22px; align-items:flex-start; margin-bottom:26px;}
+.sec-head>div:last-child{min-width:0; flex:1;}
+.sec-num{
+  font-family:var(--disp); font-size:clamp(58px,9vw,108px); line-height:.85;
+  color:var(--gold); text-shadow:5px 5px 0 var(--navy); flex:none;
+}
+.sec-kicker{font-family:var(--mono); font-size:11px; letter-spacing:.3em; text-transform:uppercase; color:var(--orange); margin-bottom:6px;}
+h2{
+  font-family:var(--disp); text-transform:uppercase; letter-spacing:.01em;
+  font-size:clamp(24px,4.4vw,44px); line-height:1; color:var(--navy);
+}
+.sec-head .stripes3{max-width:380px;}
+@media(max-width:520px){.sec-head{gap:14px;} .sec-num{font-size:46px;} h2{font-size:20px;}}
+.lead{max-width:720px; margin-bottom:24px; font-size:16.5px;}
+.lead b{color:var(--orange);}
+.navy-sec{background:var(--navy); color:var(--cream); padding:54px 0 60px; position:relative;}
+.navy-sec h2{color:var(--cream);}
+.navy-sec .sec-num{color:var(--orange); text-shadow:5px 5px 0 var(--gold);}
+.navy-sec .lead{color:#D8D2BE;}
+.navy-sec .lead b{color:var(--gold);}
+
+/* ---------- cards / figures ---------- */
+.fig{
+  border:3px solid var(--ink); background:#F7F1E2; padding:18px;
+  box-shadow:9px 9px 0 var(--navy);
+}
+.fig-cap{
+  font-family:var(--mono); font-size:11px; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--ink); opacity:.7; margin-top:10px; border-top:2px solid var(--ink); padding-top:8px;
+}
+svg{display:block; width:100%; height:auto;}
+text{user-select:none;}
+
+/* ---------- buttons / controls ---------- */
+.btn{
+  font-family:var(--mono); font-weight:700; font-size:13px; letter-spacing:.14em;
+  text-transform:uppercase; cursor:pointer; color:var(--ink);
+  background:var(--cream); border:3px solid var(--ink); padding:11px 18px;
+  box-shadow:4px 4px 0 var(--ink); transition:transform .08s, box-shadow .08s;
+}
+.btn:hover{transform:translate(-1px,-1px); box-shadow:5px 5px 0 var(--ink);}
+.btn:active{transform:translate(3px,3px); box-shadow:1px 1px 0 var(--ink);}
+.btn-primary{background:var(--orange); color:var(--cream); border-color:var(--cream); box-shadow:5px 5px 0 var(--gold); font-size:15px; padding:14px 26px;}
+.btn-primary:hover{box-shadow:6px 6px 0 var(--gold);}
+.btn-primary:active{box-shadow:1px 1px 0 var(--gold);}
+.btn-primary.live{animation:livepulse 1s steps(2,end) infinite;}
+@keyframes livepulse{50%{background:var(--orange2);}}
+.btn-ghost{background:transparent; color:var(--cream); border-color:var(--cream); box-shadow:4px 4px 0 var(--gold);}
+
+input[type=range]{
+  -webkit-appearance:none; appearance:none; height:14px; cursor:pointer; width:100%;
+  background:linear-gradient(90deg,var(--navy) 0 49%, var(--gold) 49% 51%, var(--orange) 51% 100%);
+  border:3px solid var(--ink); outline:none;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none; appearance:none; width:26px; height:30px;
+  background:var(--cream); border:3px solid var(--ink); box-shadow:3px 3px 0 rgba(0,0,0,.45);
+  background-image:linear-gradient(90deg, transparent 0 9px, var(--ink) 9px 11px, transparent 11px);
+}
+input[type=range]::-moz-range-thumb{
+  width:22px; height:26px; border-radius:0; background:var(--cream);
+  border:3px solid var(--ink); box-shadow:3px 3px 0 rgba(0,0,0,.45);
+}
+input.uni{background:linear-gradient(90deg,var(--paper2) 0 2%, var(--orange) 2% 100%);}
+
+.toggle{
+  display:flex; align-items:center; gap:12px; cursor:pointer; background:none; border:none;
+  font-family:var(--mono); font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink);
+  padding:6px 0;
+}
+.tg-track{
+  flex:none; width:74px; height:36px; border:3px solid var(--ink); background:var(--paper2);
+  position:relative; box-shadow:inset 2px 2px 0 rgba(0,0,0,.15); transition:background .15s;
+}
+.tg-knob{
+  position:absolute; top:2px; left:2px; width:28px; height:26px;
+  background:var(--navy); border:2px solid var(--ink); transition:left .15s;
+  box-shadow:2px 2px 0 rgba(0,0,0,.35);
+}
+.toggle[aria-pressed="true"] .tg-track{background:var(--gold);}
+.toggle[aria-pressed="true"] .tg-knob{left:38px; background:var(--orange);}
+.toggle b{font-weight:700;}
+
+/* ---------- principle layout ---------- */
+.grid2{display:grid; grid-template-columns:1fr 1.25fr; gap:18px; align-items:stretch;}
+@media(max-width:760px){.grid2{grid-template-columns:1fr;}}
+#gaugeSvg{touch-action:none; cursor:grab;}
+#gaugeSvg.grab{cursor:grabbing;}
+
+/* ---------- arm console ---------- */
+.arm-fig{border:3px solid var(--gold); box-shadow:10px 10px 0 rgba(0,0,0,.35); background:var(--navy2);}
+.console{
+  margin-top:20px; display:grid; grid-template-columns:1.15fr .85fr; gap:18px;
+}
+@media(max-width:840px){.console{grid-template-columns:1fr;}}
+.con-panel{
+  border:3px solid var(--cream); background:var(--navy2); padding:16px;
+  box-shadow:6px 6px 0 var(--orange); min-width:0;
+}
+.con-title{
+  font-family:var(--mono); font-size:11px; letter-spacing:.26em; text-transform:uppercase;
+  color:var(--gold); border-bottom:2px solid var(--line); padding-bottom:8px; margin-bottom:14px;
+}
+.ch-row{display:grid; grid-template-columns:118px 1fr; gap:12px; align-items:center; margin-bottom:14px;}
+.ch-row label{font-family:var(--mono); font-size:11px; letter-spacing:.1em; color:var(--cream); line-height:1.3;}
+.ch-row label b{color:var(--gold); display:block; font-size:12px;}
+.ch-ends{display:flex; justify-content:space-between; font-family:var(--mono); font-size:9px; letter-spacing:.14em; color:#8FA0CC; margin-top:3px;}
+.con-btns{display:flex; gap:14px; flex-wrap:wrap; margin-top:18px;}
+.readouts{display:grid; grid-template-columns:repeat(5,1fr); gap:8px; margin-bottom:14px;}
+@media(max-width:520px){.readouts{grid-template-columns:repeat(3,1fr);}}
+.rd{border:2px solid var(--line); padding:7px 8px; font-family:var(--mono);}
+.rd .n{font-size:9.5px; letter-spacing:.14em; color:#8FA0CC;}
+.rd .t{font-size:15px; font-weight:700; color:var(--cream); white-space:nowrap;}
+.rd .p{font-size:9.5px; letter-spacing:.1em; color:var(--gold);}
+.rd .bar{height:5px; background:#26396B; margin-top:5px; position:relative; overflow:hidden;}
+.rd .bar i{position:absolute; inset:0; background:linear-gradient(90deg,var(--gold),var(--orange)); transform-origin:left; transform:scaleX(0); display:block;}
+.log{
+  font-family:var(--mono); font-size:11.5px; line-height:1.7; color:#C8D2EE;
+  height:178px; overflow:hidden; border:2px solid var(--line); padding:9px 12px;
+  background:rgba(0,0,0,.28);
+}
+.log div{white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.log .gd{color:var(--gold); font-weight:700;}
+.log .or{color:var(--orange2); font-weight:700;}
+.log .tt{color:#7286B8; margin-right:6px;}
+
+/* ---------- patch badge fig (pull-only) ---------- */
+.pull-grid{display:grid; grid-template-columns:1.4fr .8fr; gap:18px; align-items:stretch;}
+@media(max-width:760px){.pull-grid{grid-template-columns:1fr;}}
+.pull-controls{border:3px solid var(--ink); background:var(--cream); padding:16px; box-shadow:6px 6px 0 var(--orange); display:flex; flex-direction:column; gap:8px; justify-content:center;}
+.pull-state{
+  margin-top:10px; font-family:var(--disp); font-size:17px; text-transform:uppercase;
+  color:var(--cream); background:var(--navy); padding:10px 12px; text-align:center; letter-spacing:.04em;
+}
+
+/* ---------- flight data ---------- */
+.fd-table{border:3px solid var(--ink); background:#F7F1E2; box-shadow:9px 9px 0 var(--navy); overflow:hidden;}
+.fd-row{display:grid; grid-template-columns:1.1fr 1fr 1fr 1fr; border-top:2px solid var(--ink);}
+.fd-row:first-child{border-top:none; background:var(--navy); color:var(--cream);}
+.fd-row:first-child .fd-cell{font-family:var(--mono); font-size:11px; letter-spacing:.18em; text-transform:uppercase;}
+.fd-cell{padding:13px 14px; border-left:2px solid var(--ink); font-size:14px;}
+.fd-cell:first-child{border-left:none; font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; font-weight:700; display:flex; align-items:center;}
+.fd-row:first-child .fd-cell{border-left-color:var(--line);}
+.fd-cell .big{font-family:var(--disp); font-size:21px; color:var(--navy); line-height:1.15;}
+.fd-cell small{display:block; font-size:11.5px; opacity:.75; margin-top:2px;}
+.fd-cell .bar{height:8px; background:var(--paper2); border:1.5px solid var(--ink); margin-top:7px; overflow:hidden;}
+.fd-cell .bar i{display:block; height:100%; background:var(--orange); width:0; transition:width 1.1s cubic-bezier(.2,.7,.2,1) .25s;}
+.in .fd-cell .bar i{width:var(--w);}
+.fd-hl{background:rgba(223,163,46,.18); position:relative;}
+.fd-row:first-child .fd-hl{background:var(--orange); color:var(--cream);}
+@media(max-width:760px){
+  .fd-row{grid-template-columns:1fr 1fr;}
+  .fd-cell:first-child{grid-column:1/-1; background:var(--paper2); border-top:none;}
+  .fd-row:first-child .fd-cell:first-child{background:var(--navy);}
+  .fd-cell:nth-child(2){border-left:none;}
+}
+.anomalies{
+  margin-top:26px; border:4px dashed var(--orange); background:#F9EBDD; padding:20px 22px;
+  box-shadow:8px 8px 0 var(--navy);
+}
+.anomalies h3{
+  font-family:var(--disp); text-transform:uppercase; color:var(--orange);
+  font-size:21px; margin-bottom:12px; letter-spacing:.02em;
+}
+.anomalies ul{list-style:none;}
+.anomalies li{padding:7px 0 7px 30px; position:relative; font-size:14.5px; border-top:1.5px dotted rgba(32,36,58,.35);}
+.anomalies li:first-child{border-top:none;}
+.anomalies li::before{content:"⚠"; position:absolute; left:2px; color:var(--orange); font-size:15px;}
+.anomalies b{color:var(--navy);}
+
+/* ---------- patches ---------- */
+.patches{display:grid; grid-template-columns:repeat(3,1fr); gap:24px;}
+@media(max-width:820px){.patches{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:520px){.patches{grid-template-columns:1fr 1fr; gap:14px;}}
+.patch{text-align:center;}
+.patch svg{width:172px; max-width:88%; margin:0 auto; filter:drop-shadow(5px 6px 0 rgba(27,42,82,.5)); transition:transform .25s cubic-bezier(.3,1.6,.5,1);}
+.patch:hover svg{transform:rotate(-4deg) scale(1.05);}
+.patch h4{font-family:var(--disp); text-transform:uppercase; font-size:14px; color:var(--navy); margin-top:12px; letter-spacing:.03em;}
+.patch p{font-family:var(--mono); font-size:11px; letter-spacing:.06em; color:var(--ink); opacity:.78; margin-top:4px; line-height:1.5;}
+.patch .flight{display:inline-block; margin-top:6px; font-family:var(--mono); font-size:9.5px; letter-spacing:.2em; background:var(--gold); color:var(--navy); padding:3px 9px; font-weight:700;}
+
+/* ---------- stroke section ---------- */
+.master{display:flex; gap:18px; align-items:center; margin-top:16px; flex-wrap:wrap;}
+.master label{font-family:var(--mono); font-size:11px; letter-spacing:.2em; text-transform:uppercase; white-space:nowrap;}
+.master input{flex:1; min-width:180px;}
+.master .val{font-family:var(--disp); font-size:22px; color:var(--orange); min-width:84px; text-align:right;}
+
+/* ---------- footer ---------- */
+footer{background:var(--navy); color:#AAB6DC; margin-top:70px; padding:36px 0 46px; font-family:var(--mono); font-size:11.5px; letter-spacing:.08em;}
+footer .wrap{display:flex; flex-wrap:wrap; gap:10px 30px; justify-content:space-between;}
+footer b{color:var(--gold); font-weight:500;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="wrap">
+    <span><b>NATIONAL SHAPE-MEMORY PROGRAM</b> · FLIGHT MANUAL SMA-1971-04</span>
+    <span>APPROVED FOR RELEASE · <b>REV C</b></span>
+  </div>
+</div>
+
+<!-- ================= HERO ================= -->
+<header class="hero sec" id="hero">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <div class="kicker rv" style="--i:0">Nickel · Titanium · Naval Ordnance Laboratory · 1959</div>
+        <h1>
+          <span class="l1 rv" style="--i:1">Mission:</span>
+          <span class="l2 rv" style="--i:2">Metal Muscle</span>
+        </h1>
+        <p class="hero-sub rv" style="--i:3">
+          A flight manual for the actuator that replaced the motor. Run current through a
+          <b>nitinol</b> wire and it heats, changes crystal phase, and <b>contracts like a tendon</b> —
+          no gears, no bearings, no sound. One wire is a complete muscle.
+        </p>
+        <div class="hero-tag rv" style="--i:4">FLIGHT MANUAL FOR THE ACTUATOR THAT REPLACED THE MOTOR</div>
+      </div>
+      <div class="badge-wrap rv" style="--i:2">
+        <svg viewBox="0 0 240 240" aria-label="Mission badge">
+          <defs><path id="bring" d="M120 120 m-92 0 a92 92 0 1 1 184 0 a92 92 0 1 1 -184 0"/></defs>
+          <circle cx="120" cy="120" r="118" fill="#1B2A52"/>
+          <circle cx="120" cy="120" r="118" fill="none" stroke="#DFA32E" stroke-width="4"/>
+          <circle cx="120" cy="120" r="74" fill="#F2EAD6" stroke="#DFA32E" stroke-width="3"/>
+          <circle cx="120" cy="120" r="106" fill="none" stroke="#F2EAD6" stroke-width="1.5" stroke-dasharray="2 6"/>
+          <text font-family="IBM Plex Mono, monospace" font-size="14" letter-spacing="3.5" fill="#F2EAD6" font-weight="700">
+            <textPath href="#bring" startOffset="25%" text-anchor="middle">★ METAL MUSCLE ★</textPath>
+          </text>
+          <text font-family="IBM Plex Mono, monospace" font-size="11" letter-spacing="3" fill="#DFA32E">
+            <textPath href="#bring" startOffset="75%" text-anchor="middle">NiTi · SMA · 1959</textPath>
+          </text>
+          <!-- wire flex icon -->
+          <path d="M62 138 q29 -52 58 0 q29 52 58 0" fill="none" stroke="#1B2A52" stroke-width="7" stroke-linecap="round"/>
+          <path d="M62 122 h116" fill="none" stroke="#D6491F" stroke-width="7" stroke-linecap="round" stroke-dasharray="10 8"/>
+          <path d="M96 96 l10 10 M134 96 l-10 10" stroke="#D6491F" stroke-width="4" stroke-linecap="round"/>
+          <text x="120" y="170" text-anchor="middle" font-family="Archivo Black, sans-serif" font-size="15" fill="#D6491F">Δℓ −4.5%</text>
+        </svg>
+      </div>
+    </div>
+    <div class="hero-stats rv" style="--i:5">
+      <div class="hstat"><div class="v"><span class="roll" data-v="4.5" data-d="1">0</span><small>%</small></div><div class="k">Contraction stroke</div></div>
+      <div class="hstat"><div class="v"><span class="roll" data-v="200" data-d="0">0</span><small>MPa</small></div><div class="k">Pull stress · ~500× muscle</div></div>
+      <div class="hstat"><div class="v"><span class="roll" data-v="1" data-d="0">0</span><small>kW/kg</small></div><div class="k">Power-to-weight class</div></div>
+      <div class="hstat"><div class="v"><span class="roll" data-v="0" data-d="0">0</span><small>PARTS</small></div><div class="k">Moving parts per actuator</div></div>
+    </div>
+  </div>
+</header>
+
+<div class="divider"></div>
+
+<!-- ================= 01 PRINCIPLE ================= -->
+<section class="sec wrap" id="s01">
+  <div class="sec-head rv" style="--i:0">
+    <div class="sec-num">01</div>
+    <div>
+      <div class="sec-kicker">Flight manual · Section 01</div>
+      <h2>Principle of Operation</h2>
+      <div class="stripes3"></div>
+    </div>
+  </div>
+  <p class="lead rv" style="--i:1">
+    Nitinol has two crystal phases. Cold, it sits in soft herringbone <b>martensite</b> — a wire
+    pre-stretched in this state holds the stretch. Heat it past its transition (here by
+    <b>Joule heating</b> — just run current through it) and the lattice snaps into rigid cubic
+    <b>austenite</b>, hauling the wire back ~4–5% shorter against hundreds of MPa.
+    <b>Drag the gauge needle</b> and watch the lattice — note the heating and cooling paths differ
+    (thermal hysteresis).
+  </p>
+  <div class="grid2">
+    <div class="fig rv" style="--i:2">
+      <svg id="gaugeSvg" viewBox="0 0 280 208" aria-label="Drag the temperature needle"></svg>
+      <div class="fig-cap">FIG. 1-A · WIRE TEMPERATURE — DRAG NEEDLE · A<small>s</small>/A<small>f</small> heat · M<small>s</small>/M<small>f</small> cool</div>
+    </div>
+    <div class="fig rv" style="--i:3">
+      <svg id="latticeSvg" viewBox="0 0 340 226" aria-label="Crystal lattice"></svg>
+      <div class="fig-cap">FIG. 1-B · CRYSTAL LATTICE · CUBIC AUSTENITE ⇄ HERRINGBONE MARTENSITE</div>
+    </div>
+  </div>
+  <div class="fig rv" style="--i:4; margin-top:18px;">
+    <svg id="wireSvg" viewBox="0 0 560 120" aria-label="Wire contraction with stroke bracket"></svg>
+    <div class="fig-cap">FIG. 1-C · 380&nbsp;mm WIRE UNDER LOAD · STROKE BRACKET READS Δℓ (true scale — the stroke is small; the force is not)</div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ================= 02 PULL-ONLY ================= -->
+<section class="sec wrap" id="s02">
+  <div class="sec-head rv" style="--i:0">
+    <div class="sec-num">02</div>
+    <div>
+      <div class="sec-kicker">Flight manual · Section 02</div>
+      <h2>Pull-Only System</h2>
+      <div class="stripes3"></div>
+    </div>
+  </div>
+  <p class="lead rv" style="--i:1">
+    Like your biceps, a nitinol wire can only <b>pull</b>. So you mount them the way your arm does:
+    in <b>antagonistic pairs</b>. Heat A to flex, heat B to extend — heat <b>both</b> and the joint
+    goes rigid (co-contraction), exactly how you stiffen your wrist.
+  </p>
+  <div class="pull-grid">
+    <div class="fig rv" style="--i:2">
+      <svg id="pullSvg" viewBox="0 0 520 260" aria-label="Antagonistic pair joint"></svg>
+      <div class="fig-cap">FIG. 2-A · ANTAGONISTIC PAIR · BICEPS / TRICEPS ARRANGEMENT</div>
+    </div>
+    <div class="pull-controls rv" style="--i:3">
+      <button class="toggle" id="tgA" aria-pressed="false">
+        <span class="tg-track"><span class="tg-knob"></span></span>
+        <span><b>WIRE A</b> · biceps (flexor)</span>
+      </button>
+      <button class="toggle" id="tgB" aria-pressed="false">
+        <span class="tg-track"><span class="tg-knob"></span></span>
+        <span><b>WIRE B</b> · triceps (extensor)</span>
+      </button>
+      <div class="pull-state" id="pullState">SLACK — JOINT LIMP</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider" style="margin-bottom:0"></div>
+
+<!-- ================= 03 CENTERPIECE: SAMPLE ARM ================= -->
+<section class="sec navy-sec halftone" id="s03">
+  <div class="wrap">
+    <div class="sec-head rv" style="--i:0">
+      <div class="sec-num">03</div>
+      <div>
+        <div class="sec-kicker" style="color:var(--gold)">Flight manual · Section 03 · Mission centerpiece</div>
+        <h2>Sample Acquisition Arm</h2>
+        <div class="stripes3"></div>
+      </div>
+    </div>
+    <p class="lead rv" style="--i:1">
+      A lander arm with <b>zero motors</b>. Shoulder and elbow are each driven by an antagonistic
+      pair of nitinol wires; the gripper is a single wire against a bias spring. Drive the
+      channels manually — or press <b>DEPLOY</b> and let the auto-sequence reach, grab the sample,
+      and stow. Watch the antagonist wires glow as they fire.
+    </p>
+    <div class="fig arm-fig rv" style="--i:2">
+      <svg id="armSvg" viewBox="0 0 900 560" aria-label="Robotic arm blueprint cutaway"></svg>
+    </div>
+    <div class="console rv" style="--i:3">
+      <div class="con-panel">
+        <div class="con-title">▣ ACTUATOR CONTROL — MANUAL DRIVE</div>
+        <div class="ch-row">
+          <label><b>CH-1 SHOULDER</b>wire pair A/B</label>
+          <div><input type="range" id="slSh" min="-100" max="100" value="0">
+          <div class="ch-ends"><span>◄ 1B STOW</span><span>OFF</span><span>1A DEPLOY ►</span></div></div>
+        </div>
+        <div class="ch-row">
+          <label><b>CH-2 ELBOW</b>wire pair A/B</label>
+          <div><input type="range" id="slEl" min="-100" max="100" value="0">
+          <div class="ch-ends"><span>◄ 2B FOLD</span><span>OFF</span><span>2A EXTEND ►</span></div></div>
+        </div>
+        <div class="ch-row">
+          <label><b>CH-3 GRIPPER</b>wire + bias spring</label>
+          <div><input type="range" id="slGr" class="uni" min="0" max="100" value="0">
+          <div class="ch-ends"><span>SPRING OPEN</span><span>WIRE CLOSE ►</span></div></div>
+        </div>
+        <div class="con-btns">
+          <button class="btn btn-primary" id="btnDeploy">▶ Deploy Sample Arm</button>
+          <button class="btn btn-ghost" id="btnStow">⟲ Restow / Reset</button>
+        </div>
+      </div>
+      <div class="con-panel">
+        <div class="con-title">▣ TELEMETRY — WIRE CHANNELS</div>
+        <div class="readouts">
+          <div class="rd" id="rdShA"><div class="n">CH-1A</div><div class="t">22°C</div><div class="p">MART</div><div class="bar"><i></i></div></div>
+          <div class="rd" id="rdShB"><div class="n">CH-1B</div><div class="t">22°C</div><div class="p">MART</div><div class="bar"><i></i></div></div>
+          <div class="rd" id="rdElA"><div class="n">CH-2A</div><div class="t">22°C</div><div class="p">MART</div><div class="bar"><i></i></div></div>
+          <div class="rd" id="rdElB"><div class="n">CH-2B</div><div class="t">22°C</div><div class="p">MART</div><div class="bar"><i></i></div></div>
+          <div class="rd" id="rdGr"><div class="n">CH-3</div><div class="t">22°C</div><div class="p">MART</div><div class="bar"><i></i></div></div>
+        </div>
+        <div class="log" id="armLog"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider" style="margin-top:0"></div>
+
+<!-- ================= 04 STROKE MULTIPLICATION ================= -->
+<section class="sec wrap" id="s04">
+  <div class="sec-head rv" style="--i:0">
+    <div class="sec-num">04</div>
+    <div>
+      <div class="sec-kicker">Flight manual · Section 04</div>
+      <h2>Stroke Multiplication</h2>
+      <div class="stripes3"></div>
+    </div>
+  </div>
+  <p class="lead rv" style="--i:1">
+    A straight wire gives a brutal pull but only ~4.5% stroke. Wind the same wire into a
+    <b>coil</b> or hang it on a <b>lever</b> and the stroke multiplies — at the exact price of
+    force. <b>Work in ≈ work out:</b> you can trade the ratio, never beat it.
+  </p>
+  <div class="fig rv" style="--i:2">
+    <svg id="strokeSvg" viewBox="0 0 900 360" aria-label="Straight wire vs coil vs lever"></svg>
+    <div class="master">
+      <label>⚡ Master activation</label>
+      <input type="range" id="slStroke" class="uni" min="0" max="100" value="0">
+      <div class="val" id="strokeVal">0%</div>
+    </div>
+    <div class="fig-cap">FIG. 4-A · ONE ALLOY, THREE GEARINGS · FORCE ⇄ STROKE TRADE (●&nbsp;= relative rating)</div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ================= 05 FLIGHT DATA ================= -->
+<section class="sec wrap" id="s05">
+  <div class="sec-head rv" style="--i:0">
+    <div class="sec-num">05</div>
+    <div>
+      <div class="sec-kicker">Flight manual · Section 05</div>
+      <h2>Flight Data</h2>
+      <div class="stripes3"></div>
+    </div>
+  </div>
+  <p class="lead rv" style="--i:1">
+    How the muscle wire stacks against the thing it imitates — and the thing it replaces.
+  </p>
+  <div class="fd-table rv" style="--i:2">
+    <div class="fd-row">
+      <div class="fd-cell">Metric</div>
+      <div class="fd-cell">Skeletal muscle</div>
+      <div class="fd-cell fd-hl">Nitinol wire ★</div>
+      <div class="fd-cell">Electric motor</div>
+    </div>
+    <div class="fd-row">
+      <div class="fd-cell">Actuation stress</div>
+      <div class="fd-cell"><span class="big">~0.35 MPa</span><div class="bar"><i style="--w:2%"></i></div></div>
+      <div class="fd-cell fd-hl"><span class="big">~200 MPa</span><small>~500× muscle, per cross-section</small><div class="bar"><i style="--w:96%"></i></div></div>
+      <div class="fd-cell"><span class="big">torque</span><small>needs gearbox + linkage to push/pull</small></div>
+    </div>
+    <div class="fd-row">
+      <div class="fd-cell">Strain / stroke</div>
+      <div class="fd-cell"><span class="big">~40%</span><div class="bar"><i style="--w:80%"></i></div></div>
+      <div class="fd-cell fd-hl"><span class="big">4–5%</span><small>100%+ when wound as a coil</small><div class="bar"><i style="--w:10%"></i></div></div>
+      <div class="fd-cell"><span class="big">∞ rotary</span><small>linear only via screws/cranks</small></div>
+    </div>
+    <div class="fd-row">
+      <div class="fd-cell">Power / weight</div>
+      <div class="fd-cell"><span class="big">~0.05–0.1 kW/kg</span></div>
+      <div class="fd-cell fd-hl"><span class="big">&gt;1 kW/kg</span><small>among the best of any actuator</small></div>
+      <div class="fd-cell"><span class="big">~0.1–0.3 kW/kg</span><small>with gearing</small></div>
+    </div>
+    <div class="fd-row">
+      <div class="fd-cell">Efficiency</div>
+      <div class="fd-cell"><span class="big">~25%</span><div class="bar"><i style="--w:25%"></i></div></div>
+      <div class="fd-cell fd-hl"><span class="big">&lt;5%</span><small>heat engine; thermodynamics is unkind</small><div class="bar"><i style="--w:5%"></i></div></div>
+      <div class="fd-cell"><span class="big">~90%</span><div class="bar"><i style="--w:90%"></i></div></div>
+    </div>
+    <div class="fd-row">
+      <div class="fd-cell">Cycle rate</div>
+      <div class="fd-cell"><span class="big">1–10 Hz</span></div>
+      <div class="fd-cell fd-hl"><span class="big">~0.3–3 Hz</span><small>cooling-limited — thin wire cycles faster</small></div>
+      <div class="fd-cell"><span class="big">100+ Hz</span></div>
+    </div>
+    <div class="fd-row">
+      <div class="fd-cell">Parts / noise</div>
+      <div class="fd-cell"><span class="big">0 · silent</span></div>
+      <div class="fd-cell fd-hl"><span class="big">0 · silent</span><small>solid-state; scales down to microns</small></div>
+      <div class="fd-cell"><span class="big">many · audible</span><small>brushes, gears, bearings</small></div>
+    </div>
+  </div>
+  <div class="anomalies rv" style="--i:3">
+    <h3>⚠ Known Anomalies — read before flight</h3>
+    <ul>
+      <li><b>Cooling sets the speed limit.</b> Heating takes milliseconds; shedding that heat takes seconds. Cycle rate is a thermal problem, not an electrical one.</li>
+      <li><b>Efficiency &lt;5%.</b> It is a heat engine running across a tiny temperature gap — most input energy leaves as warmth, not work.</li>
+      <li><b>Thermal hysteresis.</b> The contract and relax temperatures differ by ~20–30&nbsp;°C, so precise position control needs feedback, not just a setpoint.</li>
+      <li><b>Fatigue.</b> Work it at full 4–5% strain and it degrades in thousands of cycles; keep strain near 2–3% for million-cycle service life.</li>
+    </ul>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ================= 06 SERVICE HISTORY ================= -->
+<section class="sec wrap" id="s06" style="padding-bottom:40px">
+  <div class="sec-head rv" style="--i:0">
+    <div class="sec-num">06</div>
+    <div>
+      <div class="sec-kicker">Flight manual · Section 06</div>
+      <h2>Service History</h2>
+      <div class="stripes3"></div>
+    </div>
+  </div>
+  <p class="lead rv" style="--i:1">
+    Not a lab curiosity — nitinol muscle is in your pocket, in orbit, and in arteries.
+  </p>
+  <div class="patches" id="patches"></div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span><b>SMA-1971-04</b> · MISSION: METAL MUSCLE · END OF MANUAL</span>
+    <span>Diagrams schematic; real transition temps (M<small>f</small> M<small>s</small> A<small>s</small> A<small>f</small>) depend on alloy &amp; training · <b>NiTi est. 1959</b></span>
+  </div>
+</footer>
+
+<script>
+"use strict";
+/* =================== helpers =================== */
+const $=id=>document.getElementById(id);
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const D2R=Math.PI/180;
+const NS="http://www.w3.org/2000/svg";
+function mk(parent,tag,attrs,txt){
+  const e=document.createElementNS(NS,tag);
+  for(const k in attrs)e.setAttribute(k,attrs[k]);
+  if(txt!==undefined)e.textContent=txt;
+  parent.appendChild(e); return e;
+}
+function mixc(c1,c2,t){
+  const h=c=>[parseInt(c.slice(1,3),16),parseInt(c.slice(3,5),16),parseInt(c.slice(5,7),16)];
+  const a=h(c1),b=h(c2);
+  return "rgb("+Math.round(lerp(a[0],b[0],t))+","+Math.round(lerp(a[1],b[1],t))+","+Math.round(lerp(a[2],b[2],t))+")";
+}
+function zig(a,b,n,amp){
+  const dx=b.x-a.x, dy=b.y-a.y, L=Math.hypot(dx,dy)||1;
+  const ux=dx/L, uy=dy/L, nx=-uy, ny=ux;
+  let d="M"+a.x.toFixed(1)+" "+a.y.toFixed(1);
+  for(let k=1;k<n;k++){
+    const t=k/n, o=(k%2?1:-1)*amp*Math.sin(Math.PI*t);
+    d+=" L"+(a.x+ux*L*t+nx*o).toFixed(1)+" "+(a.y+uy*L*t+ny*o).toFixed(1);
+  }
+  return d+" L"+b.x.toFixed(1)+" "+b.y.toFixed(1);
+}
+const C={cream:"#F2EAD6",navy:"#1B2A52",navy2:"#13203F",orange:"#D6491F",orange2:"#E96E2E",gold:"#DFA32E",ink:"#20243A",line:"#3A4D85",steel:"#8E97AC"};
+
+/* wire thermal model with hysteresis */
+const As=50, Af=75, Ms=45, Mf=20;
+function makeWire(){return {T:22, f:0, i:0};}
+function stepWire(w,dt){
+  const Tt=22+w.i*165;
+  const rate=Tt>w.T?2.6:0.5;            /* heats fast, cools slow */
+  w.T+=(Tt-w.T)*Math.min(1,rate*dt);
+  const heatF=clamp((w.T-As)/(Af-As),0,1);   /* heating branch (lower bound) */
+  const coolF=clamp((w.T-Mf)/(Ms-Mf),0,1);   /* cooling branch (upper bound) */
+  w.f=clamp(w.f,heatF,coolF);
+}
+function phaseName(f){return f>0.8?"AUST":(f<0.2?"MART":"TRNS");}
+
+/* =================== reveal + counters =================== */
+const rolls=[];
+const io=new IntersectionObserver(es=>es.forEach(e=>{
+  if(!e.isIntersecting)return;
+  e.target.classList.add("in");
+  e.target.querySelectorAll(".roll").forEach(el=>{
+    if(el.dataset.done)return; el.dataset.done="1";
+    rolls.push({el,v:+el.dataset.v,d:+el.dataset.d,t0:performance.now()+300});
+  });
+  io.unobserve(e.target);
+}),{threshold:0.15});
+document.querySelectorAll(".sec").forEach(s=>io.observe(s));
+function rollTick(now){
+  for(let i=rolls.length-1;i>=0;i--){
+    const r=rolls[i], p=clamp((now-r.t0)/1300,0,1), e=1-Math.pow(1-p,3);
+    r.el.textContent=(r.v*e).toFixed(r.d);
+    if(p>=1)rolls.splice(i,1);
+  }
+}
+
+/* =================== 01 GAUGE =================== */
+const gsvg=$("gaugeSvg"), GC={x:140,y:162,r:100};
+const gauge={T:22,Tt:22,f:0};
+function gpol(T,r){const a=(-180+T*1.5)*D2R;return{x:GC.x+r*Math.cos(a),y:GC.y+r*Math.sin(a)};}
+function garc(T1,T2,r){
+  const p1=gpol(T1,r),p2=gpol(T2,r),lg=(T2-T1)>80?1:0;
+  return "M"+p1.x.toFixed(1)+" "+p1.y.toFixed(1)+" A"+r+" "+r+" 0 "+lg+" 1 "+p2.x.toFixed(1)+" "+p2.y.toFixed(1);
+}
+let gNeedle,gTval,gFval;
+(function buildGauge(){
+  mk(gsvg,"path",{d:garc(0,120,GC.r),fill:"none",stroke:C.ink,"stroke-width":3});
+  mk(gsvg,"path",{d:garc(As,Af,GC.r-10),fill:"none",stroke:C.orange,"stroke-width":7});
+  mk(gsvg,"path",{d:garc(Mf,Ms,GC.r-22),fill:"none",stroke:C.navy,"stroke-width":7});
+  for(let T=0;T<=120;T+=5){
+    const maj=T%20===0, p1=gpol(T,GC.r-(maj?14:7)), p2=gpol(T,GC.r);
+    mk(gsvg,"line",{x1:p1.x,y1:p1.y,x2:p2.x,y2:p2.y,stroke:C.ink,"stroke-width":maj?2.5:1.2});
+    if(maj){const pt=gpol(T,GC.r+13);
+      mk(gsvg,"text",{x:pt.x,y:pt.y+4,"text-anchor":"middle","font-family":"IBM Plex Mono, monospace","font-size":11,fill:C.ink},String(T));}
+  }
+  const hl=gpol((As+Af)/2,GC.r-38);
+  mk(gsvg,"text",{x:hl.x,y:hl.y,"text-anchor":"middle","font-family":"IBM Plex Mono, monospace","font-size":9,"letter-spacing":1,fill:C.orange},"HEAT As→Af");
+  const cl=gpol((Mf+Ms)/2,GC.r-46);
+  mk(gsvg,"text",{x:cl.x,y:cl.y,"text-anchor":"middle","font-family":"IBM Plex Mono, monospace","font-size":9,"letter-spacing":1,fill:C.navy},"COOL Ms→Mf");
+  gNeedle=mk(gsvg,"line",{x1:GC.x,y1:GC.y,x2:GC.x,y2:GC.y-GC.r+24,stroke:C.orange,"stroke-width":5,"stroke-linecap":"round"});
+  mk(gsvg,"circle",{cx:GC.x,cy:GC.y,r:11,fill:C.navy,stroke:C.ink,"stroke-width":3});
+  mk(gsvg,"circle",{cx:GC.x,cy:GC.y,r:3.5,fill:C.gold});
+  gTval=mk(gsvg,"text",{x:GC.x,y:GC.y+36,"text-anchor":"middle","font-family":"Archivo Black, sans-serif","font-size":24,fill:C.navy},"22°C");
+  gFval=mk(gsvg,"text",{x:GC.x,y:GC.y+52,"text-anchor":"middle","font-family":"IBM Plex Mono, monospace","font-size":10,"letter-spacing":1.5,fill:C.orange},"AUSTENITE 0%");
+  mk(gsvg,"text",{x:14,y:200,"font-family":"IBM Plex Mono, monospace","font-size":9,"letter-spacing":1,fill:C.ink,opacity:.65},"☞ DRAG THE NEEDLE");
+})();
+let gDrag=false;
+function gaugeFromEvent(e){
+  const r=gsvg.getBoundingClientRect();
+  const px=(e.clientX-r.left)*280/r.width, py=(e.clientY-r.top)*208/r.height;
+  const dx=px-GC.x, dy=py-GC.y;
+  if(dy>6){gauge.Tt=dx<0?0:120;return;}
+  let a=Math.atan2(dy,dx)/D2R;          /* -180..0 over top */
+  if(a>0)a=dx<0?-180:0;
+  gauge.Tt=clamp((a+180)/1.5,0,120);
+}
+gsvg.addEventListener("pointerdown",e=>{gDrag=true;gsvg.classList.add("grab");gsvg.setPointerCapture(e.pointerId);gaugeFromEvent(e);e.preventDefault();});
+gsvg.addEventListener("pointermove",e=>{if(gDrag)gaugeFromEvent(e);});
+const gUp=()=>{gDrag=false;gsvg.classList.remove("grab");};
+gsvg.addEventListener("pointerup",gUp); gsvg.addEventListener("pointercancel",gUp);
+
+/* ---- lattice ---- */
+const lsvg=$("latticeSvg");
+const LAT={rows:5,cols:8,s:36,ox:38,oy:32,atoms:[],hb:[],vb:[]};
+let stampM,stampA;
+(function buildLattice(){
+  for(let r=0;r<LAT.rows;r++)for(let c=0;c<LAT.cols;c++){
+    if(c<LAT.cols-1)LAT.hb.push({r,c,el:mk(lsvg,"line",{stroke:C.line,"stroke-width":2,opacity:.6})});
+    if(r<LAT.rows-1)LAT.vb.push({r,c,el:mk(lsvg,"line",{stroke:C.line,"stroke-width":2,opacity:.6})});
+  }
+  for(let r=0;r<LAT.rows;r++)for(let c=0;c<LAT.cols;c++){
+    const ni=(r+c)%2===0;
+    LAT.atoms.push({r,c,el:mk(lsvg,"circle",{r:9,fill:ni?C.navy:C.cream,stroke:ni?C.ink:C.orange,"stroke-width":2.5})});
+  }
+  function stamp(x,y,txt,col,rot){
+    const g=mk(lsvg,"g",{transform:"translate("+x+" "+y+") rotate("+rot+")",opacity:0});
+    mk(g,"rect",{x:-78,y:-19,width:156,height:38,fill:"none",stroke:col,"stroke-width":4});
+    mk(g,"text",{x:0,y:7,"text-anchor":"middle","font-family":"Archivo Black, sans-serif","font-size":19,"letter-spacing":2,fill:col},txt);
+    return g;
+  }
+  stampM=stamp(172,112,"MARTENSITE",C.navy,-7);
+  stampA=stamp(172,112,"AUSTENITE",C.orange,-7);
+  mk(lsvg,"text",{x:12,y:220,"font-family":"IBM Plex Mono, monospace","font-size":9,"letter-spacing":1,fill:C.ink,opacity:.65},"● Ni   ○ Ti");
+})();
+const TRI=r=>[0,1,2,1][r%4];
+function latticeTick(){
+  const m=1-gauge.f;
+  for(const a of LAT.atoms){
+    a.el.setAttribute("cx",LAT.ox+a.c*LAT.s+TRI(a.r)*13*m);
+    a.el.setAttribute("cy",LAT.oy+a.r*LAT.s*lerp(1,0.93,m));
+  }
+  const P=(r,c)=>[LAT.ox+c*LAT.s+TRI(r)*13*m, LAT.oy+r*LAT.s*lerp(1,0.93,m)];
+  for(const b of LAT.hb){const p1=P(b.r,b.c),p2=P(b.r,b.c+1);
+    b.el.setAttribute("x1",p1[0]);b.el.setAttribute("y1",p1[1]);b.el.setAttribute("x2",p2[0]);b.el.setAttribute("y2",p2[1]);}
+  for(const b of LAT.vb){const p1=P(b.r,b.c),p2=P(b.r+1,b.c);
+    b.el.setAttribute("x1",p1[0]);b.el.setAttribute("y1",p1[1]);b.el.setAttribute("x2",p2[0]);b.el.setAttribute("y2",p2[1]);}
+  stampM.setAttribute("opacity",clamp((m-0.55)/0.35,0,1));
+  stampA.setAttribute("opacity",clamp((gauge.f-0.55)/0.35,0,1));
+}
+
+/* ---- contracting wire ---- */
+const wsvg=$("wireSvg");
+let wWire,wEnd,wBr1,wBr2,wBrH,wBrT,wGhost,wLoad;
+(function buildWireFig(){
+  /* wall hatch */
+  mk(wsvg,"line",{x1:70,y1:18,x2:70,y2:92,stroke:C.ink,"stroke-width":4});
+  for(let y=20;y<92;y+=10)mk(wsvg,"line",{x1:70,y1:y,x2:58,y2:y+10,stroke:C.ink,"stroke-width":2});
+  wGhost=mk(wsvg,"line",{x1:70,y1:55,x2:460,y2:55,stroke:C.navy,"stroke-width":2,"stroke-dasharray":"3 7",opacity:.55});
+  mk(wsvg,"text",{x:455,y:40,"text-anchor":"end","font-family":"IBM Plex Mono, monospace","font-size":9,"letter-spacing":1,fill:C.navy,opacity:.7},"COLD (MARTENSITE) LENGTH");
+  wWire=mk(wsvg,"line",{x1:70,y1:55,x2:460,y2:55,stroke:C.steel,"stroke-width":9,"stroke-linecap":"round"});
+  wEnd=mk(wsvg,"circle",{cx:460,cy:55,r:7,fill:C.cream,stroke:C.ink,"stroke-width":3});
+  wLoad=mk(wsvg,"g",{});
+  mk(wLoad,"line",{x1:0,y1:0,x2:34,y2:0,stroke:C.ink,"stroke-width":3});
+  mk(wLoad,"path",{d:"M34 -7 L48 0 L34 7 Z",fill:C.orange});
+  mk(wLoad,"text",{x:24,y:-12,"font-family":"IBM Plex Mono, monospace","font-size":10,"letter-spacing":1,fill:C.orange},"LOAD F");
+  /* stroke bracket */
+  wBr1=mk(wsvg,"line",{stroke:C.orange,"stroke-width":2.5});
+  wBr2=mk(wsvg,"line",{stroke:C.orange,"stroke-width":2.5});
+  wBrH=mk(wsvg,"line",{stroke:C.orange,"stroke-width":2.5});
+  wBrT=mk(wsvg,"text",{"text-anchor":"middle","font-family":"Archivo Black, sans-serif","font-size":14,fill:C.orange},"Δℓ 0.0%");
+})();
+function wireFigTick(){
+  const f=gauge.f, x=70+390*(1-0.045*f);
+  wWire.setAttribute("x2",x);
+  wWire.setAttribute("stroke",mixc(C.steel,C.orange,clamp((gauge.T-22)/80,0,1)));
+  wEnd.setAttribute("cx",x);
+  wLoad.setAttribute("transform","translate("+(x+7)+" 55)");
+  wBr1.setAttribute("x1",x);wBr1.setAttribute("y1",78);wBr1.setAttribute("x2",x);wBr1.setAttribute("y2",96);
+  wBr2.setAttribute("x1",460);wBr2.setAttribute("y1",78);wBr2.setAttribute("x2",460);wBr2.setAttribute("y2",96);
+  wBrH.setAttribute("x1",x);wBrH.setAttribute("y1",87);wBrH.setAttribute("x2",460);wBrH.setAttribute("y2",87);
+  wBrT.setAttribute("x",(x+460)/2);wBrT.setAttribute("y",112);
+  wBrT.textContent="Δℓ "+(4.5*f).toFixed(1)+"%  ("+(17.1*f).toFixed(1)+" mm)";
+}
+function gaugeTick(dt){
+  gauge.T+=(gauge.Tt-gauge.T)*Math.min(1,8*dt);
+  const heatF=clamp((gauge.T-As)/(Af-As),0,1), coolF=clamp((gauge.T-Mf)/(Ms-Mf),0,1);
+  gauge.f=clamp(gauge.f,heatF,coolF);
+  const a=(-180+gauge.T*1.5)*D2R;
+  gNeedle.setAttribute("x2",GC.x+(GC.r-24)*Math.cos(a));
+  gNeedle.setAttribute("y2",GC.y+(GC.r-24)*Math.sin(a));
+  gNeedle.setAttribute("stroke",mixc(C.navy,C.orange,clamp(gauge.T/120,0,1)));
+  gTval.textContent=Math.round(gauge.T)+"°C";
+  gFval.textContent="AUSTENITE "+Math.round(gauge.f*100)+"%";
+  latticeTick(); wireFigTick();
+}
+
+/* =================== 02 PULL-ONLY =================== */
+const psvg=$("pullSvg");
+const PJ={x:150,y:130}, PLEN=250;
+const pull={pos:0.5, wA:makeWire(), wB:makeWire()};
+let pArm,pWA,pWB,pLugA,pLugB,pHand;
+(function buildPull(){
+  /* fixed "humerus" mount */
+  mk(psvg,"rect",{x:24,y:104,width:128,height:52,rx:8,fill:C.navy,stroke:C.ink,"stroke-width":3});
+  mk(psvg,"text",{x:88,y:135,"text-anchor":"middle","font-family":"IBM Plex Mono, monospace","font-size":10,"letter-spacing":1,fill:C.cream},"FRAME");
+  mk(psvg,"circle",{cx:60,cy:74,r:6,fill:C.cream,stroke:C.ink,"stroke-width":3});
+  mk(psvg,"circle",{cx:60,cy:188,r:6,fill:C.cream,stroke:C.ink,"stroke-width":3});
+  pWA=mk(psvg,"path",{fill:"none","stroke-width":4,"stroke-linecap":"round"});
+  pWB=mk(psvg,"path",{fill:"none","stroke-width":4,"stroke-linecap":"round"});
+  pArm=mk(psvg,"g",{});
+  mk(pArm,"path",{d:"M150 118 L398 122 L398 138 L150 142 Z",fill:"#E4D8B8",stroke:C.ink,"stroke-width":3});
+  mk(pArm,"line",{x1:150,y1:130,x2:398,y2:130,stroke:C.gold,"stroke-width":1.5,"stroke-dasharray":"6 5"});
+  pLugA=mk(pArm,"circle",{cx:250,cy:116,r:5,fill:C.orange,stroke:C.ink,"stroke-width":2});
+  pLugB=mk(pArm,"circle",{cx:250,cy:144,r:5,fill:C.navy,stroke:C.ink,"stroke-width":2});
+  pHand=mk(pArm,"path",{d:"M398 118 q22 4 22 12 q0 8 -22 12",fill:"none",stroke:C.ink,"stroke-width":4,"stroke-linecap":"round"});
+  mk(psvg,"circle",{cx:PJ.x,cy:PJ.y,r:11,fill:C.cream,stroke:C.ink,"stroke-width":3.5});
+  mk(psvg,"line",{x1:PJ.x-7,y1:PJ.y,x2:PJ.x+7,y2:PJ.y,stroke:C.ink,"stroke-width":2});
+  mk(psvg,"line",{x1:PJ.x,y1:PJ.y-7,x2:PJ.x,y2:PJ.y+7,stroke:C.ink,"stroke-width":2});
+  mk(psvg,"text",{x:208,y:52,"font-family":"IBM Plex Mono, monospace","font-size":10,"letter-spacing":1.5,fill:C.orange},"WIRE A · FLEXOR");
+  mk(psvg,"text",{x:208,y:222,"font-family":"IBM Plex Mono, monospace","font-size":10,"letter-spacing":1.5,fill:C.navy},"WIRE B · EXTENSOR");
+})();
+let tgAOn=false,tgBOn=false;
+$("tgA").addEventListener("click",()=>{tgAOn=!tgAOn;$("tgA").setAttribute("aria-pressed",tgAOn);});
+$("tgB").addEventListener("click",()=>{tgBOn=!tgBOn;$("tgB").setAttribute("aria-pressed",tgBOn);});
+function pullTick(dt,now){
+  pull.wA.i=tgAOn?1:0; pull.wB.i=tgBOn?1:0;
+  stepWire(pull.wA,dt); stepWire(pull.wB,dt);
+  const fA=pull.wA.f, fB=pull.wB.f, drive=fA+fB;
+  if(drive>0.05){
+    pull.pos+=(fA/drive-pull.pos)*Math.min(1,3.5*dt*Math.min(1,drive*1.5));
+  }else{
+    pull.pos+=((0.42+0.05*Math.sin(now/650))-pull.pos)*Math.min(1,0.7*dt); /* limp dangle */
+  }
+  const ang=lerp(20,-20,pull.pos);
+  pArm.setAttribute("transform","rotate("+ang.toFixed(2)+" "+PJ.x+" "+PJ.y+")");
+  const ar=ang*D2R, c=Math.cos(ar), s=Math.sin(ar);
+  const W=(x,y)=>({x:PJ.x+(x-PJ.x)*c-(y-PJ.y)*s, y:PJ.y+(x-PJ.x)*s+(y-PJ.y)*c});
+  const la=W(250,116), lb=W(250,144);
+  pWA.setAttribute("d",zig({x:60,y:74},la,12,3+4*fA));
+  pWB.setAttribute("d",zig({x:60,y:188},lb,12,3+4*fB));
+  pWA.setAttribute("stroke",mixc(C.steel,C.orange,clamp((pull.wA.T-22)/100,0,1)));
+  pWB.setAttribute("stroke",mixc(C.steel,C.orange,clamp((pull.wB.T-22)/100,0,1)));
+  let st;
+  if(tgAOn&&tgBOn)st="A+B CO-CONTRACTION → RIGID";
+  else if(tgAOn)st="WIRE A HOT → FLEX ▲";
+  else if(tgBOn)st="WIRE B HOT → EXTEND ▼";
+  else st="SLACK — JOINT LIMP";
+  const el=$("pullState");
+  if(el.textContent!==st)el.textContent=st;
+}
+
+/* =================== 03 SAMPLE ARM =================== */
+const asvg=$("armSvg");
+const S={x:180,y:330}, L1=200, L2=170;
+const A1_MIN=-78, A1_MAX=12, A2_MIN=150, A2_MAX=18;  /* deg: stow→deploy */
+const wires={shA:makeWire(),shB:makeWire(),elA:makeWire(),elB:makeWire(),gr:makeWire()};
+const cmd={sh:0,el:0,gr:0};
+const arm={sh:0,el:0,gr:0};
+const st={attached:false,falling:false,vy:0};
+let gSh,gEl,gJawU,gJawD,pShA,pShB,pElA,pElB,pGr,gRock,ldEl,ldWr,ldRk;
+const rockHome={x:0,y:0}; const rock={x:0,y:0};
+(function buildArm(){
+  /* blueprint grid */
+  const defs=mk(asvg,"defs",{});
+  const pat=mk(defs,"pattern",{id:"bgrid",width:36,height:36,patternUnits:"userSpaceOnUse"});
+  mk(pat,"path",{d:"M36 0 H0 V36",fill:"none",stroke:"rgba(242,234,214,0.07)","stroke-width":1});
+  mk(asvg,"rect",{x:0,y:0,width:900,height:560,fill:C.navy2});
+  mk(asvg,"rect",{x:0,y:0,width:900,height:560,fill:"url(#bgrid)"});
+  /* ground */
+  mk(asvg,"line",{x1:0,y1:470,x2:900,y2:470,stroke:C.cream,"stroke-width":2.5});
+  for(let x=320;x<890;x+=22)mk(asvg,"line",{x1:x,y1:470,x2:x-12,y2:482,stroke:C.cream,"stroke-width":1.2,opacity:.5});
+  /* lander body */
+  const body=mk(asvg,"g",{});
+  mk(body,"rect",{x:60,y:380,width:240,height:96,rx:6,fill:"#20315E",stroke:C.cream,"stroke-width":2.5});
+  mk(body,"rect",{x:60,y:402,width:240,height:14,fill:C.gold,opacity:.9});
+  mk(body,"circle",{cx:108,cy:448,r:14,fill:"none",stroke:C.cream,"stroke-width":2});
+  mk(body,"text",{x:206,y:454,"font-family":"Archivo Black, sans-serif","font-size":17,fill:C.cream,"letter-spacing":2},"SMA-1");
+  mk(body,"path",{d:"M70 476 L46 506 M290 476 L314 506 M46 506 h20 M294 506 h20",stroke:C.cream,"stroke-width":3,fill:"none","stroke-linecap":"round"});
+  mk(body,"path",{d:"M168 380 L174 332 L186 332 L192 380 Z",fill:"#20315E",stroke:C.cream,"stroke-width":2.5});
+  /* wire anchors */
+  mk(asvg,"circle",{cx:100,cy:390,r:5,fill:C.gold,stroke:C.ink,"stroke-width":2});
+  mk(asvg,"circle",{cx:265,cy:390,r:5,fill:C.gold,stroke:C.ink,"stroke-width":2});
+  mk(asvg,"text",{x:84,y:412,"font-family":"IBM Plex Mono, monospace","font-size":9,fill:C.gold,"letter-spacing":1},"CH-1A");
+  mk(asvg,"text",{x:250,y:412,"font-family":"IBM Plex Mono, monospace","font-size":9,fill:C.gold,"letter-spacing":1},"CH-1B");
+  /* arm groups */
+  gSh=mk(asvg,"g",{});
+  mk(gSh,"path",{d:"M186 316 L374 320 L374 340 L186 344 Z",fill:"#22356A",stroke:C.cream,"stroke-width":2.5});
+  mk(gSh,"line",{x1:184,y1:330,x2:378,y2:330,stroke:C.gold,"stroke-width":1.2,"stroke-dasharray":"7 6",opacity:.8});
+  mk(gSh,"circle",{cx:236,cy:314,r:4,fill:C.gold,stroke:C.ink,"stroke-width":1.5});
+  mk(gSh,"circle",{cx:236,cy:346,r:4,fill:C.gold,stroke:C.ink,"stroke-width":1.5});
+  mk(gSh,"circle",{cx:298,cy:316,r:4,fill:C.gold,stroke:C.ink,"stroke-width":1.5});
+  mk(gSh,"circle",{cx:298,cy:344,r:4,fill:C.gold,stroke:C.ink,"stroke-width":1.5});
+  gEl=mk(gSh,"g",{});
+  mk(gEl,"path",{d:"M386 322 L546 326 L546 334 L386 338 Z",fill:"#22356A",stroke:C.cream,"stroke-width":2.5});
+  mk(gEl,"line",{x1:384,y1:330,x2:548,y2:330,stroke:C.gold,"stroke-width":1.2,"stroke-dasharray":"7 6",opacity:.8});
+  mk(gEl,"circle",{cx:424,cy:317,r:4,fill:C.gold,stroke:C.ink,"stroke-width":1.5});
+  mk(gEl,"circle",{cx:424,cy:343,r:4,fill:C.gold,stroke:C.ink,"stroke-width":1.5});
+  pGr=mk(gEl,"path",{fill:"none","stroke-width":2.5,"stroke-linecap":"round"});
+  gJawU=mk(gEl,"g",{});
+  mk(gJawU,"path",{d:"M550 326 L588 312 L596 320 L560 332 Z",fill:"#2A3F78",stroke:C.cream,"stroke-width":2});
+  gJawD=mk(gEl,"g",{});
+  mk(gJawD,"path",{d:"M550 334 L588 348 L596 340 L560 328 Z",fill:"#2A3F78",stroke:C.cream,"stroke-width":2});
+  mk(gEl,"circle",{cx:550,cy:330,r:7,fill:C.navy2,stroke:C.cream,"stroke-width":2.5});
+  /* elbow joint circle (in shoulder frame) */
+  mk(gSh,"circle",{cx:380,cy:330,r:10,fill:C.navy2,stroke:C.cream,"stroke-width":2.5});
+  mk(gSh,"line",{x1:373,y1:330,x2:387,y2:330,stroke:C.cream,"stroke-width":1.5});
+  mk(gSh,"line",{x1:380,y1:323,x2:380,y2:337,stroke:C.cream,"stroke-width":1.5});
+  /* wires (world coords, on top) */
+  pShA=mk(asvg,"path",{fill:"none","stroke-width":3.5,"stroke-linecap":"round"});
+  pShB=mk(asvg,"path",{fill:"none","stroke-width":3.5,"stroke-linecap":"round"});
+  pElA=mk(asvg,"path",{fill:"none","stroke-width":3,"stroke-linecap":"round"});
+  pElB=mk(asvg,"path",{fill:"none","stroke-width":3,"stroke-linecap":"round"});
+  /* shoulder joint */
+  mk(asvg,"circle",{cx:S.x,cy:S.y,r:13,fill:C.navy2,stroke:C.cream,"stroke-width":3});
+  mk(asvg,"line",{x1:S.x-9,y1:S.y,x2:S.x+9,y2:S.y,stroke:C.cream,"stroke-width":1.5});
+  mk(asvg,"line",{x1:S.x,y1:S.y-9,x2:S.x,y2:S.y+9,stroke:C.cream,"stroke-width":1.5});
+  /* rock */
+  gRock=mk(asvg,"g",{});
+  mk(gRock,"path",{d:"M-13 6 L-9 -8 L3 -12 L13 -4 L11 8 L-2 11 Z",fill:"#C44E22",stroke:C.cream,"stroke-width":2});
+  mk(gRock,"circle",{cx:-2,cy:0,r:2.2,fill:C.cream,opacity:.7});
+  /* compute reach pose for rock placement */
+  const a1=A1_MAX*D2R, a2=(A1_MAX+A2_MAX)*D2R;
+  const Ex=S.x+L1*Math.cos(a1), Ey=S.y+L1*Math.sin(a1);
+  rockHome.x=Ex+(L2+26)*Math.cos(a2); rockHome.y=459;
+  rock.x=rockHome.x; rock.y=rockHome.y;
+  /* callout labels + leaders */
+  function lbl(x,y,lines){
+    const g=mk(asvg,"g",{});
+    lines.forEach((t,i)=>mk(g,"text",{x:x,y:y+i*13,"font-family":"IBM Plex Mono, monospace","font-size":10,"letter-spacing":1.2,fill:C.cream,opacity:.92},t));
+    return g;
+  }
+  mk(asvg,"line",{x1:120,y1:118,x2:S.x,y2:S.y,stroke:C.gold,"stroke-width":1,"stroke-dasharray":"4 4",opacity:.7});
+  lbl(36,98,["SHOULDER PITCH","CH-1 ANTAGONIST PAIR"]);
+  ldEl=mk(asvg,"line",{stroke:C.gold,"stroke-width":1,"stroke-dasharray":"4 4",opacity:.7});
+  lbl(648,96,["ELBOW · CH-2 PAIR"]);
+  ldEl.setAttribute("x1",644);ldEl.setAttribute("y1",92);
+  ldWr=mk(asvg,"line",{stroke:C.gold,"stroke-width":1,"stroke-dasharray":"4 4",opacity:.7});
+  lbl(700,236,["END EFFECTOR","CH-3 + BIAS SPRING"]);
+  ldWr.setAttribute("x1",696);ldWr.setAttribute("y1",240);
+  ldRk=mk(asvg,"line",{stroke:C.gold,"stroke-width":1,"stroke-dasharray":"4 4",opacity:.7});
+  lbl(384,540,["SAMPLE TARGET"]);
+  ldRk.setAttribute("x1",500);ldRk.setAttribute("y1",535);
+  /* title block */
+  const tb=mk(asvg,"g",{});
+  mk(tb,"rect",{x:648,y:486,width:236,height:62,fill:"none",stroke:C.cream,"stroke-width":2});
+  mk(tb,"line",{x1:648,y1:506,x2:884,y2:506,stroke:C.cream,"stroke-width":1.5});
+  mk(tb,"text",{x:658,y:501,"font-family":"Archivo Black, sans-serif","font-size":11,"letter-spacing":1.5,fill:C.gold},"SAMPLE ACQUISITION ARM");
+  mk(tb,"text",{x:658,y:522,"font-family":"IBM Plex Mono, monospace","font-size":9,"letter-spacing":1,fill:C.cream},"DWG SMA-ARM-001 · REV C");
+  mk(tb,"text",{x:658,y:538,"font-family":"IBM Plex Mono, monospace","font-size":9,"letter-spacing":1,fill:C.cream},"DRIVE: NiTi Ø0.3mm × 5 CH");
+})();
+/* console wiring */
+const slSh=$("slSh"), slEl=$("slEl"), slGr=$("slGr");
+const logEl=$("armLog");
+let logT=0;
+function logc(msg,cls){
+  const d=document.createElement("div");
+  const tt=document.createElement("span");
+  tt.className="tt"; tt.textContent="T+"+logT.toFixed(1).padStart(5,"0");
+  d.appendChild(tt); d.appendChild(document.createTextNode(msg));
+  if(cls)d.classList.add(cls);
+  logEl.prepend(d);
+  while(logEl.children.length>9)logEl.removeChild(logEl.lastChild);
+}
+function setCmd(k,v){
+  cmd[k]=v/100;
+  if(k==="sh")slSh.value=v; else if(k==="el")slEl.value=v; else slGr.value=v;
+}
+const deploy={active:false,t:0,list:null,fired:0};
+function startSeq(list,name){
+  deploy.active=true; deploy.t=0; deploy.list=list; deploy.fired=0; logT=0;
+  $("btnDeploy").classList.add("live");
+  logc("── "+name+" ──","gd");
+}
+function endSeq(){deploy.active=false;$("btnDeploy").classList.remove("live");}
+function abortSeq(){
+  if(!deploy.active)return;
+  endSeq(); logc("MANUAL OVERRIDE — AUTO SEQUENCE ABORTED","or");
+}
+[slSh,slEl,slGr].forEach(sl=>sl.addEventListener("input",()=>{
+  abortSeq();
+  cmd.sh=slSh.value/100; cmd.el=slEl.value/100; cmd.gr=slGr.value/100;
+}));
+const ampOf=w=>(w.i*3.2).toFixed(1);
+const TL_DEPLOY=[
+  [0.0,()=>logc("AUTO SEQUENCE START — DEPLOY SAMPLE ARM","gd")],
+  [0.4,()=>{setCmd("sh",100);logc("CH-1A POWER ON · "+ampOf(wires.shA)+" A — HEATING…");}],
+  [1.5,()=>logc("CH-1A "+Math.round(wires.shA.T)+"°C — TRANSFORMING…")],
+  [2.5,()=>logc("CH-1A "+Math.round(wires.shA.T)+"°C — AUSTENITE ✓ SHOULDER DEPLOYED","gd")],
+  [2.7,()=>{setCmd("el",100);logc("CH-2A POWER ON — HEATING…");}],
+  [3.7,()=>logc("CH-2A "+Math.round(wires.elA.T)+"°C — ELBOW EXTENDING…")],
+  [4.9,()=>logc("CH-2A AUSTENITE ✓ — TARGET IN ENVELOPE","gd")],
+  [5.1,()=>{setCmd("gr",100);logc("CH-3 POWER ON — JAWS CLOSING…");}],
+  [6.5,()=>logc(st.attached?"GRIP CONFIRMED ✓ ~14 N — SAMPLE SECURED":"GRIP CLOSED — NO SAMPLE IN JAWS","gd")],
+  [6.9,()=>{setCmd("sh",-100);setCmd("el",-100);logc("CH-1B/2B POWER ON — ANTAGONISTS RETRACTING…");}],
+  [8.3,()=>logc("A-WIRES COOLING "+Math.round(wires.shA.T)+"°C… (RADIATIVE — THE SLOW PART)")],
+  [10.2,()=>{setCmd("sh",0);setCmd("el",0);logc("ALL CHANNELS OFF — MARTENSITE HOLDS POSE");}],
+  [10.8,()=>{logc("SEQUENCE COMPLETE ✓ ARM STOWED","gd");endSeq();}]
+];
+const TL_STOW=[
+  [0.0,()=>{setCmd("gr",0);setCmd("sh",-100);setCmd("el",-100);logc("RESTOW — JAWS RELEASED, ANTAGONISTS ON");}],
+  [3.8,()=>{setCmd("sh",0);setCmd("el",0);logc("CHANNELS OFF — STOWED");}],
+  [4.6,()=>{
+    st.attached=false;st.falling=false;
+    rock.x=rockHome.x;rock.y=rockHome.y;
+    logc("NEW SAMPLE PLACED AT TARGET SITE","gd");endSeq();
+  }]
+];
+$("btnDeploy").addEventListener("click",()=>startSeq(TL_DEPLOY,"DEPLOY SEQUENCE (RESTART)"));
+$("btnStow").addEventListener("click",()=>startSeq(TL_STOW,"RESTOW SEQUENCE"));
+/* readout cells */
+function rdUpdate(id,w){
+  const cell=$(id);
+  const t=cell.children[1], p=cell.children[2], bar=cell.children[3].firstChild;
+  const tv=Math.round(w.T)+"°C";
+  if(t.textContent!==tv)t.textContent=tv;
+  const pv=phaseName(w.f);
+  if(p.textContent!==pv)p.textContent=pv;
+  bar.style.transform="scaleX("+clamp((w.T-22)/165,0,1).toFixed(3)+")";
+}
+function armTick(dt,now){
+  /* currents */
+  wires.shA.i=Math.max(0,cmd.sh); wires.shB.i=Math.max(0,-cmd.sh);
+  wires.elA.i=Math.max(0,cmd.el); wires.elB.i=Math.max(0,-cmd.el);
+  wires.gr.i=cmd.gr;
+  for(const k in wires)stepWire(wires[k],dt);
+  /* joints (antagonistic balance) */
+  function joint(pos,fA,fB){
+    const drive=fA+fB;
+    if(drive>0.05)pos+=(fA/drive-pos)*Math.min(1,3.2*dt*Math.min(1,drive*1.6));
+    return pos;
+  }
+  arm.sh=joint(arm.sh,wires.shA.f,wires.shB.f);
+  arm.el=joint(arm.el,wires.elA.f,wires.elB.f);
+  arm.gr+=(wires.gr.f-arm.gr)*Math.min(1,3*dt);
+  /* timeline */
+  if(deploy.active){
+    deploy.t+=dt; logT=deploy.t;
+    while(deploy.fired<deploy.list.length&&deploy.list[deploy.fired][0]<=deploy.t){
+      deploy.list[deploy.fired][1](); deploy.fired++;
+    }
+  }
+  /* kinematics */
+  const a1d=lerp(A1_MIN,A1_MAX,arm.sh), a2d=lerp(A2_MIN,A2_MAX,arm.el);
+  const jaw=lerp(34,6,arm.gr);
+  gSh.setAttribute("transform","rotate("+a1d.toFixed(2)+" "+S.x+" "+S.y+")");
+  gEl.setAttribute("transform","rotate("+a2d.toFixed(2)+" 380 330)");
+  gJawU.setAttribute("transform","rotate("+(-jaw).toFixed(1)+" 550 330)");
+  gJawD.setAttribute("transform","rotate("+jaw.toFixed(1)+" 550 330)");
+  /* world transforms */
+  const a1=a1d*D2R, c1=Math.cos(a1), s1=Math.sin(a1);
+  const w1=(x,y)=>{const vx=x-S.x,vy=y-S.y;return{x:S.x+vx*c1-vy*s1,y:S.y+vx*s1+vy*c1};};
+  const a2=a2d*D2R, c2=Math.cos(a2), s2=Math.sin(a2);
+  const w2=(x,y)=>{const vx=x-380,vy=y-330;return w1(380+vx*c2-vy*s2,330+vx*s2+vy*c2);};
+  /* wires */
+  function setWire(p,w,A,B,segs){
+    p.setAttribute("d",zig(A,B,segs,2.5+3.5*w.f));
+    const h=clamp((w.T-22)/140,0,1);
+    p.setAttribute("stroke",mixc("#9AA6C4",C.orange2,h));
+    p.style.filter=h>0.25?"drop-shadow(0 0 "+(6*h).toFixed(1)+"px rgba(233,110,46,"+(0.85*h).toFixed(2)+"))":"none";
+  }
+  setWire(pShA,wires.shA,{x:100,y:390},w1(236,314),14);
+  setWire(pShB,wires.shB,{x:265,y:390},w1(236,346),14);
+  setWire(pElA,wires.elA,w1(298,316),w2(424,317),12);
+  setWire(pElB,wires.elB,w1(298,344),w2(424,343),12);
+  /* gripper wire lives in elbow-local coords */
+  pGr.setAttribute("d",zig({x:404,y:321},{x:534,y:321},16,2+2.5*wires.gr.f));
+  const gh=clamp((wires.gr.T-22)/140,0,1);
+  pGr.setAttribute("stroke",mixc("#9AA6C4",C.orange2,gh));
+  /* rock + grab logic */
+  const jawC=w2(576,330);
+  if(st.attached){rock.x=jawC.x;rock.y=jawC.y;}
+  else if(st.falling){
+    st.vy+=900*dt; rock.y+=st.vy*dt;
+    const floor=(rock.x<310)?368:459;
+    if(rock.y>=floor){rock.y=floor;st.falling=false;st.vy=0;}
+  }
+  if(!st.attached&&arm.gr>0.62&&Math.hypot(jawC.x-rock.x,jawC.y-rock.y)<32){
+    st.attached=true;st.falling=false;
+    logc("SAMPLE CAPTURED ✓","gd");
+  }
+  if(st.attached&&arm.gr<0.45){
+    st.attached=false;st.falling=true;st.vy=0;
+    logc("SAMPLE RELEASED");
+  }
+  gRock.setAttribute("transform","translate("+rock.x.toFixed(1)+" "+rock.y.toFixed(1)+")");
+  /* leaders */
+  const E=w1(380,330), Wr=w2(550,330);
+  ldEl.setAttribute("x2",E.x);ldEl.setAttribute("y2",E.y);
+  ldWr.setAttribute("x2",Wr.x);ldWr.setAttribute("y2",Wr.y);
+  ldRk.setAttribute("x2",rock.x);ldRk.setAttribute("y2",rock.y-12);
+  /* telemetry */
+  rdUpdate("rdShA",wires.shA); rdUpdate("rdShB",wires.shB);
+  rdUpdate("rdElA",wires.elA); rdUpdate("rdElB",wires.elB);
+  rdUpdate("rdGr",wires.gr);
+  if(!deploy.active)logT+=dt;
+}
+logc("STANDBY — ALL CHANNELS COLD · MANUAL CONTROL LIVE");
+
+/* =================== 04 STROKE MULTIPLICATION =================== */
+const ssvg=$("strokeSvg");
+const stroke={act:0,tgt:0};
+let sWire1,sLoad1,sPtr1,sCoil,sLoad2,sPtr2,sBeam,sWire3,sPtr3;
+(function buildStroke(){
+  const stations=[
+    {x:150,name:"STRAIGHT WIRE",force:"●●●●●",strokeR:"●",note:"Δ 4.5% · BRUTAL PULL"},
+    {x:450,name:"COILED SPRING",force:"●●●",strokeR:"●●●",note:"Δ ~50% · BALANCED"},
+    {x:740,name:"LEVER LINKAGE",force:"●",strokeR:"●●●●●",note:"Δ ×10 · FORCE ÷10"}
+  ];
+  stations.forEach(s=>{
+    mk(ssvg,"text",{x:s.x,y:30,"text-anchor":"middle","font-family":"Archivo Black, sans-serif","font-size":15,fill:C.navy,"letter-spacing":1},s.name);
+    mk(ssvg,"text",{x:s.x,y:330,"text-anchor":"middle","font-family":"IBM Plex Mono, monospace","font-size":10,"letter-spacing":1,fill:C.ink},"FORCE "+s.force+"  STROKE "+s.strokeR);
+    mk(ssvg,"text",{x:s.x,y:346,"text-anchor":"middle","font-family":"IBM Plex Mono, monospace","font-size":9,"letter-spacing":1,fill:C.orange},s.note);
+  });
+  /* ceiling hatch st.1 & 2 */
+  [150,450].forEach(x=>{
+    mk(ssvg,"line",{x1:x-46,y1:50,x2:x+46,y2:50,stroke:C.ink,"stroke-width":4});
+    for(let h=x-42;h<x+46;h+=11)mk(ssvg,"line",{x1:h,y1:50,x2:h-8,y2:40,stroke:C.ink,"stroke-width":1.5});
+  });
+  /* station 1: straight wire */
+  sWire1=mk(ssvg,"line",{x1:150,y1:50,x2:150,y2:200,stroke:C.steel,"stroke-width":7,"stroke-linecap":"round"});
+  sLoad1=mk(ssvg,"g",{});
+  mk(sLoad1,"rect",{x:-34,y:0,width:68,height:38,fill:C.navy,stroke:C.ink,"stroke-width":3});
+  mk(sLoad1,"text",{x:0,y:25,"text-anchor":"middle","font-family":"Archivo Black, sans-serif","font-size":14,fill:C.cream},"10 kg");
+  /* ruler st.1 */
+  for(let y=190;y<=210;y+=2){
+    const maj=(y-190)%10===0;
+    mk(ssvg,"line",{x1:196,y1:y,x2:196+(maj?14:8),y2:y,stroke:C.ink,"stroke-width":maj?1.8:1});
+  }
+  mk(ssvg,"line",{x1:196,y1:188,x2:196,y2:212,stroke:C.ink,"stroke-width":2});
+  sPtr1=mk(ssvg,"path",{d:"M222 200 l-10 -5 v10 Z",fill:C.orange});
+  /* station 2: coil */
+  sCoil=mk(ssvg,"path",{fill:"none",stroke:C.steel,"stroke-width":5,"stroke-linecap":"round","stroke-linejoin":"round"});
+  sLoad2=mk(ssvg,"g",{});
+  mk(sLoad2,"rect",{x:-26,y:0,width:52,height:30,fill:C.navy,stroke:C.ink,"stroke-width":3});
+  mk(sLoad2,"text",{x:0,y:21,"text-anchor":"middle","font-family":"Archivo Black, sans-serif","font-size":12,fill:C.cream},"1 kg");
+  for(let y=125;y<=235;y+=5){
+    const maj=(y-125)%25===0;
+    mk(ssvg,"line",{x1:506,y1:y,x2:506+(maj?14:8),y2:y,stroke:C.ink,"stroke-width":maj?1.8:1});
+  }
+  mk(ssvg,"line",{x1:506,y1:122,x2:506,y2:238,stroke:C.ink,"stroke-width":2});
+  sPtr2=mk(ssvg,"path",{d:"M532 130 l-10 -5 v10 Z",fill:C.orange});
+  /* station 3: lever */
+  const P3={x:700,y:96};
+  mk(ssvg,"path",{d:"M"+(P3.x-16)+" "+(P3.y+18)+" L"+P3.x+" "+P3.y+" L"+(P3.x+16)+" "+(P3.y+18)+" Z",fill:C.navy,stroke:C.ink,"stroke-width":2.5});
+  mk(ssvg,"line",{x1:P3.x-30,y1:P3.y+18,x2:P3.x+30,y2:P3.y+18,stroke:C.ink,"stroke-width":3});
+  /* anchor above lug */
+  mk(ssvg,"line",{x1:660,y1:36,x2:704,y2:36,stroke:C.ink,"stroke-width":4});
+  for(let h=662;h<704;h+=10)mk(ssvg,"line",{x1:h,y1:36,x2:h-8,y2:27,stroke:C.ink,"stroke-width":1.5});
+  sWire3=mk(ssvg,"line",{stroke:C.steel,"stroke-width":5,"stroke-linecap":"round"});
+  sBeam=mk(ssvg,"g",{});
+  mk(sBeam,"path",{d:"M"+(P3.x-22)+" "+(P3.y-4)+" L"+(P3.x+178)+" "+(P3.y-3)+" L"+(P3.x+178)+" "+(P3.y+3)+" L"+(P3.x-22)+" "+(P3.y+4)+" Z",fill:"#E4D8B8",stroke:C.ink,"stroke-width":2.5});
+  mk(sBeam,"circle",{cx:P3.x-18,cy:P3.y,r:4,fill:C.orange,stroke:C.ink,"stroke-width":1.5});
+  sPtr3=mk(sBeam,"path",{d:"M"+(P3.x+178)+" "+(P3.y-7)+" l14 7 l-14 7 Z",fill:C.orange,stroke:C.ink,"stroke-width":1.5});
+  mk(ssvg,"circle",{cx:P3.x,cy:P3.y,r:7,fill:C.cream,stroke:C.ink,"stroke-width":3});
+  /* engraved arc scale for lever tip */
+  for(let b=26;b<=64;b+=4){
+    const maj=(b-26)%12===0, r1=192, r2=r1+(maj?14:8);
+    const x1=P3.x+r1*Math.cos(b*D2R), y1=P3.y+r1*Math.sin(b*D2R);
+    const x2=P3.x+r2*Math.cos(b*D2R), y2=P3.y+r2*Math.sin(b*D2R);
+    mk(ssvg,"line",{x1:x1,y1:y1,x2:x2,y2:y2,stroke:C.ink,"stroke-width":maj?1.8:1});
+  }
+  ssvg._P3=P3;
+})();
+$("slStroke").addEventListener("input",()=>{stroke.tgt=$("slStroke").value/100;});
+function strokeTick(dt){
+  stroke.act+=(stroke.tgt-stroke.act)*Math.min(1,6*dt);
+  const f=stroke.act, hot=mixc(C.steel,C.orange,f);
+  $("strokeVal").textContent=Math.round(f*100)+"%";
+  /* st1: 150px wire, 4.5% = 6.75px */
+  const y1=50+150*(1-0.045*f);
+  sWire1.setAttribute("y2",y1); sWire1.setAttribute("stroke",hot);
+  sLoad1.setAttribute("transform","translate(150 "+y1.toFixed(1)+")");
+  sPtr1.setAttribute("transform","translate(0 "+(y1-200).toFixed(1)+")");
+  /* st2: coil 180 → 105 */
+  const cl=180-75*f, yb=50+cl;
+  sCoil.setAttribute("d",zig({x:450,y:50},{x:450,y:yb},18,15+7*f));
+  sCoil.setAttribute("stroke",hot);
+  sLoad2.setAttribute("transform","translate(450 "+yb.toFixed(1)+")");
+  sPtr2.setAttribute("transform","translate(0 "+(yb-130).toFixed(1)+")");
+  /* st3: lever */
+  const P3=ssvg._P3, b=lerp(28,62,f);
+  sBeam.setAttribute("transform","rotate("+b.toFixed(2)+" "+P3.x+" "+P3.y+")");
+  const br=b*D2R, lx=P3.x-18*Math.cos(br), ly=P3.y-18*Math.sin(br);
+  sWire3.setAttribute("x1",682);sWire3.setAttribute("y1",36);
+  sWire3.setAttribute("x2",lx.toFixed(1));sWire3.setAttribute("y2",ly.toFixed(1));
+  sWire3.setAttribute("stroke",hot);
+}
+
+/* =================== 06 PATCHES =================== */
+(function buildPatches(){
+  const N=C.navy,O=C.orange,G=C.gold,K=C.cream;
+  const P=[
+    {title:"AUTOFOCUS DRIVE",sub:"SMA wire steers phone-camera lenses — silent, micron-precise",bg:K,ring:N,off:"PHONE OPTICS · OIS",
+     icon:'<rect x="74" y="76" width="52" height="48" rx="7" fill="none" stroke="'+N+'" stroke-width="4"/><circle cx="100" cy="100" r="14" fill="none" stroke="'+O+'" stroke-width="4"/><circle cx="100" cy="100" r="4" fill="'+O+'"/><path d="M82 68 v8 M118 68 v8" stroke="'+N+'" stroke-width="4"/>'},
+    {title:"PROSTHETIC HAND",sub:"Tendon-style wire bundles flex fingers with muscle-like motion",bg:K,ring:O,off:"BIONIC TENDONS",
+     icon:'<path d="M82 128 v-36 m12 36 v-46 m12 46 v-50 m12 50 v-42" stroke="'+N+'" stroke-width="6" stroke-linecap="round"/><path d="M76 128 h54 v-12" fill="none" stroke="'+O+'" stroke-width="5" stroke-linecap="round"/>'},
+    {title:"MICRO-GRIPPER",sub:"Sub-millimetre SMA jaws for surgery and micro-assembly",bg:K,ring:N,off:"MEMS SCALE",
+     icon:'<path d="M76 74 L100 104 L124 74" fill="none" stroke="'+N+'" stroke-width="5" stroke-linecap="round"/><path d="M84 70 L100 92 L116 70" fill="none" stroke="'+O+'" stroke-width="4" stroke-linecap="round"/><circle cx="100" cy="116" r="5" fill="'+O+'"/>'},
+    {title:"PIN-PULLER RELEASE",sub:"SMA pin-pullers deploy satellite booms & panels — no pyrotechnics",bg:K,ring:G,flight:true,off:"FLIGHT HERITAGE",
+     icon:'<rect x="84" y="86" width="32" height="28" fill="none" stroke="'+N+'" stroke-width="4"/><path d="M60 92 h18 m44 0 h18 M60 108 h18 m44 0 h18" stroke="'+O+'" stroke-width="4"/><path d="M64 84 v32 m72 -32 v32" stroke="'+N+'" stroke-width="4"/>'},
+    {title:"JET CHEVRONS",sub:"Engine-nozzle chevrons that morph with altitude to cut noise",bg:K,ring:N,off:"VARIABLE GEOMETRY",
+     icon:'<circle cx="100" cy="98" r="26" fill="none" stroke="'+N+'" stroke-width="4"/><path d="M74 110 l9 12 l8 -12 l9 12 l8 -12 l9 12 l9 -12" fill="none" stroke="'+O+'" stroke-width="4" stroke-linejoin="round"/>'},
+    {title:"HEART STENTS",sub:"Superelastic mesh crushed into a catheter, springs open in the artery",bg:K,ring:O,off:"SUPERELASTIC",
+     icon:'<path d="M72 84 h56 M72 116 h56" stroke="'+N+'" stroke-width="4"/><path d="M76 84 l12 32 l12 -32 l12 32 l12 -32 M76 116 l12 -32 l12 32 l12 -32 l12 32" fill="none" stroke="'+O+'" stroke-width="3"/>'}
+  ];
+  const host=$("patches");
+  P.forEach((p,i)=>{
+    const d=document.createElement("div");
+    d.className="patch rv"; d.style.setProperty("--i",String(i%3+2));
+    d.innerHTML='<svg viewBox="0 0 200 200">'+
+      '<defs><path id="pr'+i+'" d="M100 100 m-74 0 a74 74 0 1 1 148 0 a74 74 0 1 1 -148 0"/></defs>'+
+      '<circle cx="100" cy="100" r="97" fill="'+N+'"/>'+
+      '<circle cx="100" cy="100" r="97" fill="none" stroke="'+p.ring+'" stroke-width="5"/>'+
+      '<circle cx="100" cy="100" r="58" fill="'+p.bg+'" stroke="'+p.ring+'" stroke-width="3"/>'+
+      '<text font-family="IBM Plex Mono, monospace" font-size="12" letter-spacing="2.5" fill="'+K+'" font-weight="700">'+
+      '<textPath href="#pr'+i+'" startOffset="25%" text-anchor="middle">★ '+p.title+' ★</textPath></text>'+
+      '<text font-family="IBM Plex Mono, monospace" font-size="9.5" letter-spacing="2" fill="'+G+'">'+
+      '<textPath href="#pr'+i+'" startOffset="75%" text-anchor="middle">'+p.off+'</textPath></text>'+
+      p.icon+'</svg>'+
+      '<h4>'+p.title+'</h4><p>'+p.sub+'</p>'+
+      (p.flight?'<span class="flight">★ FLOWN IN SPACE ★</span>':'');
+    host.appendChild(d);
+  });
+})();
+
+/* =================== main loop =================== */
+let last=performance.now();
+function loop(now){
+  const dt=Math.min(0.05,(now-last)/1000); last=now;
+  gaugeTick(dt);
+  pullTick(dt,now);
+  armTick(dt,now);
+  strokeTick(dt);
+  rollTick(now);
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>

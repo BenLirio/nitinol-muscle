@@ -1,0 +1,1226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ACTUATOR TRIALS: METAL MUSCLE — NiTi Test Cell 07</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Oswald:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0c0d0f;
+  --bg2:#101113;
+  --panel:#121316;
+  --panel2:#0e0f11;
+  --inset:#0a0b0c;
+  --line:#26282c;
+  --line2:#1a1c1f;
+  --amber:#ffb000;
+  --amber-hi:#ffd24d;
+  --amber-dim:#7a5500;
+  --cyan:#3fd2e0;
+  --cyan-dim:#15535b;
+  --red:#ff4a2e;
+  --green:#54d66a;
+  --txt:#d6d2c4;
+  --mut:#84816f;
+  --mut2:#56544a;
+  --mono:"IBM Plex Mono",ui-monospace,"Cascadia Mono",Menlo,Consolas,monospace;
+  --disp:"Archivo Black","Arial Black","Helvetica Neue",sans-serif;
+  --cond:"Oswald","Arial Narrow",Impact,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--bg);
+  color:var(--txt);
+  font-family:var(--mono);
+  font-size:14px;
+  line-height:1.55;
+  overflow-x:hidden;
+}
+/* instrument grid + scanline + vignette overlays */
+body::before{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    linear-gradient(rgba(255,176,0,.022) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,176,0,.022) 1px,transparent 1px);
+  background-size:52px 52px;
+}
+body::after{
+  content:"";position:fixed;inset:0;z-index:90;pointer-events:none;
+  background:
+    repeating-linear-gradient(0deg,rgba(0,0,0,.13) 0 1px,transparent 1px 3px),
+    radial-gradient(ellipse 120% 90% at 50% 40%,transparent 55%,rgba(0,0,0,.5) 100%);
+}
+::selection{background:var(--amber);color:#000;}
+.wrap{max-width:1180px;margin:0 auto;padding:0 22px;position:relative;z-index:1;}
+
+/* ---------- generic instrument bits ---------- */
+.stripe{
+  height:7px;
+  background:repeating-linear-gradient(-45deg,var(--amber) 0 11px,#141414 11px 22px);
+  opacity:.85;
+}
+.led{
+  display:inline-block;width:8px;height:8px;border-radius:50%;
+  background:var(--green);box-shadow:0 0 6px var(--green);
+  vertical-align:1px;margin-right:7px;
+}
+.led.amber{background:var(--amber);box-shadow:0 0 6px var(--amber);}
+.led.red{background:var(--red);box-shadow:0 0 6px var(--red);}
+.led.blink{animation:ledblink 1.4s steps(1) infinite;}
+@keyframes ledblink{0%,55%{opacity:1}56%,70%{opacity:.18}71%,100%{opacity:1}}
+.barcode{
+  display:inline-block;height:16px;width:74px;vertical-align:-3px;
+  background:repeating-linear-gradient(90deg,
+    var(--mut) 0 1px,transparent 1px 3px,
+    var(--mut) 3px 6px,transparent 6px 7px,
+    var(--mut) 7px 8px,transparent 8px 12px);
+  opacity:.7;
+}
+.tag{
+  font-size:10px;letter-spacing:.14em;color:var(--mut);
+  text-transform:uppercase;
+}
+.num{font-variant-numeric:tabular-nums;}
+
+/* panels with corner ticks + screws */
+.mod{
+  position:relative;
+  border:1px solid var(--line);
+  background:linear-gradient(180deg,var(--panel),var(--panel2));
+  margin:30px 0;
+}
+.mod::before,.mod::after{
+  content:"";position:absolute;width:13px;height:13px;pointer-events:none;z-index:2;
+}
+.mod::before{
+  top:-1px;left:-1px;
+  border-top:2px solid var(--amber);border-left:2px solid var(--amber);
+}
+.mod::after{
+  bottom:-1px;right:-1px;
+  border-bottom:2px solid var(--amber);border-right:2px solid var(--amber);
+}
+.screw{
+  position:absolute;width:9px;height:9px;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,#3a3d43,#17181b 70%);
+  border:1px solid #2e3137;z-index:3;
+}
+.screw::after{
+  content:"";position:absolute;left:1px;right:1px;top:50%;height:1px;
+  background:#0a0a0a;transform:rotate(38deg);
+}
+.screw.tl{top:5px;left:5px;}  .screw.tr{top:5px;right:5px;}
+.screw.bl{bottom:5px;left:5px;}  .screw.br{bottom:5px;right:5px;}
+
+.mod-head{
+  display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+  padding:11px 18px 10px 26px;
+  border-bottom:1px solid var(--line);
+  background:rgba(255,176,0,.03);
+}
+.mod-no{
+  font-family:var(--cond);font-weight:700;font-size:13px;letter-spacing:.18em;
+  color:#000;background:var(--amber);padding:1px 9px 0;
+}
+.mod-title{
+  font-family:var(--cond);font-weight:600;font-size:17px;
+  letter-spacing:.22em;text-transform:uppercase;color:var(--txt);
+}
+.mod-head .right{margin-left:auto;display:flex;align-items:center;gap:12px;}
+.mod-body{padding:20px 22px 24px;}
+@media(max-width:560px){.mod-body{padding:16px 13px 18px;}}
+
+.caption{
+  font-size:12px;color:var(--mut);max-width:760px;margin-top:14px;
+  border-left:2px solid var(--amber-dim);padding-left:12px;
+}
+.caption b{color:var(--txt);font-weight:600;}
+.caption i{color:var(--amber);font-style:normal;}
+
+/* controls */
+.ctl-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.slider-block{margin:13px 0;}
+.slider-block .lab{
+  display:flex;justify-content:space-between;align-items:baseline;
+  font-size:11px;letter-spacing:.12em;margin-bottom:3px;
+}
+.slider-block .lab .v{color:var(--amber);font-weight:600;font-size:13px;}
+input[type=range]{
+  -webkit-appearance:none;appearance:none;width:100%;height:26px;
+  background:transparent;cursor:pointer;touch-action:none;
+}
+input[type=range]::-webkit-slider-runnable-track{
+  height:4px;background:#222428;border:1px solid #2e3035;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;appearance:none;width:13px;height:22px;margin-top:-10px;
+  background:linear-gradient(180deg,var(--amber-hi),var(--amber));
+  border:1px solid #000;box-shadow:0 0 0 1px #3a3325, 0 2px 5px rgba(0,0,0,.6);
+}
+input[type=range]::-moz-range-track{height:4px;background:#222428;border:1px solid #2e3035;}
+input[type=range]::-moz-range-thumb{
+  width:13px;height:22px;border-radius:0;
+  background:linear-gradient(180deg,var(--amber-hi),var(--amber));
+  border:1px solid #000;
+}
+input[type=range].cy::-webkit-slider-thumb{background:linear-gradient(180deg,#9ee9f0,var(--cyan));}
+input[type=range].cy::-moz-range-thumb{background:linear-gradient(180deg,#9ee9f0,var(--cyan));}
+.ticks{
+  height:5px;margin:-7px 1px 0;
+  background:repeating-linear-gradient(90deg,var(--mut2) 0 1px,transparent 1px 10%);
+  opacity:.6;
+}
+button{
+  font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--amber);
+  background:#17150d;border:1px solid var(--amber-dim);
+  padding:8px 14px;cursor:pointer;position:relative;
+  transition:background .15s,color .15s,box-shadow .15s;
+}
+button:hover{background:#241d08;box-shadow:0 0 10px rgba(255,176,0,.18);}
+button:active{transform:translateY(1px);}
+button.on{background:var(--amber);color:#000;box-shadow:0 0 14px rgba(255,176,0,.4);}
+button.ghost{color:var(--mut);border-color:var(--line);}
+button.ghost:hover{color:var(--txt);box-shadow:none;background:#1a1c1f;}
+
+/* readout chips */
+.ro{
+  display:inline-flex;align-items:baseline;gap:7px;
+  background:var(--inset);border:1px solid var(--line2);
+  padding:5px 10px;font-size:11px;color:var(--mut);
+  letter-spacing:.08em;
+}
+.ro b{color:var(--txt);font-weight:600;font-size:13px;font-variant-numeric:tabular-nums;}
+.ro b.am{color:var(--amber);} .ro b.cy{color:var(--cyan);} .ro b.rd{color:var(--red);}
+.phase-chip{
+  font-size:10px;font-weight:700;letter-spacing:.1em;padding:1px 6px;
+  border:1px solid;font-variant-numeric:tabular-nums;
+}
+.phase-chip.mart{color:var(--cyan);border-color:var(--cyan-dim);background:rgba(63,210,224,.06);}
+.phase-chip.aust{color:var(--amber);border-color:var(--amber-dim);background:rgba(255,176,0,.08);}
+.phase-chip.trans{color:var(--txt);border-color:var(--mut2);}
+
+canvas{display:block;width:100%;touch-action:pan-y;}
+.scope-frame,.svg-frame{
+  background:var(--inset);border:1px solid var(--line);position:relative;
+}
+.svg-frame svg{display:block;width:100%;height:auto;}
+.frame-label{
+  position:absolute;top:6px;left:9px;font-size:9px;letter-spacing:.18em;
+  color:var(--mut2);text-transform:uppercase;pointer-events:none;z-index:2;
+}
+.frame-label.r{left:auto;right:9px;}
+
+/* ---------- header ---------- */
+header{position:relative;z-index:1;border-bottom:1px solid var(--line);}
+.hd-top{
+  display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;
+  padding:10px 0 9px;font-size:10px;letter-spacing:.16em;color:var(--mut);
+  text-transform:uppercase;border-bottom:1px solid var(--line2);
+}
+.hd-main{padding:38px 0 30px;display:grid;grid-template-columns:1fr auto;gap:22px;align-items:end;}
+@media(max-width:760px){.hd-main{grid-template-columns:1fr;}}
+.hd-kicker{
+  font-family:var(--cond);font-weight:600;letter-spacing:.42em;font-size:14px;
+  color:var(--amber);text-transform:uppercase;margin-bottom:8px;
+}
+h1{
+  font-family:var(--disp);font-weight:400;
+  font-size:clamp(46px,9.5vw,118px);
+  line-height:.88;letter-spacing:-.01em;color:var(--txt);
+  text-transform:uppercase;
+}
+h1 .ol{
+  color:transparent;-webkit-text-stroke:2px var(--amber);
+}
+.hd-sub{
+  margin-top:16px;max-width:620px;font-size:12.5px;color:var(--mut);
+}
+.hd-sub b{color:var(--txt);}
+.spec-plate{
+  border:1px solid var(--line);background:var(--panel2);
+  padding:13px 16px;font-size:11px;line-height:1.9;min-width:250px;
+  position:relative;
+}
+.spec-plate .k{color:var(--mut2);display:inline-block;width:92px;letter-spacing:.08em;}
+.spec-plate .v{color:var(--txt);}
+.spec-plate .v.am{color:var(--amber);}
+
+/* ---------- module 01 bench ---------- */
+.bench-grid{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);gap:18px;}
+@media(max-width:860px){.bench-grid{grid-template-columns:1fr;}}
+.ch-panel{
+  border:1px solid var(--line);background:var(--inset);padding:13px 15px 11px;
+  margin-bottom:12px;position:relative;
+}
+.ch-panel .ch-id{
+  position:absolute;top:-1px;right:-1px;font-family:var(--cond);font-weight:700;
+  font-size:11px;letter-spacing:.2em;padding:2px 8px 1px;color:#000;
+}
+.ch-panel.a .ch-id{background:var(--amber);}
+.ch-panel.b .ch-id{background:var(--cyan);}
+.ch-ro-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px;}
+.bench-btns{display:flex;gap:9px;flex-wrap:wrap;margin:4px 0 12px;}
+.stiff-block .lab{
+  display:flex;justify-content:space-between;font-size:10px;
+  letter-spacing:.14em;color:var(--mut);margin-bottom:5px;text-transform:uppercase;
+}
+.meter{height:10px;background:var(--inset);border:1px solid var(--line);position:relative;overflow:hidden;}
+.meter>i{
+  position:absolute;inset:0;transform-origin:left;transform:scaleX(0);
+  background:repeating-linear-gradient(90deg,var(--amber) 0 6px,transparent 6px 9px);
+}
+.scope-wrap{margin-top:18px;}
+.scope-head{
+  display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+  font-size:10px;letter-spacing:.16em;color:var(--mut);text-transform:uppercase;
+  margin-bottom:7px;
+}
+.scope-head .leg{display:flex;align-items:center;gap:6px;}
+.leg i{display:inline-block;width:14px;height:2px;}
+
+/* ---------- module 02 specimen ---------- */
+.spec-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px;align-items:start;}
+@media(max-width:680px){.spec-grid{grid-template-columns:1fr;}}
+.fact-list{font-size:12px;color:var(--mut);}
+.fact-list li{
+  list-style:none;padding:8px 0 8px 18px;border-bottom:1px dashed var(--line2);
+  position:relative;
+}
+.fact-list li::before{
+  content:"▸";position:absolute;left:0;color:var(--amber);font-size:11px;
+}
+.fact-list b{color:var(--txt);}
+.dial-row{display:flex;gap:16px;align-items:center;margin-top:13px;flex-wrap:wrap;}
+.dial-row svg{width:128px;flex:none;}
+.dial-ctl{flex:1;min-width:160px;}
+
+/* ---------- module 03 stroke ---------- */
+.trial-bars{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px;}
+@media(max-width:680px){.trial-bars{grid-template-columns:1fr;}}
+.tb{border:1px solid var(--line2);background:var(--inset);padding:10px 12px;font-size:10px;}
+.tb .t{letter-spacing:.16em;color:var(--txt);text-transform:uppercase;margin-bottom:7px;font-weight:600;}
+.tb .row{display:flex;align-items:center;gap:8px;margin:5px 0;}
+.tb .row .k{width:52px;color:var(--mut2);letter-spacing:.1em;}
+.tb .bar{flex:1;height:8px;background:#16171a;border:1px solid var(--line2);overflow:hidden;}
+.tb .bar>i{display:block;height:100%;transform-origin:left;transform:scaleX(0);background:var(--amber);}
+.tb .bar.f>i{background:var(--cyan);}
+.tb .val{width:74px;text-align:right;color:var(--txt);font-variant-numeric:tabular-nums;}
+
+/* ---------- module 04 bandwidth ---------- */
+.bw-grid{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:18px;}
+@media(max-width:760px){.bw-grid{grid-template-columns:1fr;}}
+.verdict-stamp{
+  display:inline-block;font-family:var(--cond);font-weight:700;font-size:20px;
+  letter-spacing:.3em;padding:3px 14px 1px;border:2px solid var(--green);
+  color:var(--green);transform:rotate(-3deg);text-transform:uppercase;
+}
+.verdict-stamp.warn{border-color:var(--amber);color:var(--amber);}
+.verdict-stamp.fail{border-color:var(--red);color:var(--red);}
+
+/* ---------- module 05 table ---------- */
+.tbl-scroll{overflow-x:auto;}
+table{border-collapse:collapse;width:100%;min-width:640px;font-size:12px;}
+th,td{border:1px solid var(--line);padding:9px 12px;text-align:left;vertical-align:top;}
+thead th{
+  font-family:var(--cond);font-weight:600;letter-spacing:.18em;font-size:12px;
+  text-transform:uppercase;color:var(--amber);background:rgba(255,176,0,.05);
+}
+td.rowk{color:var(--mut);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;white-space:nowrap;}
+td .big{font-size:15px;font-weight:600;color:var(--txt);font-variant-numeric:tabular-nums;}
+td.niti{background:rgba(255,176,0,.045);}
+td small{color:var(--mut);display:block;font-size:10.5px;margin-top:2px;}
+.verdicts{display:flex;flex-wrap:wrap;gap:11px;margin-top:18px;}
+.vd{
+  border:1px solid var(--line);background:var(--inset);padding:9px 12px;
+  font-size:10px;letter-spacing:.1em;display:flex;align-items:center;gap:10px;
+}
+.vd .st{
+  font-family:var(--cond);font-weight:700;font-size:13px;letter-spacing:.2em;
+  border:2px solid;padding:0 7px;transform:rotate(-4deg);
+}
+.vd .st.p{color:var(--green);border-color:var(--green);}
+.vd .st.f{color:var(--red);border-color:var(--red);}
+.vd .st.c{color:var(--amber);border-color:var(--amber);}
+
+/* ---------- module 06 log ---------- */
+.log{font-size:12px;}
+.log-entry{
+  display:grid;grid-template-columns:148px 1fr auto;gap:14px;
+  padding:13px 4px;border-bottom:1px dashed var(--line2);align-items:start;
+}
+@media(max-width:640px){.log-entry{grid-template-columns:1fr;gap:4px;}}
+.log-entry .ts{color:var(--mut2);font-size:10.5px;letter-spacing:.08em;line-height:1.8;}
+.log-entry .ti{color:var(--amber);font-weight:600;letter-spacing:.06em;}
+.log-entry .de{color:var(--mut);font-size:11.5px;margin-top:3px;max-width:640px;}
+.log-entry .stat{
+  font-size:9.5px;font-weight:700;letter-spacing:.18em;padding:3px 8px;
+  border:1px solid var(--green);color:var(--green);white-space:nowrap;
+}
+.log-entry .stat.tr{border-color:var(--cyan);color:var(--cyan);}
+.cursor{display:inline-block;width:8px;height:13px;background:var(--amber);vertical-align:-2px;animation:curblink 1s steps(1) infinite;}
+@keyframes curblink{0%,49%{opacity:1}50%,100%{opacity:0}}
+
+footer{
+  border-top:1px solid var(--line);margin-top:44px;padding:24px 0 60px;
+  font-size:10.5px;color:var(--mut2);letter-spacing:.1em;
+}
+footer b{color:var(--mut);}
+.svgtxt{font-family:var(--mono);letter-spacing:.12em;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="stripe"></div>
+  <div class="wrap">
+    <div class="hd-top">
+      <span><span class="led blink" id="sysLed"></span>TEST CELL 07 — ONLINE</span>
+      <span class="num">DOC NO. NT-MM-2026-0611 · REV C</span>
+      <span class="num">T+<span id="clock">00:00:00</span></span>
+    </div>
+    <div class="hd-main">
+      <div>
+        <div class="hd-kicker">Actuator Trials //</div>
+        <h1>METAL<br><span class="ol">MUSCLE</span></h1>
+        <p class="hd-sub">
+          Test campaign on <b>nitinol shape-memory wire</b> as artificial muscle.
+          Pass current through it: Joule heat drives a crystal phase change and the wire
+          <b>contracts like a tendon</b> — silent, solid-state, ~500× the pull stress of your bicep.
+          Six stations below. Instruments are live.
+        </p>
+      </div>
+      <div class="spec-plate">
+        <span class="screw tl"></span><span class="screw br"></span>
+        <div><span class="k">SPECIMEN</span><span class="v am">NiTi-55 · Ø0.15 mm</span></div>
+        <div><span class="k">ALLOY</span><span class="v">55.8 wt% Ni / bal. Ti</span></div>
+        <div><span class="k">A<sub>s</sub> / A<sub>f</sub></span><span class="v num">68 °C / 82 °C</span></div>
+        <div><span class="k">M<sub>s</sub> / M<sub>f</sub></span><span class="v num">58 °C / 42 °C</span></div>
+        <div><span class="k">LOT</span><span class="v num">NOL-1959-114B&nbsp;&nbsp;<span class="barcode"></span></span></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- ============== MODULE 01 — TEST BENCH ============== -->
+  <section class="mod" id="mod01">
+    <span class="screw tl"></span><span class="screw tr"></span><span class="screw bl"></span><span class="screw br"></span>
+    <div class="mod-head">
+      <span class="mod-no">MODULE 01</span>
+      <span class="mod-title">Antagonistic Pair — Elbow Rig</span>
+      <span class="right">
+        <span class="tag"><span class="led amber blink"></span>LIVE</span>
+        <span class="tag num">RIG SN 07-114</span>
+      </span>
+    </div>
+    <div class="mod-body">
+      <div class="bench-grid">
+        <div>
+          <div class="svg-frame">
+            <span class="frame-label">KINEMATIC VIEW · SCALE 1:2</span>
+            <span class="frame-label r num" id="angLabel">θ = +55.0°</span>
+            <svg id="armSvg" viewBox="0 0 560 320" aria-label="Robotic elbow with antagonistic nitinol wires">
+              <!-- backdrop calibration -->
+              <g stroke="#1b1d20" stroke-width="1">
+                <line x1="0" y1="160" x2="560" y2="160"/>
+                <line x1="320" y1="0" x2="320" y2="320"/>
+              </g>
+              <!-- angle arc -->
+              <path id="angArc" fill="none" stroke="#3a3325" stroke-width="1.5" stroke-dasharray="3 4"/>
+              <!-- frame post -->
+              <rect x="34" y="36" width="36" height="252" fill="#17181b" stroke="#2c2e33"/>
+              <rect x="34" y="36" width="36" height="10" fill="none" stroke="#2c2e33"/>
+              <text x="52" y="305" text-anchor="middle" class="svgtxt" fill="#56544a" font-size="9">FRAME</text>
+              <!-- upper arm beam -->
+              <rect x="68" y="150" width="252" height="20" fill="#202227" stroke="#34373d"/>
+              <rect x="68" y="158" width="252" height="2" fill="#101113"/>
+              <!-- wires -->
+              <line id="wireA" x1="120" y1="124" x2="354" y2="148" stroke="#5a6068" stroke-width="3" stroke-linecap="round"/>
+              <line id="wireB" x1="120" y1="196" x2="354" y2="172" stroke="#5a6068" stroke-width="3" stroke-linecap="round"/>
+              <!-- crimps -->
+              <rect x="114" y="118" width="12" height="12" fill="#2c2e33" stroke="#44474d"/>
+              <rect x="114" y="190" width="12" height="12" fill="#2c2e33" stroke="#44474d"/>
+              <rect id="crimpA" x="-5" y="-4" width="10" height="8" fill="#2c2e33" stroke="#44474d"/>
+              <rect id="crimpB" x="-5" y="-4" width="10" height="8" fill="#2c2e33" stroke="#44474d"/>
+              <!-- forearm -->
+              <g id="forearm">
+                <rect x="0" y="-8" width="150" height="16" fill="#23252a" stroke="#3c3f45"/>
+                <rect x="0" y="-1" width="150" height="2" fill="#101113"/>
+                <circle cx="150" cy="0" r="11" fill="#17181b" stroke="#ffb000" stroke-width="1.5"/>
+                <text x="150" y="3.5" text-anchor="middle" class="svgtxt" fill="#ffb000" font-size="8">0.5kg</text>
+              </g>
+              <!-- elbow joint -->
+              <circle cx="320" cy="160" r="14" fill="#17181b" stroke="#4a4d54" stroke-width="3"/>
+              <circle cx="320" cy="160" r="4" fill="#34373d"/>
+              <!-- labels -->
+              <text x="128" y="110" class="svgtxt" fill="#ffb000" font-size="9.5">CH-A · FLEXOR</text>
+              <text x="128" y="218" class="svgtxt" fill="#3fd2e0" font-size="9.5">CH-B · EXTENSOR</text>
+            </svg>
+          </div>
+          <p class="caption">
+            SMA wire is <b>pull-only</b>, exactly like muscle — so the rig uses an
+            <i>antagonistic pair</i>: CH-A flexes the joint, CH-B extends it.
+            Drive both at once (<b>co-contraction</b>) and the joint barely moves but gets
+            <b>stiff</b> — the same trick your arm uses when you brace for impact.
+          </p>
+        </div>
+
+        <div>
+          <div class="ch-panel a">
+            <span class="ch-id">CH-A</span>
+            <div class="slider-block">
+              <div class="lab"><span class="tag">FLEXOR DRIVE CURRENT</span><span class="v num" id="curAVal">0%</span></div>
+              <input type="range" id="curA" min="0" max="100" value="0">
+              <div class="ticks"></div>
+            </div>
+            <div class="ch-ro-row">
+              <span class="ro">T <b class="am num" id="tA">22°C</b></span>
+              <span class="ro">ε <b class="num" id="sA">0.0%</b></span>
+              <span class="phase-chip mart" id="phA">MART B19′</span>
+            </div>
+          </div>
+          <div class="ch-panel b">
+            <span class="ch-id">CH-B</span>
+            <div class="slider-block">
+              <div class="lab"><span class="tag">EXTENSOR DRIVE CURRENT</span><span class="v num" id="curBVal" style="color:var(--cyan)">0%</span></div>
+              <input type="range" id="curB" class="cy" min="0" max="100" value="0">
+              <div class="ticks"></div>
+            </div>
+            <div class="ch-ro-row">
+              <span class="ro">T <b class="cy num" id="tB">22°C</b></span>
+              <span class="ro">ε <b class="num" id="sB">0.0%</b></span>
+              <span class="phase-chip mart" id="phB">MART B19′</span>
+            </div>
+          </div>
+          <div class="bench-btns">
+            <button id="btnCC">◉ CO-CONTRACT</button>
+            <button id="btnImpact" class="ghost">⊕ IMPACT TEST</button>
+            <button id="btnRelax" class="ghost">RELAX ALL</button>
+          </div>
+          <div class="stiff-block">
+            <div class="lab"><span>JOINT STIFFNESS</span><span class="num" id="stiffVal">04%</span></div>
+            <div class="meter"><i id="stiffBar"></i></div>
+            <p class="caption" style="margin-top:11px">
+              Run the <b>impact test</b> relaxed, then again co-contracted: high tension on
+              both wires snubs the swing. Stiffness control without a gearbox.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- scope -->
+      <div class="scope-wrap">
+        <div class="scope-head">
+          <span><span class="led"></span>TRACE 01 · THERMAL / KINEMATIC · 15 s WINDOW</span>
+          <span class="leg"><i style="background:var(--amber)"></i>T CH-A</span>
+          <span class="leg"><i style="background:var(--cyan)"></i>T CH-B</span>
+          <span class="leg"><i style="background:#9aa468"></i>JOINT θ</span>
+          <span class="leg"><i style="background:none;border-top:1px dashed var(--amber-dim);height:0"></i>A<sub>s</sub>/A<sub>f</sub></span>
+        </div>
+        <div class="scope-frame">
+          <canvas id="scope" height="230"></canvas>
+        </div>
+        <p class="caption">
+          Watch the <b>asymmetry</b>: temperature rockets up under current but decays slowly —
+          the wire can only lose heat to still air. And the phase change lags with
+          <i>hysteresis</i>: contraction starts above A<sub>s</sub>≈68 °C, but on the way down nothing
+          relaxes until the wire falls below M<sub>s</sub>≈58 °C. Heating is electric; cooling is patience.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== MODULE 02 + 03 ============== -->
+  <section class="mod" id="mod02">
+    <span class="screw tl"></span><span class="screw tr"></span><span class="screw bl"></span><span class="screw br"></span>
+    <div class="mod-head">
+      <span class="mod-no">MODULE 02</span>
+      <span class="mod-title">Specimen Dossier — What Is This Wire</span>
+      <span class="right"><span class="tag num">MAT REF NiTi-55</span></span>
+    </div>
+    <div class="mod-body">
+      <div class="spec-grid">
+        <div>
+          <ul class="fact-list">
+            <li><b>Nitinol = Ni + Ti + NOL.</b> Near-equiatomic nickel–titanium, discovered by
+              accident at the <b>Naval Ordnance Laboratory, 1959–62</b> (Buehler &amp; Wang), when a bent
+              demo strip snapped straight over a pipe lighter.</li>
+            <li>It has <b>two crystal structures</b>. Cold: <b>martensite</b> (B19′), a soft, low-symmetry
+              herringbone that deforms easily and stays put. Hot: <b>austenite</b> (B2), a rigid cubic
+              lattice with exactly one allowed arrangement — the “remembered” shape.</li>
+            <li>The transition is <b>diffusionless</b> — atoms shear less than one bond length.
+              No melting. That is why it can cycle millions of times.</li>
+            <li>Transition temperature is <b>tunable</b>: shift the Ni:Ti ratio by 0.1 wt% and the
+              set-point moves ~10 °C. Muscle-grade wire is tuned so body/ambient = relaxed,
+              ~70–90 °C = contracted.</li>
+          </ul>
+        </div>
+        <div>
+          <div class="svg-frame">
+            <span class="frame-label">LATTICE MONITOR · 54 ATOMS</span>
+            <span class="frame-label r" id="latPhase" style="color:var(--cyan)">MARTENSITE B19′</span>
+            <canvas id="latCv" height="220"></canvas>
+          </div>
+          <div class="dial-row">
+            <svg viewBox="0 0 120 78" id="dialSvg" aria-label="Temperature dial">
+              <g id="dialTicks"></g>
+              <path id="dialZoneA" fill="none" stroke="var(--amber)" stroke-width="3" opacity=".8"/>
+              <path id="dialZoneM" fill="none" stroke="var(--cyan)" stroke-width="3" opacity=".8"/>
+              <line id="needle" x1="60" y1="66" x2="60" y2="22" stroke="var(--amber)" stroke-width="2"/>
+              <circle cx="60" cy="66" r="4.5" fill="#17181b" stroke="#4a4d54" stroke-width="1.5"/>
+              <text x="60" y="76" text-anchor="middle" class="svgtxt" fill="#84816f" font-size="8" id="dialTxt">22°C</text>
+            </svg>
+            <div class="dial-ctl">
+              <div class="slider-block" style="margin:0">
+                <div class="lab"><span class="tag">SPECIMEN TEMP</span><span class="v num" id="latTval">22 °C</span></div>
+                <input type="range" id="latT" min="22" max="130" value="22">
+                <div class="ticks"></div>
+              </div>
+              <p class="caption" style="margin-top:9px;border:none;padding:0">
+                Sweep up: atoms snap to the cubic grid at A<sub>s</sub>→A<sub>f</sub>.
+                Sweep down: they hold until M<sub>s</sub> — hysteresis, visible at the atomic scale.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mod" id="mod03">
+    <span class="screw tl"></span><span class="screw tr"></span><span class="screw bl"></span><span class="screw br"></span>
+    <div class="mod-head">
+      <span class="mod-no">MODULE 03</span>
+      <span class="mod-title">Stroke Amplification Trial</span>
+      <span class="right"><span class="tag"><span class="led amber blink"></span>3 SPECIMENS · COMMON BUS</span></span>
+    </div>
+    <div class="mod-body">
+      <div class="svg-frame">
+        <span class="frame-label">DISPLACEMENT VIEW · VISUAL GAIN ×1</span>
+        <svg id="strokeSvg" viewBox="0 0 660 260">
+          <rect x="20" y="18" width="620" height="14" fill="#17181b" stroke="#2c2e33"/>
+          <g stroke="#1b1d20" stroke-width="1">
+            <line x1="20" y1="120" x2="640" y2="120"/><line x1="20" y1="200" x2="640" y2="200"/>
+          </g>
+          <!-- ghost rest marks -->
+          <g stroke="#3a3325" stroke-dasharray="3 4" stroke-width="1">
+            <line x1="80" y1="202" x2="160" y2="202"/>
+            <line x1="290" y1="202" x2="370" y2="202"/>
+            <line x1="500" y1="202" x2="580" y2="202"/>
+          </g>
+          <!-- S1 straight -->
+          <line id="s1wire" x1="120" y1="32" x2="120" y2="192" stroke="#5a6068" stroke-width="3"/>
+          <rect id="s1w" x="103" y="192" width="34" height="20" fill="#23252a" stroke="#4a4d54"/>
+          <text x="120" y="245" text-anchor="middle" class="svgtxt" fill="#84816f" font-size="9">S1 · STRAIGHT WIRE</text>
+          <!-- S2 coil -->
+          <path id="s2coil" fill="none" stroke="#5a6068" stroke-width="3" stroke-linejoin="round"/>
+          <rect id="s2w" x="316" y="192" width="28" height="16" fill="#23252a" stroke="#4a4d54"/>
+          <text x="330" y="245" text-anchor="middle" class="svgtxt" fill="#84816f" font-size="9">S2 · COILED SPRING</text>
+          <!-- S3 bundle -->
+          <line id="s3a" x1="531" y1="32" x2="531" y2="192" stroke="#5a6068" stroke-width="3"/>
+          <line id="s3b" x1="540" y1="32" x2="540" y2="192" stroke="#5a6068" stroke-width="3"/>
+          <line id="s3c" x1="549" y1="32" x2="549" y2="192" stroke="#5a6068" stroke-width="3"/>
+          <rect id="s3w" x="516" y="192" width="48" height="26" fill="#23252a" stroke="#4a4d54"/>
+          <text x="540" y="245" text-anchor="middle" class="svgtxt" fill="#84816f" font-size="9">S3 · 7-WIRE BUNDLE</text>
+        </svg>
+      </div>
+      <div class="slider-block">
+        <div class="lab"><span class="tag">COMMON BUS CURRENT</span><span class="v num" id="stCurVal">0%</span></div>
+        <input type="range" id="stCur" min="0" max="100" value="0">
+        <div class="ticks"></div>
+      </div>
+      <div class="trial-bars">
+        <div class="tb"><div class="t">S1 · Straight</div>
+          <div class="row"><span class="k">STROKE</span><div class="bar"><i id="b1s"></i></div><span class="val num" id="v1s">0.0 mm</span></div>
+          <div class="row"><span class="k">FORCE</span><div class="bar f"><i id="b1f"></i></div><span class="val num" id="v1f">0.0 N</span></div>
+        </div>
+        <div class="tb"><div class="t">S2 · Coil</div>
+          <div class="row"><span class="k">STROKE</span><div class="bar"><i id="b2s"></i></div><span class="val num" id="v2s">0.0 mm</span></div>
+          <div class="row"><span class="k">FORCE</span><div class="bar f"><i id="b2f"></i></div><span class="val num" id="v2f">0.0 N</span></div>
+        </div>
+        <div class="tb"><div class="t">S3 · Bundle ×7</div>
+          <div class="row"><span class="k">STROKE</span><div class="bar"><i id="b3s"></i></div><span class="val num" id="v3s">0.0 mm</span></div>
+          <div class="row"><span class="k">FORCE</span><div class="bar f"><i id="b3f"></i></div><span class="val num" id="v3f">0.0 N</span></div>
+        </div>
+      </div>
+      <p class="caption">
+        Bare wire contracts only <b>~4–5%</b> — strong but short. Wind it into a
+        <i>coil</i> and stroke exceeds <b>100% of actuator length</b>, paid for in force
+        (it acts as a soft spring). <i>Bundle</i> wires in parallel for force instead.
+        Stroke × force is conserved; geometry just spends it differently — like muscle fiber architecture.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============== MODULE 04 — BANDWIDTH ============== -->
+  <section class="mod" id="mod04">
+    <span class="screw tl"></span><span class="screw tr"></span><span class="screw bl"></span><span class="screw br"></span>
+    <div class="mod-head">
+      <span class="mod-no">MODULE 04</span>
+      <span class="mod-title">Duty-Cycle / Bandwidth Limit</span>
+      <span class="right"><span class="tag num" id="bwHz">0.5 Hz</span></span>
+    </div>
+    <div class="mod-body">
+      <div class="bw-grid">
+        <div>
+          <div class="svg-frame" style="max-width:280px">
+            <span class="frame-label">CYCLING RIG · GAIN ×4</span>
+            <svg viewBox="0 0 200 210">
+              <rect x="40" y="10" width="120" height="12" fill="#17181b" stroke="#2c2e33"/>
+              <line id="bwWire" x1="100" y1="22" x2="100" y2="160" stroke="#5a6068" stroke-width="3.5"/>
+              <rect id="bwW" x="78" y="160" width="44" height="24" fill="#23252a" stroke="#4a4d54"/>
+              <g id="bwFan" opacity="0">
+                <circle cx="34" cy="95" r="13" fill="none" stroke="#3fd2e0" stroke-width="1.5"/>
+                <g id="bwFanBlades" stroke="#3fd2e0" stroke-width="2">
+                  <line x1="34" y1="85" x2="34" y2="105"/><line x1="24" y1="95" x2="44" y2="95"/>
+                </g>
+                <text x="34" y="122" text-anchor="middle" class="svgtxt" fill="#3fd2e0" font-size="7.5">FORCED AIR</text>
+              </g>
+            </svg>
+          </div>
+          <div class="slider-block">
+            <div class="lab"><span class="tag">CYCLE FREQUENCY</span><span class="v num" id="bwFval">0.5 Hz</span></div>
+            <input type="range" id="bwF" min="2" max="40" value="5">
+            <div class="ticks"></div>
+          </div>
+          <div class="ctl-row">
+            <button id="btnFan">❄ FAN ASSIST</button>
+            <span class="ro">STROKE <b class="am num" id="bwStroke">100%</b></span>
+            <span id="bwVerdict" class="verdict-stamp">PASS</span>
+          </div>
+        </div>
+        <div>
+          <div class="scope-frame">
+            <canvas id="bwCv" height="180"></canvas>
+          </div>
+          <p class="caption">
+            <b>Cooling is the speed limit.</b> Heating takes milliseconds; dumping that heat takes
+            seconds. Push past ~1–2 Hz and the wire never falls below M<sub>s</sub> between pulses —
+            stroke collapses to a hot quiver. Fixes: <i>thinner wire</i> (more surface per volume),
+            <i>forced air</i>, or water cooling. Toggle the fan and re-sweep the frequency.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== MODULE 05 — SPEC SHEET ============== -->
+  <section class="mod" id="mod05">
+    <span class="screw tl"></span><span class="screw tr"></span><span class="screw bl"></span><span class="screw br"></span>
+    <div class="mod-head">
+      <span class="mod-no">MODULE 05</span>
+      <span class="mod-title">Comparative Datasheet</span>
+      <span class="right"><span class="tag num">3 ACTUATOR FAMILIES</span></span>
+    </div>
+    <div class="mod-body">
+      <div class="tbl-scroll">
+        <table>
+          <thead><tr>
+            <th></th><th>Skeletal Muscle</th><th>NiTi Wire</th><th>DC Motor + Gearbox</th>
+          </tr></thead>
+          <tbody>
+            <tr><td class="rowk">Actuation stress</td>
+              <td><span class="big num">~0.35 MPa</span><small>soft tissue, in parallel bundles</small></td>
+              <td class="niti"><span class="big num">~200 MPa</span><small>~500× muscle per cross-section</small></td>
+              <td><span class="big">torque-based</span><small>scales with gearbox, not area</small></td></tr>
+            <tr><td class="rowk">Usable strain</td>
+              <td><span class="big num">~40%</span><small>huge stroke per length</small></td>
+              <td class="niti"><span class="big num">4–5%</span><small>needs coils/levers for stroke</small></td>
+              <td><span class="big">unlimited</span><small>continuous rotation</small></td></tr>
+            <tr><td class="rowk">Power / weight</td>
+              <td><span class="big num">~50–100 W/kg</span><small>sustained, self-cooled</small></td>
+              <td class="niti"><span class="big num">&gt;1 kW/kg</span><small>burst only — thermally limited</small></td>
+              <td><span class="big num">~100–300 W/kg</span><small>continuous</small></td></tr>
+            <tr><td class="rowk">Efficiency</td>
+              <td><span class="big num">~25%</span><small>plus regenerates fuel onboard</small></td>
+              <td class="niti"><span class="big num">&lt;5%</span><small>Carnot-limited heat engine</small></td>
+              <td><span class="big num">60–90%</span><small>before gear losses</small></td></tr>
+            <tr><td class="rowk">Bandwidth</td>
+              <td><span class="big num">~5–30 Hz</span><small>twitch fibers</small></td>
+              <td class="niti"><span class="big num">~1–2 Hz</span><small>cooling-limited (see Module 04)</small></td>
+              <td><span class="big num">&gt;100 Hz</span><small>with control loop</small></td></tr>
+            <tr><td class="rowk">Acoustic noise</td>
+              <td><span class="big">silent</span><small></small></td>
+              <td class="niti"><span class="big">silent</span><small>zero moving parts</small></td>
+              <td><span class="big">audible</span><small>gear whine, cogging</small></td></tr>
+            <tr><td class="rowk">Mechanism count</td>
+              <td><span class="big">self-repairing</span><small>unfair advantage</small></td>
+              <td class="niti"><span class="big">1 wire + driver</span><small>works at any scale, even sub-mm</small></td>
+              <td><span class="big">motor, gears, encoder, bearings</span><small>does not miniaturize well</small></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="verdicts">
+        <span class="vd"><span class="st p">PASS</span>MICRO-GRIPPER &lt;10 g — motors can't shrink this far</span>
+        <span class="vd"><span class="st p">PASS</span>PHONE CAMERA AF/OIS — silent, tiny, ships today</span>
+        <span class="vd"><span class="st p">PASS</span>ONE-SHOT SPACE HINGE — fire once, no maintenance</span>
+        <span class="vd"><span class="st c">COND</span>PROSTHETIC FINGERS — silent &amp; light, but heat + battery drain</span>
+        <span class="vd"><span class="st f">FAIL</span>RUNNING ROBOT LEGS — bandwidth and efficiency both disqualify</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== MODULE 06 — DEPLOYMENT LOG ============== -->
+  <section class="mod" id="mod06">
+    <span class="screw tl"></span><span class="screw tr"></span><span class="screw bl"></span><span class="screw br"></span>
+    <div class="mod-head">
+      <span class="mod-no">MODULE 06</span>
+      <span class="mod-title">Deployment Log — Fielded Muscle</span>
+      <span class="right"><span class="tag"><span class="led"></span>5 RECORDS</span></span>
+    </div>
+    <div class="mod-body log">
+      <div class="log-entry">
+        <div class="ts">LOG-0114<br>STATION: CONSUMER</div>
+        <div><div class="ti">SMARTPHONE CAMERA AUTOFOCUS / OIS</div>
+          <div class="de">Four hair-thin NiTi wires tilt and shift the lens barrel. Silent, magnet-free,
+          immune to audio interference. Hundreds of millions of units shipped — the highest-volume
+          artificial muscle in history is in pockets, not labs.</div></div>
+        <span class="stat">SHIPPED</span>
+      </div>
+      <div class="log-entry">
+        <div class="ts">LOG-0087<br>STATION: MEDICAL</div>
+        <div><div class="ti">MICRO-GRIPPERS &amp; STEERABLE CATHETERS</div>
+          <div class="de">Sub-millimeter SMA actuators flex graspers and guide tips inside blood vessels,
+          where no motor could fit. One wire is the entire drivetrain.</div></div>
+        <span class="stat">FIELDED</span>
+      </div>
+      <div class="log-entry">
+        <div class="ts">LOG-0072<br>STATION: AEROSPACE</div>
+        <div><div class="ti">SATELLITE HINGE / RELEASE ACTUATORS</div>
+          <div class="de">Heat a trained NiTi element and a panel deploys or a latch releases — replacing
+          pyrotechnic bolts. No shock, no shrapnel, testable on the ground. Also flown: morphing
+          engine chevrons that bend with altitude temperature.</div></div>
+        <span class="stat">FIELDED</span>
+      </div>
+      <div class="log-entry">
+        <div class="ts">LOG-0061<br>STATION: PROSTHETICS</div>
+        <div><div class="ti">PROSTHETIC HAND FINGER FLEXORS</div>
+          <div class="de">Antagonistic SMA tendon pairs (the Module 01 architecture) curl fingers with
+          lifelike silence and compliance. Grip strength is fine; battery life and cooling pace
+          keep it in advanced prototypes.</div></div>
+        <span class="stat tr">TRIALS</span>
+      </div>
+      <div class="log-entry">
+        <div class="ts">LOG-0055<br>STATION: SOFT ROBOTICS</div>
+        <div><div class="ti">CRAWLING / SWIMMING SOFT ROBOTS</div>
+          <div class="de">Wires embedded in silicone bodies make octopus arms, robotic fish and
+          inchworm crawlers with zero rigid parts. Slow heartbeat-rate gaits suit the
+          cooling limit perfectly.</div></div>
+        <span class="stat tr">TRIALS</span>
+      </div>
+      <div style="padding-top:13px;color:var(--mut2);font-size:11px">END OF LOG <span class="cursor"></span></div>
+    </div>
+  </section>
+
+  <footer>
+    TEST CELL 07 · ACTUATOR TRIALS: METAL MUSCLE · <b>models are schematic but truthful</b> —
+    transition temps (M<sub>f</sub>, M<sub>s</sub>, A<sub>s</sub>, A<sub>f</sub>), strain and stress depend on alloy
+    composition, training and load. NUMERIC REFS: STRESS ~200 MPa · STRAIN 4–5% · EFF &lt;5% · η<sub>MUSCLE</sub> ~25%.
+    <br>DOC NO. NT-MM-2026-0611 REV C · NO EXPORT RESTRICTION
+  </footer>
+
+</main>
+
+<script>
+"use strict";
+/* ================= helpers ================= */
+const $=id=>document.getElementById(id);
+const clamp=(v,a,b)=>v<a?a:v>b?b:v;
+const lerp=(a,b,t)=>a+(b-a)*t;
+const DPR=Math.min(2,window.devicePixelRatio||1);
+
+/* ================= thermal / phase model =================
+   Hysteresis: austenite fraction xi is pinched between a heating
+   bound (must transform above As..Af) and a cooling bound
+   (may stay transformed down to Ms..Mf). As>Ms, Af>As. */
+const AMB=22, AS=68, AF=82, MS=58, MF=42, MAXSTRAIN=4.8;
+function makeWire(){return {T:AMB, xi:0};}
+function stepWire(w,cur,dt,coolMul){
+  const Tt=AMB+(cur/100)*108;                     // 100% drive -> ~130 C
+  const k=Tt>w.T?3.0:0.55*(coolMul||1);           // heats fast, cools slow
+  w.T+=(Tt-w.T)*(1-Math.exp(-k*dt));
+  const lo=clamp((w.T-AS)/(AF-AS),0,1);           // heating bound
+  const hi=clamp((w.T-MF)/(MS-MF),0,1);           // cooling bound
+  w.xi=clamp(w.xi,lo,hi);
+}
+function phaseChip(el,xi){
+  let txt,cls;
+  if(xi<0.12){txt="MART B19′";cls="phase-chip mart";}
+  else if(xi>0.88){txt="AUST B2";cls="phase-chip aust";}
+  else{txt="TRANSFORM";cls="phase-chip trans";}
+  if(el.textContent!==txt){el.textContent=txt;el.className=cls;}
+}
+function wireColor(T){
+  const h=clamp((T-AMB)/100,0,1);
+  const r=Math.round(lerp(90,255,h)), g=Math.round(lerp(96,150,Math.min(1,h*1.3)));
+  const b=Math.round(lerp(104,20,h));
+  return "rgb("+r+","+g+","+b+")";
+}
+function setGlow(el,T){
+  const h=clamp((T-AS)/60,0,1);
+  el.style.filter=h>0.05?"drop-shadow(0 0 "+(7*h)+"px rgba(255,140,0,"+(0.9*h)+"))":"none";
+}
+function sizeCanvas(cv){
+  const w=cv.clientWidth, h=parseInt(cv.getAttribute("height"))||200;
+  cv.width=Math.round(w*DPR); cv.height=Math.round(h*DPR);
+  cv.style.height=h+"px";
+  const ctx=cv.getContext("2d");
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+  return {ctx,w,h};
+}
+
+/* ================= MODULE 01 — TEST BENCH ================= */
+const wA=makeWire(), wB=makeWire();
+const J={th:55, vel:0};
+const E={x:320,y:160}, ANCH_A={x:120,y:124}, ANCH_B={x:120,y:196};
+let ccOn=false;
+const elCurA=$("curA"), elCurB=$("curB");
+const elTA=$("tA"), elTB=$("tB"), elSA=$("sA"), elSB=$("sB");
+const wireAEl=$("wireA"), wireBEl=$("wireB");
+const forearmEl=$("forearm"), angLabel=$("angLabel");
+const crimpAEl=$("crimpA"), crimpBEl=$("crimpB");
+elCurA.addEventListener("input",()=>$("curAVal").textContent=elCurA.value+"%");
+elCurB.addEventListener("input",()=>$("curBVal").textContent=elCurB.value+"%");
+$("btnCC").addEventListener("click",e=>{
+  ccOn=!ccOn; e.currentTarget.classList.toggle("on",ccOn);
+});
+$("btnImpact").addEventListener("click",()=>{J.vel+=460;});
+$("btnRelax").addEventListener("click",()=>{
+  ccOn=false; $("btnCC").classList.remove("on");
+  elCurA.value=0; elCurB.value=0;
+  elCurA.dispatchEvent(new Event("input")); elCurB.dispatchEvent(new Event("input"));
+});
+// angle arc (static path around elbow)
+(function(){
+  const r=34, a0=-70*Math.PI/180, a1=58*Math.PI/180;
+  $("angArc").setAttribute("d",
+    "M"+(E.x+r*Math.cos(a0)).toFixed(1)+" "+(E.y+r*Math.sin(a0)).toFixed(1)+
+    " A"+r+" "+r+" 0 0 1 "+(E.x+r*Math.cos(a1)).toFixed(1)+" "+(E.y+r*Math.sin(a1)).toFixed(1));
+})();
+function benchTick(dt){
+  const cA=ccOn?Math.max(+elCurA.value,82):+elCurA.value;
+  const cB=ccOn?Math.max(+elCurB.value,82):+elCurB.value;
+  stepWire(wA,cA,dt); stepWire(wB,cB,dt);
+  // joint: weighted equilibrium of flexor pull, extensor pull, gravity droop
+  const g=0.16;
+  const eq=(wA.xi*-62 + wB.xi*40 + g*55)/(wA.xi+wB.xi+g);
+  const stiff=clamp((wA.xi+wB.xi)/2,0,1);
+  const om=3.2+11*Math.min(1,wA.xi+wB.xi);              // co-contraction -> stiffer spring
+  J.vel+=(om*om*(eq-J.th)-2*1.0*om*J.vel)*dt;
+  J.th=clamp(J.th+J.vel*dt,-70,62);
+  // geometry
+  const a=J.th*Math.PI/180, c=Math.cos(a), s=Math.sin(a);
+  forearmEl.setAttribute("transform","translate("+E.x+","+E.y+") rotate("+J.th.toFixed(2)+")");
+  const atA={x:E.x+34*c+12*s, y:E.y+34*s-12*c};
+  const atB={x:E.x+34*c-12*s, y:E.y+34*s+12*c};
+  wireAEl.setAttribute("x2",atA.x.toFixed(1)); wireAEl.setAttribute("y2",atA.y.toFixed(1));
+  wireBEl.setAttribute("x2",atB.x.toFixed(1)); wireBEl.setAttribute("y2",atB.y.toFixed(1));
+  crimpAEl.setAttribute("transform","translate("+atA.x.toFixed(1)+","+atA.y.toFixed(1)+")");
+  crimpBEl.setAttribute("transform","translate("+atB.x.toFixed(1)+","+atB.y.toFixed(1)+")");
+  wireAEl.setAttribute("stroke",wireColor(wA.T));
+  wireBEl.setAttribute("stroke",wireColor(wB.T));
+  setGlow(wireAEl,wA.T); setGlow(wireBEl,wB.T);
+  // readouts
+  elTA.textContent=Math.round(wA.T)+"°C";
+  elTB.textContent=Math.round(wB.T)+"°C";
+  elSA.textContent=(wA.xi*MAXSTRAIN).toFixed(1)+"%";
+  elSB.textContent=(wB.xi*MAXSTRAIN).toFixed(1)+"%";
+  phaseChip($("phA"),wA.xi); phaseChip($("phB"),wB.xi);
+  angLabel.textContent="θ = "+(J.th>=0?"+":"")+J.th.toFixed(1)+"°";
+  $("stiffVal").textContent=String(Math.round(4+stiff*96)).padStart(2,"0")+"%";
+  $("stiffBar").style.transform="scaleX("+(0.04+stiff*0.96).toFixed(3)+")";
+}
+
+/* ---------- oscilloscope ---------- */
+const scopeCv=$("scope");
+let SC=sizeCanvas(scopeCv);
+const SN=900;
+const bufTA=new Float32Array(SN).fill(AMB);
+const bufTB=new Float32Array(SN).fill(AMB);
+const bufTH=new Float32Array(SN).fill(55);
+let sHead=0;
+function scopePush(){
+  bufTA[sHead]=wA.T; bufTB[sHead]=wB.T; bufTH[sHead]=J.th;
+  sHead=(sHead+1)%SN;
+}
+function trace(ctx,buf,ymap,color,w,lw){
+  ctx.beginPath();
+  for(let i=0;i<SN;i++){
+    const x=w*i/(SN-1), y=ymap(buf[(sHead+i)%SN]);
+    if(i)ctx.lineTo(x,y);else ctx.moveTo(x,y);
+  }
+  ctx.strokeStyle=color; ctx.lineWidth=lw||1.4; ctx.stroke();
+}
+function scopeDraw(){
+  const {ctx,w,h}=SC;
+  ctx.clearRect(0,0,w,h);
+  const tTop=14,tBot=h*0.56, aTop=h*0.56+16, aBot=h-10;
+  const yT=v=>tBot-(v-15)/(140-15)*(tBot-tTop);
+  const yA=v=>aTop+(v-(-75))/(65-(-75))*(aBot-aTop);
+  // grid
+  ctx.strokeStyle="rgba(255,176,0,.06)"; ctx.lineWidth=1;
+  ctx.beginPath();
+  for(let x=0;x<w;x+=60){ctx.moveTo(x+.5,0);ctx.lineTo(x+.5,h);}
+  for(const v of [40,80,120]){ctx.moveTo(0,yT(v)+.5);ctx.lineTo(w,yT(v)+.5);}
+  ctx.moveTo(0,yA(0)+.5);ctx.lineTo(w,yA(0)+.5);
+  ctx.stroke();
+  // divider
+  ctx.strokeStyle="#26282c";
+  ctx.beginPath();ctx.moveTo(0,tBot+8);ctx.lineTo(w,tBot+8);ctx.stroke();
+  // thresholds
+  ctx.setLineDash([4,5]);
+  ctx.strokeStyle="rgba(255,176,0,.5)";
+  ctx.beginPath();ctx.moveTo(0,yT(AS));ctx.lineTo(w,yT(AS));ctx.stroke();
+  ctx.beginPath();ctx.moveTo(0,yT(AF));ctx.lineTo(w,yT(AF));ctx.stroke();
+  ctx.strokeStyle="rgba(63,210,224,.45)";
+  ctx.beginPath();ctx.moveTo(0,yT(MS));ctx.lineTo(w,yT(MS));ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.font="9px IBM Plex Mono,monospace";
+  ctx.fillStyle="rgba(255,176,0,.75)";
+  ctx.fillText("Af 82°",w-44,yT(AF)-3); ctx.fillText("As 68°",w-44,yT(AS)-3);
+  ctx.fillStyle="rgba(63,210,224,.7)"; ctx.fillText("Ms 58°",w-44,yT(MS)+10);
+  ctx.fillStyle="#56544a";
+  ctx.fillText("°C",6,tTop+2); ctx.fillText("θ°",6,aTop+4);
+  // traces
+  trace(ctx,bufTA,yT,"#ffb000",w,1.6);
+  trace(ctx,bufTB,yT,"#3fd2e0",w,1.6);
+  trace(ctx,bufTH,yA,"#9aa468",w,1.5);
+  // sweep head
+  ctx.fillStyle="rgba(255,176,0,.85)";
+  ctx.fillRect(w-2,yT(bufTA[(sHead+SN-1)%SN])-2,4,4);
+}
+
+/* ================= MODULE 02 — LATTICE ================= */
+const latCv=$("latCv");
+let LC=sizeCanvas(latCv);
+const latW=makeWire();
+const latSpr={x:0,v:0};                     // snappy displayed fraction
+const latT=$("latT");
+const ROWS=6,COLS=9;
+const HB=[0,1,2,1];                          // herringbone shear pattern
+function latticeTick(dt){
+  latW.T+=( +latT.value - latW.T )*(1-Math.exp(-6*dt));
+  const lo=clamp((latW.T-AS)/(AF-AS),0,1);
+  const hi=clamp((latW.T-MF)/(MS-MF),0,1);
+  latW.xi=clamp(latW.xi,lo,hi);
+  // spring toward xi for atom "snap" with slight overshoot
+  const om=14;
+  latSpr.v+=(om*om*(latW.xi-latSpr.x)-2*0.62*om*latSpr.v)*dt;
+  latSpr.x+=latSpr.v*dt;
+  const m=1-clamp(latSpr.x,-0.08,1.08);     // martensite amount (can overshoot a touch)
+  const {ctx,w,h}=LC;
+  ctx.clearRect(0,0,w,h);
+  const sp=Math.min(34,(w-60)/(COLS-1));
+  const ox=(w-sp*(COLS-1))/2, oy=(h-sp*0.92*(ROWS-1))/2+2;
+  const pos=(r,c)=>{
+    const shear=((HB[r%4]-1)*13 + ((c%2)?2.4:-2.4))*m;
+    return [ox+c*sp+shear, oy+r*sp*lerp(1,0.9,m)*0.92+((c%2)?1:-1)*2.2*m];
+  };
+  ctx.strokeStyle="#2b2d31"; ctx.lineWidth=1;
+  ctx.beginPath();
+  for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){
+    const p=pos(r,c);
+    if(c<COLS-1){const q=pos(r,c+1);ctx.moveTo(p[0],p[1]);ctx.lineTo(q[0],q[1]);}
+    if(r<ROWS-1){const q=pos(r+1,c);ctx.moveTo(p[0],p[1]);ctx.lineTo(q[0],q[1]);}
+  }
+  ctx.stroke();
+  for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){
+    const p=pos(r,c), ni=(r+c)%2===0;
+    ctx.beginPath();ctx.arc(p[0],p[1],6.2,0,6.2832);
+    ctx.fillStyle=ni?"#ffb000":"#3fd2e0";
+    ctx.globalAlpha=ni?0.92:0.8;
+    ctx.fill();
+    ctx.globalAlpha=1;
+  }
+  // labels/dial
+  $("latTval").textContent=Math.round(latW.T)+" °C";
+  $("dialTxt").textContent=Math.round(latW.T)+"°C";
+  const ph=$("latPhase");
+  let txt,col;
+  if(latW.xi>0.88){txt="AUSTENITE B2 — CUBIC";col="var(--amber)";}
+  else if(latW.xi<0.12){txt="MARTENSITE B19′ — HERRINGBONE";col="var(--cyan)";}
+  else{txt="TRANSFORMING…";col="var(--txt)";}
+  if(ph.textContent!==txt){ph.textContent=txt;ph.style.color=col;}
+  const ang=lerp(-118,118,clamp((latW.T-22)/(130-22),0,1));
+  $("needle").setAttribute("transform","rotate("+ang.toFixed(1)+" 60 66)");
+  $("needle").setAttribute("stroke",latW.xi>0.5?"#ffb000":"#3fd2e0");
+}
+// dial face (ticks + zone arcs)
+(function(){
+  const NS="http://www.w3.org/2000/svg", g=$("dialTicks");
+  const cx=60,cy=66,r1=42,r2=47;
+  for(let i=0;i<=12;i++){
+    const a=(-118+236*i/12)*Math.PI/180;
+    const l=document.createElementNS(NS,"line");
+    l.setAttribute("x1",cx+Math.sin(a)*r1); l.setAttribute("y1",cy-Math.cos(a)*r1);
+    l.setAttribute("x2",cx+Math.sin(a)*r2); l.setAttribute("y2",cy-Math.cos(a)*r2);
+    l.setAttribute("stroke",i%3?"#3a3d43":"#84816f");
+    l.setAttribute("stroke-width",i%3?1:1.6);
+    g.appendChild(l);
+  }
+  const t2a=t=>(-118+236*clamp((t-22)/(130-22),0,1))*Math.PI/180;
+  function arc(el,t0,t1){
+    const a0=t2a(t0),a1=t2a(t1),r=44.5;
+    el.setAttribute("d","M"+(cx+Math.sin(a0)*r).toFixed(1)+" "+(cy-Math.cos(a0)*r).toFixed(1)+
+      " A"+r+" "+r+" 0 0 1 "+(cx+Math.sin(a1)*r).toFixed(1)+" "+(cy-Math.cos(a1)*r).toFixed(1));
+  }
+  arc($("dialZoneA"),AS,AF); arc($("dialZoneM"),MF,MS);
+})();
+
+/* ================= MODULE 03 — STROKE TRIAL ================= */
+const stWire=makeWire();
+const stCur=$("stCur");
+stCur.addEventListener("input",()=>$("stCurVal").textContent=stCur.value+"%");
+const S_TOP=32, S_LEN=160;
+function coilPath(cx,top,len){
+  const n=18, amp=14;
+  let d="M"+cx+" "+top;
+  for(let k=1;k<n;k++){
+    const t=k/n;
+    d+=" L"+(cx+(k%2?amp:-amp))+" "+(top+len*t).toFixed(1);
+  }
+  return d+" L"+cx+" "+(top+len);
+}
+function strokeTick(dt){
+  stepWire(stWire,+stCur.value,dt);
+  const xi=stWire.xi, col=wireColor(stWire.T);
+  // S1 straight: 4.8% strain
+  const L1=S_LEN*(1-0.048*xi);
+  $("s1wire").setAttribute("y2",(S_TOP+L1).toFixed(1));
+  $("s1w").setAttribute("y",(S_TOP+L1).toFixed(1));
+  // S2 coil: 55% compression
+  const L2=S_LEN*(1-0.55*xi);
+  $("s2coil").setAttribute("d",coilPath(330,S_TOP,L2));
+  $("s2w").setAttribute("y",(S_TOP+L2).toFixed(1));
+  // S3 bundle: same strain, more force
+  for(const id of ["s3a","s3b","s3c"])$(id).setAttribute("y2",(S_TOP+L1).toFixed(1));
+  $("s3w").setAttribute("y",(S_TOP+L1).toFixed(1));
+  for(const id of ["s1wire","s2coil","s3a","s3b","s3c"]){
+    $(id).setAttribute("stroke",col);
+  }
+  setGlow($("s2coil"),stWire.T); setGlow($("s1wire"),stWire.T);
+  // bars: stroke scale max 90mm, force scale max 25N (160mm specimen ≙ 160mm wire)
+  const st1=xi*7.2, st2=xi*88, fo1=xi*3.5, fo2=xi*0.4, fo3=xi*24.5;
+  $("b1s").style.transform="scaleX("+(st1/90)+")";
+  $("b2s").style.transform="scaleX("+(st2/90)+")";
+  $("b3s").style.transform="scaleX("+(st1/90)+")";
+  $("b1f").style.transform="scaleX("+(fo1/25)+")";
+  $("b2f").style.transform="scaleX("+(fo2/25)+")";
+  $("b3f").style.transform="scaleX("+(fo3/25)+")";
+  $("v1s").textContent=st1.toFixed(1)+" mm"; $("v1f").textContent=fo1.toFixed(1)+" N";
+  $("v2s").textContent=st2.toFixed(1)+" mm"; $("v2f").textContent=fo2.toFixed(1)+" N";
+  $("v3s").textContent=st1.toFixed(1)+" mm"; $("v3f").textContent=fo3.toFixed(1)+" N";
+}
+
+/* ================= MODULE 04 — BANDWIDTH ================= */
+const bwWire=makeWire();
+const bwCv=$("bwCv");
+let BC=sizeCanvas(bwCv);
+const BN=420;
+const bufBW=new Float32Array(BN);
+let bHead=0, fanOn=false, bwPhasePrev=0, fanAng=0;
+const bwFEl=$("bwF");
+bwFEl.addEventListener("input",()=>{
+  const f=(+bwFEl.value/10).toFixed(1)+" Hz";
+  $("bwFval").textContent=f; $("bwHz").textContent=f;
+});
+$("btnFan").addEventListener("click",e=>{
+  fanOn=!fanOn; e.currentTarget.classList.toggle("on",fanOn);
+  $("bwFan").setAttribute("opacity",fanOn?"1":"0");
+});
+function bwTick(dt,now){
+  const f=+bwFEl.value/10;
+  const ph=(now/1000*f)%1;
+  const drive=ph<0.5?100:0;
+  stepWire(bwWire,drive,dt,fanOn?3.4:1);
+  bwPhasePrev=ph;
+  const strain=bwWire.xi*MAXSTRAIN;
+  bufBW[bHead]=strain; bHead=(bHead+1)%BN;
+  // measure stroke over ~1.2 cycles of samples (sampled per frame ~60Hz)
+  const span=Math.min(BN,Math.ceil(72/f)+4);
+  let mn=1e9,mx=-1e9;
+  for(let i=0;i<span;i++){
+    const v=bufBW[(bHead+BN-1-i)%BN];
+    if(v<mn)mn=v; if(v>mx)mx=v;
+  }
+  const strokePct=clamp((mx-mn)/MAXSTRAIN*100,0,100);
+  $("bwStroke").textContent=Math.round(strokePct)+"%";
+  const vd=$("bwVerdict");
+  let vTxt,vCls;
+  if(strokePct>70){vTxt="PASS";vCls="verdict-stamp";}
+  else if(strokePct>30){vTxt="MARGINAL";vCls="verdict-stamp warn";}
+  else{vTxt="STALL";vCls="verdict-stamp fail";}
+  if(vd.textContent!==vTxt){vd.textContent=vTxt;vd.className=vCls;}
+  // rig animation (gain x4)
+  const L=138-strain*4*2.9;
+  $("bwWire").setAttribute("y2",(22+L).toFixed(1));
+  $("bwWire").setAttribute("stroke",wireColor(bwWire.T));
+  setGlow($("bwWire"),bwWire.T);
+  $("bwW").setAttribute("y",(22+L).toFixed(1));
+  if(fanOn){fanAng+=dt*560;$("bwFanBlades").setAttribute("transform","rotate("+(fanAng%360).toFixed(0)+" 34 95)");}
+  // mini trace
+  const {ctx,w,h}=BC;
+  ctx.clearRect(0,0,w,h);
+  ctx.strokeStyle="rgba(255,176,0,.06)";ctx.lineWidth=1;
+  ctx.beginPath();
+  for(let x=0;x<w;x+=46){ctx.moveTo(x+.5,0);ctx.lineTo(x+.5,h);}
+  for(let y=0;y<h;y+=36){ctx.moveTo(0,y+.5);ctx.lineTo(w,y+.5);}
+  ctx.stroke();
+  const ym=v=>h-12-(v/MAXSTRAIN)*(h-26);
+  ctx.setLineDash([4,5]);ctx.strokeStyle="rgba(255,176,0,.4)";
+  ctx.beginPath();ctx.moveTo(0,ym(MAXSTRAIN));ctx.lineTo(w,ym(MAXSTRAIN));ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.font="9px IBM Plex Mono,monospace";ctx.fillStyle="rgba(255,176,0,.6)";
+  ctx.fillText("FULL STROKE 4.8%",6,ym(MAXSTRAIN)-4);
+  ctx.fillStyle="#56544a";ctx.fillText("CONTRACTION ε vs t",6,h-4);
+  ctx.beginPath();
+  for(let i=0;i<BN;i++){
+    const x=w*i/(BN-1), y=ym(bufBW[(bHead+i)%BN]);
+    if(i)ctx.lineTo(x,y);else ctx.moveTo(x,y);
+  }
+  ctx.strokeStyle="#ffb000";ctx.lineWidth=1.6;ctx.stroke();
+}
+
+/* ================= header clock ================= */
+const t0=performance.now();
+let lastClock=-1;
+function clockTick(now){
+  const s=Math.floor((now-t0)/1000);
+  if(s!==lastClock){
+    lastClock=s;
+    const hh=String(Math.floor(s/3600)).padStart(2,"0");
+    const mm=String(Math.floor(s/60)%60).padStart(2,"0");
+    const ss=String(s%60).padStart(2,"0");
+    $("clock").textContent=hh+":"+mm+":"+ss;
+  }
+}
+
+/* ================= resize ================= */
+let resizeT=null;
+window.addEventListener("resize",()=>{
+  clearTimeout(resizeT);
+  resizeT=setTimeout(()=>{SC=sizeCanvas(scopeCv);LC=sizeCanvas(latCv);BC=sizeCanvas(bwCv);},120);
+});
+
+/* ================= main loop ================= */
+let last=performance.now();
+function loop(now){
+  const dt=Math.min(0.05,(now-last)/1000); last=now;
+  benchTick(dt);
+  scopePush(); scopeDraw();
+  latticeTick(dt);
+  strokeTick(dt);
+  bwTick(dt,now);
+  clockTick(now);
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>

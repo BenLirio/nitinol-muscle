@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nitinol Muscle — Design Gallery</title>
+<style>
+  :root{--bg:#101014; --text:#e9e9ee; --muted:#9a9aa8;}
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    background:var(--bg); color:var(--text); min-height:100vh;
+    font-family:Georgia,"Times New Roman",serif; padding:56px 24px 80px;
+  }
+  .wrap{max-width:1100px; margin:0 auto;}
+  h1{font-size:clamp(30px,5vw,46px); font-weight:400; letter-spacing:-.01em;}
+  h1 em{font-style:italic;}
+  .sub{color:var(--muted); margin:10px 0 40px; font-family:Helvetica,Arial,sans-serif; font-size:15px; max-width:640px; line-height:1.6;}
+  .grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:18px;}
+  a.cardlink{text-decoration:none; color:inherit; display:block;
+    border-radius:16px; overflow:hidden; border:1px solid #2a2a33;
+    transition:transform .18s ease, box-shadow .18s ease;}
+  a.cardlink:hover{transform:translateY(-4px); box-shadow:0 18px 50px rgba(0,0,0,.5);}
+  .swatch{height:150px; display:flex; align-items:center; justify-content:center;
+    font-size:14px; letter-spacing:.18em; text-transform:uppercase; font-weight:700;}
+  .body{padding:18px 20px 22px; background:#17171d;
+    font-family:Helvetica,Arial,sans-serif;}
+  .body h2{font-size:18px; margin-bottom:6px;}
+  .body p{font-size:13.5px; color:var(--muted); line-height:1.55;}
+  .tag{display:inline-block; margin-top:12px; font-size:11px; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--muted); border:1px solid #33333d;
+    border-radius:999px; padding:4px 11px;}
+  /* variant swatches echo each page's palette */
+  .sw-anatomy{background:#f5efe2; color:#3a2c20;
+    background-image:repeating-linear-gradient(0deg,transparent,transparent 26px,rgba(58,44,32,.08) 27px);}
+  .sw-anatomy b{border-top:1px solid #8b1d1d; border-bottom:1px solid #8b1d1d; padding:8px 4px; color:#8b1d1d;}
+  .sw-lab{background:#0c0d0f; color:#ffb000;
+    background-image:linear-gradient(rgba(255,176,0,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(255,176,0,.06) 1px,transparent 1px);
+    background-size:22px 22px;}
+  .sw-lab b{border:1px solid #ffb000; padding:8px 14px;}
+  .sw-organism{background:radial-gradient(circle at 30% 30%, #143a4a, #0a1228 70%); color:#7df3df; text-shadow:0 0 14px rgba(125,243,223,.8);}
+  .sw-mission{background:#f2e9d8; color:#1d2a52; position:relative;}
+  .sw-mission::after{content:""; position:absolute; left:0; right:0; bottom:18px; height:14px;
+    background:linear-gradient(#c1502e 0 4px,transparent 4px 6px,#1d2a52 6px 10px,transparent 10px 12px,#d9a441 12px 14px);}
+  .footer{margin-top:46px; color:var(--muted); font-family:Helvetica,Arial,sans-serif; font-size:13px;}
+  .footer a{color:#c9c9d6;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Nitinol as muscle — <em>four ways to tell it</em></h1>
+  <p class="sub">Same science, four completely different design directions. Each page is fully
+  interactive and self-contained: flex the arms, drive the antagonistic pairs, curl the tentacle,
+  deploy the rover arm. Pick the one that fits.</p>
+  <div class="grid">
+    <a class="cardlink" href="anatomy.html">
+      <div class="swatch sw-anatomy"><b>Fig. 1 — De Musculo Metallico</b></div>
+      <div class="body">
+        <h2>① The Anatomy Atlas</h2>
+        <p>A 19th-century comparative-anatomy textbook: warm paper, engraved line art, drop caps.
+        Human bicep and nitinol bicep flex side by side from one brass lever.</p>
+        <span class="tag">light · editorial · serif</span>
+      </div>
+    </a>
+    <a class="cardlink" href="lab.html">
+      <div class="swatch sw-lab"><b>ACTUATOR TRIALS · CELL 07</b></div>
+      <div class="body">
+        <h2>② The Test Bench</h2>
+        <p>An industrial robotics lab in phosphor amber: antagonistic elbow rig with a live
+        oscilloscope, co-contraction stiffness, impact tests, and a bandwidth panel where the
+        wire stalls above ~2 Hz.</p>
+        <span class="tag">dark · instrument HUD · mono</span>
+      </div>
+    </a>
+    <a class="cardlink" href="organism.html">
+      <div class="swatch sw-organism">Nitinolus flexilis</div>
+      <div class="body">
+        <h2>③ The Organism</h2>
+        <p>A bioluminescent night aquarium: a soft tentacle with three glowing metal muscles that
+        curls and grabs a pearl, a swimming jellyfish, and a worm/inchworm/fish-tail trio.</p>
+        <span class="tag">deep-sea · playful · squishy physics</span>
+      </div>
+    </a>
+    <a class="cardlink" href="mission.html">
+      <div class="swatch sw-mission"><b>MISSION: METAL MUSCLE</b></div>
+      <div class="body">
+        <h2>④ The Flight Manual</h2>
+        <p>1970s NASA poster design: a blueprint rover arm with antagonistic wire pairs you drive
+        from a mission console, plus a choreographed “Deploy Sample Arm” sequence with telemetry.</p>
+        <span class="tag">retro print · navy &amp; burnt orange</span>
+      </div>
+    </a>
+  </div>
+  <p class="footer">Original single-page version: <a href="nitinol.html">nitinol.html</a></p>
+</div>
+</body>
+</html>
