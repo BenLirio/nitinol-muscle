@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How this was made — a Claude Code session replay</title>
+<style>
+  :root{
+    --bg:#171310; --term:#1f1a15; --termhead:#26201a; --border:#352c23;
+    --text:#e8e2d9; --dim:#8a8174; --dimmer:#5e564a;
+    --orange:#d97757; --violet:#b8a6e8; --green:#8fc97f; --cyan:#7fc4c9; --gold:#d9a441;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    background:var(--bg); color:var(--text); min-height:100vh;
+    font-family:"SFMono-Regular",ui-monospace,"Cascadia Mono","JetBrains Mono",Menlo,Consolas,monospace;
+    display:flex; flex-direction:column; align-items:center; padding:34px 16px 60px;
+  }
+  body::before{content:""; position:fixed; inset:0; z-index:-1;
+    background:radial-gradient(800px 400px at 70% -5%, rgba(217,119,87,.07), transparent 60%);}
+  .top{width:100%; max-width:900px; margin-bottom:18px;}
+  .back{color:var(--dim); text-decoration:none; font-size:13px;}
+  .back:hover{color:var(--orange);}
+  h1{font-size:clamp(21px,4vw,30px); margin:10px 0 6px; font-weight:700; letter-spacing:-.01em;}
+  h1 .accent{color:var(--orange);}
+  .sub{color:var(--dim); font-size:13.5px; line-height:1.6; max-width:640px;}
+
+  .steps{display:flex; flex-wrap:wrap; gap:7px; margin:18px 0 12px; width:100%; max-width:900px;}
+  .step{
+    font-size:11.5px; color:var(--dimmer); border:1px solid var(--border); border-radius:999px;
+    padding:4px 12px; transition:all .3s; white-space:nowrap;
+  }
+  .step.active{color:#1a1410; background:var(--orange); border-color:var(--orange); font-weight:700;}
+  .step.done{color:var(--orange); border-color:#6b4434;}
+
+  .controls{display:flex; gap:8px; align-items:center; width:100%; max-width:900px; margin-bottom:10px;}
+  .controls button{
+    font:inherit; font-size:12.5px; color:var(--text); background:#2a231c; border:1px solid var(--border);
+    border-radius:8px; padding:6px 13px; cursor:pointer;
+  }
+  .controls button:hover{border-color:var(--orange); color:var(--orange);}
+  .controls button.on{background:var(--orange); border-color:var(--orange); color:#1a1410; font-weight:700;}
+  .spacer{flex:1;}
+
+  .terminal{
+    width:100%; max-width:900px; background:var(--term); border:1px solid var(--border);
+    border-radius:14px; overflow:hidden; box-shadow:0 24px 70px rgba(0,0,0,.5);
+  }
+  .thead{
+    display:flex; align-items:center; gap:8px; padding:11px 16px;
+    background:var(--termhead); border-bottom:1px solid var(--border);
+  }
+  .dot3{width:12px; height:12px; border-radius:50%;}
+  .ttitle{margin-left:8px; color:var(--dim); font-size:12.5px;}
+  .tbody{
+    height:min(64vh,560px); overflow-y:auto; padding:20px 22px 30px; font-size:13.5px; line-height:1.65;
+    scrollbar-width:thin; scrollbar-color:#3a3128 transparent;
+  }
+
+  .msg{margin:14px 0 4px; animation:fadein .3s;}
+  @keyframes fadein{from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:none;}}
+  .user{
+    border:1px solid #4a3b2d; background:#251e17; border-radius:10px; padding:9px 14px;
+    white-space:pre-wrap; word-break:break-word;
+  }
+  .user .ps1{color:var(--orange); font-weight:700;}
+  .user .slash{color:var(--violet); font-weight:700;}
+  .caret{display:inline-block; width:8px; height:15px; background:var(--text);
+    vertical-align:-2px; animation:blink 1s steps(1) infinite;}
+  @keyframes blink{50%{opacity:0;}}
+  .stdout{color:var(--dim); font-style:italic; margin:6px 0 0 6px; white-space:pre-wrap;}
+
+  .tool{margin:10px 0 0 2px;}
+  .tool .tdot{color:var(--green); margin-right:8px;}
+  .tool .tdot.spin{color:var(--orange);}
+  .tool .tname{font-weight:700;}
+  .tool .targ{color:var(--dim);}
+  .toolres{color:var(--dim); margin:1px 0 0 20px;}
+  .toolres .elbow{color:var(--dimmer);}
+  .toolres .ok{color:var(--green);}
+
+  .claude{margin:14px 0 4px 2px;}
+  .claude .line{opacity:0; transition:opacity .45s; margin:2px 0;}
+  .claude .line.show{opacity:1;}
+  .claude .cdot{color:var(--orange); margin-right:8px;}
+  .claude b{color:var(--gold);}
+  .claude a{color:var(--cyan);}
+
+  .agents{margin:10px 0 4px 20px; border-left:2px solid var(--border); padding-left:14px;}
+  .agent{margin:7px 0; opacity:0; transition:opacity .35s;}
+  .agent.show{opacity:1;}
+  .agent .adot{color:var(--orange); margin-right:8px;}
+  .agent .alabel{font-weight:700; color:var(--cyan);}
+  .agent .adesc{color:var(--dim); display:block; margin-left:20px; font-size:12.5px;}
+  .agent .adone{color:var(--green); margin-left:8px; font-size:12.5px;}
+
+  .endcard{
+    margin:24px 0 6px; border:1px solid #4a3b2d; border-radius:12px; padding:16px 18px;
+    background:linear-gradient(135deg,#27201840,#d9775718); animation:fadein .5s;
+  }
+  .endcard .big{color:var(--gold); font-weight:700; margin-bottom:8px;}
+  .endcard a{color:var(--cyan);}
+  .endcard .row{display:flex; flex-wrap:wrap; gap:9px; margin-top:12px;}
+  .endcard .row a{
+    text-decoration:none; font-size:12.5px; border:1px solid var(--border); border-radius:8px;
+    padding:6px 12px; color:var(--text);
+  }
+  .endcard .row a:hover{border-color:var(--orange); color:var(--orange);}
+  .foot{color:var(--dimmer); font-size:12px; margin-top:16px; max-width:900px; width:100%;}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <a class="back" href="index.html">← back to the gallery</a>
+  <h1>How this was made <span class="accent">— the actual session, replayed</span></h1>
+  <p class="sub">Every prompt below is verbatim from the Claude Code session that built this site:
+  one model switch, one prompt for v1, one plugin install, one skill invocation that fanned out
+  four parallel design agents, one deploy request — and one request for this very page.</p>
+</div>
+
+<div class="steps" id="steps">
+  <span class="step" data-s="1">1 · /model</span>
+  <span class="step" data-s="2">2 · first prompt</span>
+  <span class="step" data-s="3">3 · /plugin</span>
+  <span class="step" data-s="4">4 · 4 agents</span>
+  <span class="step" data-s="5">5 · deploy</span>
+  <span class="step" data-s="6">6 · this page</span>
+</div>
+
+<div class="controls">
+  <button id="btnReplay">⟲ replay</button>
+  <button id="btnPause">⏸ pause</button>
+  <span class="spacer"></span>
+  <button class="spd on" data-spd="1">1×</button>
+  <button class="spd" data-spd="2">2×</button>
+  <button class="spd" data-spd="4">4×</button>
+  <button id="btnSkip">⏭ skip to end</button>
+</div>
+
+<div class="terminal">
+  <div class="thead">
+    <span class="dot3" style="background:#ff5f57"></span>
+    <span class="dot3" style="background:#febc2e"></span>
+    <span class="dot3" style="background:#28c840"></span>
+    <span class="ttitle">claude — ~/blirio — session replay</span>
+  </div>
+  <div class="tbody" id="tbody"></div>
+</div>
+
+<p class="foot">Times and token counts are the real ones from the session. Claude's replies are
+condensed; the human's prompts are not.</p>
+
+<script>
+"use strict";
+/* ---------------- the session script ---------------- */
+const SCRIPT = [
+  {t:"step", n:1},
+  {t:"cmd", cmd:"/model"},
+  {t:"out", lines:["Set model to Fable 5 and saved as your default for new sessions"]},
+
+  {t:"step", n:2},
+  {t:"user", text:"Make me an HTML file that explain how nitinol works in a visual way and also how it can be used like muscles. Make it animated and interactive."},
+  {t:"tool", name:"Write", arg:"nitinol.html", dur:2400, res:"~900 lines · hero wire · crystal lattice · bendable wire · robotic bicep"},
+  {t:"tool", name:"Edit", arg:"nitinol.html", dur:900, res:"removed one stray malformed line"},
+  {t:"tool", name:"Bash", arg:"node --check (extracted inline script)", dur:1200, res:"SYNTAX OK", ok:true},
+  {t:"claude", lines:[
+    "Done — <b>nitinol.html</b>, fully self-contained:",
+    "&nbsp;&nbsp;· looping hero wire that bends cold, glows red, snaps back",
+    "&nbsp;&nbsp;· temperature-slider crystal lattice (austenite ⇄ twinned martensite)",
+    "&nbsp;&nbsp;· a wire you drag to bend, then heat to watch it remember",
+    "&nbsp;&nbsp;· a nitinol-coil robotic bicep lifting a dumbbell on a current slider"
+  ]},
+
+  {t:"step", n:3},
+  {t:"cmd", cmd:"/plugin"},
+  {t:"out", lines:["✓ Installed frontend-design. Run /reload-plugins to apply."]},
+  {t:"cmd", cmd:"/reload-plugins"},
+  {t:"out", lines:["Reloaded: 2 plugins · 0 skills · 6 agents · 0 hooks · 0 plugin MCP servers · 0 plugin LSP servers"]},
+
+  {t:"step", n:4},
+  {t:"cmd", cmd:"/frontend-design:frontend-design", args:" improve it plus also make it more about the muscles and show me a bunch of different options to do it"},
+  {t:"claude", lines:["Launching <b>four design agents in parallel</b> — same physics, four bold aesthetic directions…"]},
+  {t:"agents", items:[
+    {label:"Agent · anatomy.html",  desc:"19th-century anatomy atlas — human & metal biceps flex from one brass lever", dur:2600, done:"done in 8m07s · 67k tokens"},
+    {label:"Agent · lab.html",      desc:"industrial test bench — antagonistic elbow rig with a live oscilloscope",     dur:3100, done:"done in 8m57s · 73k tokens"},
+    {label:"Agent · organism.html", desc:"bioluminescent aquarium — a tentacle with metal muscles that grabs a pearl",  dur:3700, done:"done in 14m27s · 96k tokens"},
+    {label:"Agent · mission.html",  desc:"1970s NASA flight manual — deployable rover arm with mission console",        dur:4500, done:"done in 21m44s · 129k tokens"}
+  ]},
+  {t:"tool", name:"Write", arg:"index.html", dur:1400, res:"gallery page linking all four variants"},
+  {t:"claude", lines:["Four complete muscle-focused redesigns + a gallery to compare them side by side."]},
+
+  {t:"step", n:5},
+  {t:"user", text:"I'd like you to make this live, you can use my gh cli with git hub pages or my aws cli and create s3 buckets etc whatever as long as this is live and clickable somewhere"},
+  {t:"tool", name:"Bash", arg:"gh auth status", dur:1100, res:"✓ logged in to github.com as BenLirio", ok:true},
+  {t:"tool", name:"Bash", arg:"git init && git add -A && git commit", dur:1300, res:"6 files committed on main"},
+  {t:"tool", name:"Bash", arg:"gh repo create nitinol-muscle --public --source=. --push", dur:1900, res:"https://github.com/BenLirio/nitinol-muscle"},
+  {t:"tool", name:"Bash", arg:"gh api repos/…/pages  (enable GitHub Pages)", dur:1300, res:"Pages enabled · custom domain benlirio.com detected"},
+  {t:"tool", name:"Bash", arg:"poll build status…", dur:2200, res:"building… building… building… built ✓", ok:true},
+  {t:"tool", name:"Bash", arg:"curl ×6 (every page)", dur:1500, res:"200 · 200 · 200 · 200 · 200 · 200", ok:true},
+  {t:"claude", lines:[
+    "Live ✅ → <a href=\"https://benlirio.com/nitinol-muscle/\" target=\"_blank\" rel=\"noopener\">benlirio.com/nitinol-muscle/</a>",
+    "Public repo: <a href=\"https://github.com/BenLirio/nitinol-muscle\" target=\"_blank\" rel=\"noopener\">github.com/BenLirio/nitinol-muscle</a> — push to update, Pages rebuilds in ~1 min."
+  ]},
+
+  {t:"step", n:6},
+  {t:"user", text:"Now make an HTML that animates the prompts I used to create this (including the /plugins and /model etc) and upload it to a how I created it page as well"},
+  {t:"tool", name:"Write", arg:"how.html", dur:2200, res:"the page you are reading right now"},
+  {t:"tool", name:"Bash", arg:"git commit && git push  →  Pages rebuild", dur:1600, res:"deployed ✓", ok:true},
+  {t:"end"}
+];
+
+/* ---------------- playback engine ---------------- */
+const tbody = document.getElementById("tbody");
+const state = {speed:1, paused:false, skip:false, token:0};
+const CANCEL = Symbol("cancel");
+let stick = true;
+tbody.addEventListener("scroll", ()=>{
+  stick = tbody.scrollHeight - tbody.scrollTop - tbody.clientHeight < 90;
+});
+function scrollDown(){ if(stick) tbody.scrollTop = tbody.scrollHeight; }
+const raw = ms=>new Promise(r=>setTimeout(r,ms));
+async function sleep(ms, tok){
+  let rem = ms;
+  while(rem > 0){
+    if(state.token!==tok) throw CANCEL;
+    if(state.skip) return;
+    if(!state.paused) rem -= 40*state.speed;
+    await raw(40);
+  }
+}
+function el(tag, cls, html){
+  const e=document.createElement(tag); if(cls) e.className=cls;
+  if(html!==undefined) e.innerHTML=html; return e;
+}
+async function typeInto(span, text, cps, tok){
+  for(const ch of text){
+    if(state.token!==tok) throw CANCEL;
+    if(state.skip){ span.textContent=text; scrollDown(); return; }
+    span.textContent += ch;
+    scrollDown();
+    await sleep(1000/cps + Math.random()*26, tok);
+  }
+}
+const SPIN="⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏";
+function startSpin(span){
+  let i=0;
+  const id=setInterval(()=>{ span.textContent=SPIN[i++%SPIN.length]; },90);
+  return ()=>clearInterval(id);
+}
+function setStep(n){
+  document.querySelectorAll(".step").forEach(s=>{
+    const sn=+s.dataset.s;
+    s.classList.toggle("active", sn===n);
+    s.classList.toggle("done", sn<n);
+  });
+}
+
+const handlers = {
+  async step(ev, tok){ setStep(ev.n); await sleep(350, tok); },
+
+  async cmd(ev, tok){
+    const box = el("div","msg user");
+    const ps1 = el("span","ps1","❯ ");
+    const cmdSpan = el("span","slash");
+    const argSpan = el("span");
+    const caret = el("span","caret");
+    box.append(ps1,cmdSpan,argSpan,caret);
+    tbody.appendChild(box); scrollDown();
+    await sleep(500, tok);
+    await typeInto(cmdSpan, ev.cmd, 24, tok);
+    if(ev.args) await typeInto(argSpan, ev.args, 42, tok);
+    await sleep(550, tok);
+    caret.remove();
+  },
+
+  async out(ev, tok){
+    await sleep(420, tok);
+    for(const line of ev.lines){
+      tbody.appendChild(el("div","stdout",line));
+      scrollDown();
+      await sleep(300, tok);
+    }
+    await sleep(500, tok);
+  },
+
+  async user(ev, tok){
+    const box = el("div","msg user");
+    const ps1 = el("span","ps1","❯ ");
+    const txt = el("span");
+    const caret = el("span","caret");
+    box.append(ps1,txt,caret);
+    tbody.appendChild(box); scrollDown();
+    await sleep(600, tok);
+    await typeInto(txt, ev.text, 48, tok);
+    await sleep(650, tok);
+    caret.remove();
+  },
+
+  async tool(ev, tok){
+    const line = el("div","msg tool");
+    const dot = el("span","tdot spin");
+    line.append(dot, el("span","tname",ev.name), el("span","targ","("+ev.arg+")"));
+    tbody.appendChild(line); scrollDown();
+    const stop = startSpin(dot);
+    await sleep(ev.dur, tok).finally(stop);
+    dot.classList.remove("spin"); dot.textContent="⏺";
+    const res = el("div","toolres");
+    res.append(el("span","elbow","⎿  "), el("span", ev.ok?"ok":"", ev.res));
+    line.appendChild(res); scrollDown();
+    await sleep(420, tok);
+  },
+
+  async claude(ev, tok){
+    const box = el("div","msg claude");
+    tbody.appendChild(box);
+    for(let i=0;i<ev.lines.length;i++){
+      const line = el("div","line",(i===0?'<span class="cdot">⏺</span>':"")+ev.lines[i]);
+      box.appendChild(line); scrollDown();
+      requestAnimationFrame(()=>line.classList.add("show"));
+      await sleep(560, tok);
+    }
+    await sleep(450, tok);
+  },
+
+  async agents(ev, tok){
+    const wrap = el("div","agents");
+    tbody.appendChild(wrap);
+    const rows = ev.items.map(it=>{
+      const r = el("div","agent");
+      const dot = el("span","adot");
+      r.append(dot, el("span","alabel",it.label));
+      r.appendChild(el("span","adesc",it.desc));
+      wrap.appendChild(r);
+      return {r, dot, it, stop:null};
+    });
+    for(const row of rows){
+      row.r.classList.add("show");
+      row.stop = startSpin(row.dot);
+      scrollDown();
+      await sleep(280, tok);
+    }
+    await Promise.all(rows.map(async row=>{
+      try{ await sleep(row.it.dur, tok); }
+      finally{ row.stop(); }
+      if(state.token!==tok) throw CANCEL;
+      row.dot.textContent="⏺"; row.dot.style.color="var(--green)";
+      row.r.querySelector(".alabel").insertAdjacentElement("afterend",
+        el("span","adone","✓ "+row.it.done));
+      scrollDown();
+    }));
+    await sleep(500, tok);
+  },
+
+  async end(ev, tok){
+    await sleep(500, tok);
+    const card = el("div","endcard");
+    card.appendChild(el("div","big","✦ …and that's this page. You're inside step 6."));
+    card.appendChild(el("div","", "Total: 6 prompts, 4 parallel agents, ~365k agent tokens, zero hand-written code."));
+    const row = el("div","row");
+    row.appendChild(el("a","",'🧲 the gallery')).href="index.html";
+    row.appendChild(el("a","",'📜 v1 page')).href="nitinol.html";
+    const gh = el("a","",'⚙ source on GitHub');
+    gh.href="https://github.com/BenLirio/nitinol-muscle"; gh.target="_blank"; gh.rel="noopener";
+    row.appendChild(gh);
+    const rep = el("a","",'⟲ replay');
+    rep.href="#"; rep.addEventListener("click",e=>{e.preventDefault(); restart();});
+    row.appendChild(rep);
+    card.appendChild(row);
+    tbody.appendChild(card); scrollDown();
+  }
+};
+
+async function run(){
+  const tok = state.token;
+  try{
+    for(const ev of SCRIPT){
+      if(state.token!==tok) throw CANCEL;
+      await handlers[ev.t](ev, tok);
+    }
+  }catch(e){ if(e!==CANCEL) throw e; }
+  if(state.token===tok) state.skip=false;
+}
+function restart(){
+  state.token++;
+  state.skip=false; state.paused=false; stick=true;
+  document.getElementById("btnPause").textContent="⏸ pause";
+  tbody.innerHTML="";
+  setStep(0);
+  run();
+}
+
+/* ---------------- controls ---------------- */
+document.getElementById("btnReplay").addEventListener("click", restart);
+document.getElementById("btnSkip").addEventListener("click", ()=>{ state.skip=true; state.paused=false; });
+document.getElementById("btnPause").addEventListener("click", function(){
+  state.paused=!state.paused;
+  this.textContent = state.paused ? "▶ play" : "⏸ pause";
+});
+document.querySelectorAll(".spd").forEach(b=>b.addEventListener("click",()=>{
+  state.speed=+b.dataset.spd;
+  document.querySelectorAll(".spd").forEach(x=>x.classList.toggle("on",x===b));
+}));
+
+restart();
+</script>
+</body>
+</html>
